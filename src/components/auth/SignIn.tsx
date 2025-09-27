@@ -2,9 +2,16 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { userAuthenticationSchema } from "@/lib/validations";
 
 export function SignIn() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCredentialsLoading, setIsCredentialsLoading] = useState(false);
+  const [credentialsError, setCredentialsError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -15,6 +22,48 @@ export function SignIn() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCredentialsSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCredentialsLoading(true);
+    setCredentialsError(null);
+
+    try {
+      // Validação do lado do cliente
+      const validationResult = userAuthenticationSchema.safeParse(formData);
+      if (!validationResult.success) {
+        setCredentialsError(
+          validationResult.error.issues[0]?.message || "Dados inválidos",
+        );
+        setIsCredentialsLoading(false);
+        return;
+      }
+
+      const result = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setCredentialsError("Email ou senha incorretos");
+      } else if (result?.ok) {
+        window.location.href = "/dashboard";
+      }
+    } catch (_error) {
+      setCredentialsError("Erro de conexão. Tente novamente.");
+    } finally {
+      setIsCredentialsLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   return (
@@ -29,6 +78,101 @@ export function SignIn() {
           </p>
         </div>
 
+        {/* Formulário de Email/Senha */}
+        <form onSubmit={handleCredentialsSignIn} className="space-y-4">
+          {credentialsError && (
+            <div className="rounded-lg bg-red-50 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="h-5 w-5 text-red-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    role="img"
+                    aria-label="Ícone de erro"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <h3 className="font-medium text-red-800 text-sm">Erro</h3>
+                  <div className="mt-2 text-red-700 text-sm">
+                    <p>{credentialsError}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-2 block font-medium text-gray-700 text-sm"
+            >
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
+              placeholder="Digite seu email"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-2 block font-medium text-gray-700 text-sm"
+            >
+              Senha
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              value={formData.password}
+              onChange={handleInputChange}
+              className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
+              placeholder="Digite sua senha"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isCredentialsLoading}
+            className="flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isCredentialsLoading ? (
+              <div className="flex items-center">
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Entrando...
+              </div>
+            ) : (
+              "Entrar com Email"
+            )}
+          </button>
+        </form>
+
+        {/* Divisor */}
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-gray-300 border-t" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="bg-white px-2 text-gray-500">ou</span>
+          </div>
+        </div>
+
+        {/* Botão do Google */}
         <div className="space-y-4">
           <button
             type="button"

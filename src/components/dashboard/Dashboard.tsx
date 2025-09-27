@@ -36,6 +36,13 @@ export function Dashboard() {
               </span>
               <button
                 type="button"
+                onClick={() => router.push("/settings")}
+                className="rounded-md bg-gray-600 px-3 py-2 font-medium text-sm text-white hover:bg-gray-700"
+              >
+                Configurações
+              </button>
+              <button
+                type="button"
                 onClick={() => signOut()}
                 className="rounded-md bg-red-600 px-3 py-2 font-medium text-sm text-white hover:bg-red-700"
               >
