@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 
@@ -34,13 +35,12 @@ export function Dashboard() {
               <span className="text-gray-700 text-sm">
                 Olá, {session.user?.name || session.user?.email}
               </span>
-              <button
-                type="button"
-                onClick={() => router.push("/settings")}
+              <Link
+                href="/settings"
                 className="rounded-md bg-gray-600 px-3 py-2 font-medium text-sm text-white hover:bg-gray-700"
               >
                 Configurações
-              </button>
+              </Link>
               <button
                 type="button"
                 onClick={() => signOut()}
