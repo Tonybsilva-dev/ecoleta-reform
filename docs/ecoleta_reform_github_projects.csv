@@ -1,0 +1,25 @@
+Title,Body,Assignees,Labels,Milestone,State
+Configurar estrutura base Next.js + DDD,"Criar arquitetura de pastas com domains, core, app e configurar Next.js 14 App Router.",Tonybsilva-dev,infra,MVP,open
+Configurar Tailwind + Shadcn UI,"Integrar TailwindCSS, instalar Shadcn e gerar tema base do sistema.",Tonybsilva-dev,ui,MVP,open
+Integrar Prisma com Postgres,Conectar ORM Prisma ao banco de dados Postgres e definir schema inicial.,Tonybsilva-dev,infra,MVP,open
+Configurar Auth.js com Adapter Prisma,Implementar autenticação e persistência de sessões com NextAuth/Auth.js.,Tonybsilva-dev,auth,MVP,open
+Criar enum de Roles e permissões CASL,"Definir papéis do sistema: Admin, Citizen, Collector, Company, NGO e regras CASL.",Tonybsilva-dev,auth,MVP,open
+Implementar formulários de login e registro,Usar react-hook-form + zod + Shadcn UI para autenticação.,Tonybsilva-dev,ui,MVP,open
+Criar modelo User/Profile,Modelar entidades User e Profile com relação 1:1 e campos essenciais.,Tonybsilva-dev,api,MVP,open
+Cadastrar e listar organizações,Implementar CRUD para empresas/ONGs com validação de tipo e localização.,Tonybsilva-dev,api,MVP,open
+Criar CRUD de Materiais e Itens,"Permitir criação, edição e exclusão de materiais recicláveis e itens disponíveis.",Tonybsilva-dev,marketplace,MVP,open
+Integrar Leaflet e mapa de pontos,"Exibir pontos de coleta, clusters e detalhes de itens no mapa.",Tonybsilva-dev,map,MVP,open
+Implementar fluxo de compra/doação,Gerar pedidos (Orders) a partir de Itens e registrar status da transação.,Tonybsilva-dev,marketplace,MVP,open
+Implementar Socket.io server,Configurar servidor Socket.io para mensagens e notificações em tempo real.,Tonybsilva-dev,chat,Expansão,open
+Criar modelo Message e Notification,Definir entidades para mensagens e alertas com enum de tipo.,Tonybsilva-dev,chat,Expansão,open
+Implementar chat em tempo real,UI com listagem de mensagens e integração via Zustand store.,Tonybsilva-dev,chat,Expansão,open
+Sistema de avaliações e denúncias,Permitir reviews em pedidos concluídos e envio de reports de usuários/itens.,Tonybsilva-dev,reviews,Expansão,open
+Criar modelo Campaign,Gerenciar campanhas de ONGs e empresas com metas e prazos.,Tonybsilva-dev,campaigns,Expansão,open
+"Integrar EcoScore, Mission e Badge","Definir modelos e lógica de pontuação, missões e recompensas.",Tonybsilva-dev,gamification,Expansão,open
+Leaderboard público,Exibir ranking global e por cidade de usuários mais engajados.,Tonybsilva-dev,gamification,Expansão,open
+Modelo Metric e dashboard de impacto,"Registrar KPIs ambientais (CO2, materiais coletados, doações, etc.).",Tonybsilva-dev,metrics,Métricas,open
+Dashboard de organizações,Dashboard visual com estatísticas de impacto para empresas e ONGs.,Tonybsilva-dev,metrics,Métricas,open
+Painel administrativo global,"Gerenciar usuários, itens, reports e campanhas em um painel interno.",Tonybsilva-dev,admin,Métricas,open
+Configurar CI/CD com GitHub Actions,"Pipeline com build, migrate, e deploy automático.",Tonybsilva-dev,infra,Métricas,open
+Monitoramento com Pino e Sentry,Adicionar logs estruturados e rastreamento de erros no backend.,Tonybsilva-dev,infra,Métricas,open
+Documentar API com Swagger/OpenAPI,Gerar documentação automatizada das rotas e modelos do backend.,Tonybsilva-dev,api,Métricas,open
