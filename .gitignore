@@ -63,4 +63,5 @@ tasks.json
 tasks/ 
 .taskmaster/
 .cursor/
+dev-logs/
 development_logs/
