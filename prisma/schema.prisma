@@ -53,22 +53,81 @@ enum PaymentStatus {
 // ===== MODELS =====
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String?
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?
   emailVerified DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Auth.js relations
+  accounts Account[]
+  sessions Session[]
 
   // Relations
-  profile      Profile?
-  memberships  Member[]
-  createdItems Item[]
-  orders       Order[]
+  profile         Profile?
+  memberships     Member[]
+  createdItems    Item[]
+  orders          Order[]
   reviewerReviews Review[] @relation("ReviewerReviews")
   revieweeReviews Review[] @relation("RevieweeReviews")
 
   @@map("users")
+}
+
+// ===== AUTH.JS MODELS =====
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Authenticator {
+  id                String   @id @default(cuid())
+  credentialID      String   @unique
+  userId            String
+  providerAccountId String
+  credentialPublicKey String
+  counter           Int
+  credentialDeviceType String
+  credentialBackedUp Boolean
+  transports        String?
+
+  @@map("authenticators")
 }
 
 model Profile {
@@ -108,11 +167,11 @@ model Organization {
 }
 
 model Member {
-  id             String   @id @default(cuid())
-  role           Role     @default(MEMBER)
-  joinedAt       DateTime @default(now())
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id        String   @id @default(cuid())
+  role      Role     @default(MEMBER)
+  joinedAt  DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   userId         String
@@ -125,14 +184,14 @@ model Member {
 }
 
 model Point {
-  id           String   @id @default(cuid())
-  name         String
-  description  String?
-  address      String
-  location     Unsupported("geography(Point, 4326)")
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String                                @id @default(cuid())
+  name        String
+  description String?
+  address     String
+  location    Unsupported("geography(Point, 4326)")
+  isActive    Boolean                               @default(true)
+  createdAt   DateTime                              @default(now())
+  updatedAt   DateTime                              @updatedAt
 
   // Relations
   organizationId String
@@ -155,11 +214,11 @@ model Item {
 
   // Relations
   createdById String
-  createdBy   User @relation(fields: [createdById], references: [id], onDelete: Cascade)
-  
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
-  
+
   pointItems PointItem[]
   orders     Order[]
 
@@ -167,13 +226,13 @@ model Item {
 }
 
 model PointItem {
-  id      String @id @default(cuid())
-  
+  id String @id @default(cuid())
+
   // Relations
   pointId String
   itemId  String
-  point   Point @relation(fields: [pointId], references: [id], onDelete: Cascade)
-  item    Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  point   Point  @relation(fields: [pointId], references: [id], onDelete: Cascade)
+  item    Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   @@unique([pointId, itemId])
   @@map("point_items")
@@ -188,11 +247,11 @@ model Order {
   updatedAt   DateTime    @updatedAt
 
   // Relations
-  userId  String
-  itemId  String
-  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  item    Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  
+  userId String
+  itemId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
   payment Payment?
 
   @@map("orders")
@@ -224,8 +283,8 @@ model Review {
   // Relations
   reviewerId String
   revieweeId String
-  reviewer   User @relation("ReviewerReviews", fields: [reviewerId], references: [id], onDelete: Cascade)
-  reviewee   User @relation("RevieweeReviews", fields: [revieweeId], references: [id], onDelete: Cascade)
+  reviewer   User   @relation("ReviewerReviews", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewee   User   @relation("RevieweeReviews", fields: [revieweeId], references: [id], onDelete: Cascade)
 
   @@unique([reviewerId, revieweeId])
   @@map("reviews")
