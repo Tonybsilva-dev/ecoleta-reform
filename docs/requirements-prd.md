@@ -13,14 +13,14 @@ Criar uma plataforma digital de gestão e marketplace sustentável, onde cidadã
 
 2. Papéis e Atores do Sistema
 
-| Papel                  | Descrição                                                    | Permissões principais                                              |
-|------------------------|--------------------------------------------------------------|-------------------------------------------------------------------|
-| Administrador (Admin)  | Superusuário responsável por gerenciar todo o sistema        | Gerenciar usuários, entidades, denúncias, categorias, políticas   |
-| Empresa (Company)      | Cadastra pontos de coleta, vende materiais, acompanha métricas ambientais | Gerenciar equipe, cadastrar itens, ver dashboard de métricas      |
-| ONG / Parceiro (NGO)   | Recebe doações, promove campanhas, monitora impacto         | Gerenciar campanhas, visualizar impacto ambiental, relatórios     |
-| Coletor (Collector)    | Coleta materiais, realiza entregas, ganha pontos            | Atualizar status de coletas, receber recompensas                  |
-| Cidadão (User / Buyer) | Usuário comum que doa, compra ou vende materiais recicláveis | Cadastrar doações, realizar pedidos, participar de missões        |
-| Visitante (Guest)      | Pode navegar e visualizar pontos de coleta                   | Visualização limitada, sem transações                             |
+| Papel                  | Descrição                                                                 | Permissões principais                                           |
+| ---------------------- | ------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Administrador (Admin)  | Superusuário responsável por gerenciar todo o sistema                     | Gerenciar usuários, entidades, denúncias, categorias, políticas |
+| Empresa (Company)      | Cadastra pontos de coleta, vende materiais, acompanha métricas ambientais | Gerenciar equipe, cadastrar itens, ver dashboard de métricas    |
+| ONG / Parceiro (NGO)   | Recebe doações, promove campanhas, monitora impacto                       | Gerenciar campanhas, visualizar impacto ambiental, relatórios   |
+| Coletor (Collector)    | Coleta materiais, realiza entregas, ganha pontos                          | Atualizar status de coletas, receber recompensas                |
+| Cidadão (User / Buyer) | Usuário comum que doa, compra ou vende materiais recicláveis              | Cadastrar doações, realizar pedidos, participar de missões      |
+| Visitante (Guest)      | Pode navegar e visualizar pontos de coleta                                | Visualização limitada, sem transações                           |
 
 ## 3. Módulos Principais
 
@@ -125,8 +125,8 @@ Criar uma plataforma digital de gestão e marketplace sustentável, onde cidadã
 
 ## 4. Requisitos Não Funcionais
 
-| Categoria           | Especificação                                                        |
-|---------------------|---------------------------------------------------------------------|
+| Categoria           | Especificação                                                       |
+| ------------------- | ------------------------------------------------------------------- |
 | Arquitetura         | DDD modular + App Router (Next.js 14+)                              |
 | Banco de dados      | PostgreSQL com Prisma ORM e extensão PostGIS                        |
 | Realtime            | Socket.io, namespaces /messages e /notifications                    |
@@ -136,7 +136,7 @@ Criar uma plataforma digital de gestão e marketplace sustentável, onde cidadã
 | Observabilidade     | Logs estruturados (Pino), Sentry e monitoramento básico             |
 | Testes              | Vitest (unitário), Playwright (e2e), mocks no Jest se necessário    |
 | Internacionalização | Multi-idioma (PT-BR/EN) via next-intl                               |
-| Documentação        | Storybook para componentes + Swagger/OpenAPI para rotas API          |
+| Documentação        | Storybook para componentes + Swagger/OpenAPI para rotas API         |
 | Acessibilidade      | Conformidade com WCAG 2.1 AA                                        |
 
 ## 5. Modelo Conceitual — Entidades e Relacionamentos (Prisma-level)
@@ -158,21 +158,21 @@ Criar uma plataforma digital de gestão e marketplace sustentável, onde cidadã
 
 ### 5.2. Relacionamentos
 
-| Entidade      | Relacionamentos                                                                                  |
-|---------------|-------------------------------------------------------------------------------------------------|
-| User          | 1:1 Profile • 1:N Items • 1:N Orders • 1:N Reviews • N:M Organizations (colaboradores)           |
-| Organization  | 1:N Items • 1:N Metrics • 1:N Members (Users)                                                    |
-| Material      | 1:N Items                                                                                       |
-| Item          | 1:1 Material • 1:N Bids • 1:N Orders • N:M Images                                               |
-| Order         | 1:1 Payment • N:1 Buyer (User) • N:1 Seller (User/Org)                                          |
-| Payment       | 1:1 Order                                                                                       |
-| Message       | N:1 Sender (User) • N:1 Receiver (User/Org) • opcionalmente 1:1 Item                            |
-| Notification  | N:1 User • tipo: message / bid / system / campaign                                              |
-| Review        | N:1 Reviewer (User) • N:1 Target (User/Org) • N:1 Order                                         |
-| Mission       | N:M Users (participantes)                                                                       |
-| Badge         | N:M Users (recompensas)                                                                         |
-| Metric        | N:1 Organization (dados agregados)                                                              |
-| Report        | N:1 Reporter (User) • N:1 Target (User/Item)                                                    |
+| Entidade     | Relacionamentos                                                                        |
+| ------------ | -------------------------------------------------------------------------------------- |
+| User         | 1:1 Profile • 1:N Items • 1:N Orders • 1:N Reviews • N:M Organizations (colaboradores) |
+| Organization | 1:N Items • 1:N Metrics • 1:N Members (Users)                                          |
+| Material     | 1:N Items                                                                              |
+| Item         | 1:1 Material • 1:N Bids • 1:N Orders • N:M Images                                      |
+| Order        | 1:1 Payment • N:1 Buyer (User) • N:1 Seller (User/Org)                                 |
+| Payment      | 1:1 Order                                                                              |
+| Message      | N:1 Sender (User) • N:1 Receiver (User/Org) • opcionalmente 1:1 Item                   |
+| Notification | N:1 User • tipo: message / bid / system / campaign                                     |
+| Review       | N:1 Reviewer (User) • N:1 Target (User/Org) • N:1 Order                                |
+| Mission      | N:M Users (participantes)                                                              |
+| Badge        | N:M Users (recompensas)                                                                |
+| Metric       | N:1 Organization (dados agregados)                                                     |
+| Report       | N:1 Reporter (User) • N:1 Target (User/Item)                                           |
 
 ### 5.3. Métricas Ambientais (dados agregados)
 
@@ -190,12 +190,12 @@ Esses dados alimentam o **dashboard de impacto**.
 
 ### 5.4. Gameficação e EcoPoints
 
-| Entidade   | Atributos principais                  | Descrição                    |
-|------------|--------------------------------------|------------------------------|
-| EcoScore   | points, level, userId, lastActivity  | Representa o score do usuário|
-| Mission    | title, goalType, goalValue, expiresAt| Desafios de reciclagem       |
-| Badge      | name, icon, criteria                 | Recompensa visual            |
-| RewardLog  | userId, missionId, pointsEarned, date| Histórico de ganhos          |
+| Entidade  | Atributos principais                  | Descrição                     |
+| --------- | ------------------------------------- | ----------------------------- |
+| EcoScore  | points, level, userId, lastActivity   | Representa o score do usuário |
+| Mission   | title, goalType, goalValue, expiresAt | Desafios de reciclagem        |
+| Badge     | name, icon, criteria                  | Recompensa visual             |
+| RewardLog | userId, missionId, pointsEarned, date | Histórico de ganhos           |
 
 ## 6. Fluxos Chave (Operacionais)
 

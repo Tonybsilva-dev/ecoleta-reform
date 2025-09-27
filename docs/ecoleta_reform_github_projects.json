@@ -1,0 +1,194 @@
+[
+  {
+    "title": "Configurar estrutura base Next.js + DDD",
+    "body": "Criar arquitetura de pastas com domains, core, app e configurar Next.js 14 App Router.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["infra"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Configurar Tailwind + Shadcn UI",
+    "body": "Integrar TailwindCSS, instalar Shadcn e gerar tema base do sistema.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["ui"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Integrar Prisma com Postgres",
+    "body": "Conectar ORM Prisma ao banco de dados Postgres e definir schema inicial.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["infra"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Configurar Auth.js com Adapter Prisma",
+    "body": "Implementar autenticação e persistência de sessões com NextAuth/Auth.js.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["auth"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Criar enum de Roles e permissões CASL",
+    "body": "Definir papéis do sistema: Admin, Citizen, Collector, Company, NGO e regras CASL.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["auth"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Implementar formulários de login e registro",
+    "body": "Usar react-hook-form + zod + Shadcn UI para autenticação.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["ui"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Criar modelo User/Profile",
+    "body": "Modelar entidades User e Profile com relação 1:1 e campos essenciais.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["api"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Cadastrar e listar organizações",
+    "body": "Implementar CRUD para empresas/ONGs com validação de tipo e localização.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["api"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Criar CRUD de Materiais e Itens",
+    "body": "Permitir criação, edição e exclusão de materiais recicláveis e itens disponíveis.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["marketplace"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Integrar Leaflet e mapa de pontos",
+    "body": "Exibir pontos de coleta, clusters e detalhes de itens no mapa.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["map"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Implementar fluxo de compra/doação",
+    "body": "Gerar pedidos (Orders) a partir de Itens e registrar status da transação.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["marketplace"],
+    "milestone": "MVP",
+    "state": "open"
+  },
+  {
+    "title": "Implementar Socket.io server",
+    "body": "Configurar servidor Socket.io para mensagens e notificações em tempo real.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["chat"],
+    "milestone": "Expansão",
+    "state": "open"
+  },
+  {
+    "title": "Criar modelo Message e Notification",
+    "body": "Definir entidades para mensagens e alertas com enum de tipo.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["chat"],
+    "milestone": "Expansão",
+    "state": "open"
+  },
+  {
+    "title": "Implementar chat em tempo real",
+    "body": "UI com listagem de mensagens e integração via Zustand store.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["chat"],
+    "milestone": "Expansão",
+    "state": "open"
+  },
+  {
+    "title": "Sistema de avaliações e denúncias",
+    "body": "Permitir reviews em pedidos concluídos e envio de reports de usuários/itens.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["reviews"],
+    "milestone": "Expansão",
+    "state": "open"
+  },
+  {
+    "title": "Criar modelo Campaign",
+    "body": "Gerenciar campanhas de ONGs e empresas com metas e prazos.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["campaigns"],
+    "milestone": "Expansão",
+    "state": "open"
+  },
+  {
+    "title": "Integrar EcoScore, Mission e Badge",
+    "body": "Definir modelos e lógica de pontuação, missões e recompensas.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["gamification"],
+    "milestone": "Expansão",
+    "state": "open"
+  },
+  {
+    "title": "Leaderboard público",
+    "body": "Exibir ranking global e por cidade de usuários mais engajados.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["gamification"],
+    "milestone": "Expansão",
+    "state": "open"
+  },
+  {
+    "title": "Modelo Metric e dashboard de impacto",
+    "body": "Registrar KPIs ambientais (CO2, materiais coletados, doações, etc.).",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["metrics"],
+    "milestone": "Métricas",
+    "state": "open"
+  },
+  {
+    "title": "Dashboard de organizações",
+    "body": "Dashboard visual com estatísticas de impacto para empresas e ONGs.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["metrics"],
+    "milestone": "Métricas",
+    "state": "open"
+  },
+  {
+    "title": "Painel administrativo global",
+    "body": "Gerenciar usuários, itens, reports e campanhas em um painel interno.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["admin"],
+    "milestone": "Métricas",
+    "state": "open"
+  },
+  {
+    "title": "Configurar CI/CD com GitHub Actions",
+    "body": "Pipeline com build, migrate, e deploy automático.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["infra"],
+    "milestone": "Métricas",
+    "state": "open"
+  },
+  {
+    "title": "Monitoramento com Pino e Sentry",
+    "body": "Adicionar logs estruturados e rastreamento de erros no backend.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["infra"],
+    "milestone": "Métricas",
+    "state": "open"
+  },
+  {
+    "title": "Documentar API com Swagger/OpenAPI",
+    "body": "Gerar documentação automatizada das rotas e modelos do backend.",
+    "assignees": ["Tonybsilva-dev"],
+    "labels": ["api"],
+    "milestone": "Métricas",
+    "state": "open"
+  }
+]

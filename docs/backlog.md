@@ -1,5 +1,5 @@
 | Épico | Task | Subtask | Responsável | Prioridade | Status |
-|--------|-------|----------|--------------|-------------|---------|
+| ----- | ---- | ------- | ----------- | ---------- | ------ |
 
 # 🧱 FASE 1 — MVP (Infra, Auth, Itens, Mapa, Marketplace)
 

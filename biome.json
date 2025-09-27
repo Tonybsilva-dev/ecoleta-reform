@@ -20,6 +20,20 @@
       "recommended": true,
       "suspicious": {
         "noUnknownAtRules": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "warn"
+      },
+      "style": {
+        "useConst": "error",
+        "useTemplate": "error"
+      },
+      "complexity": {
+        "noBannedTypes": "warn",
+        "noUselessFragments": "error"
+      },
+      "nursery": {
+        "useSortedClasses": "warn"
       }
     },
     "domains": {
