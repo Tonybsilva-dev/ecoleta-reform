@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Progress } from "@/components/ui/progress";
+import { Progress } from "@/components/ui";
 
 interface PasswordStrengthProps {
   password: string;

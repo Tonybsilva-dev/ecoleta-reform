@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useCallback, useEffect, useState } from "react";
 import { PasswordForm } from "@/components/auth/PasswordForm";
-import { Button } from "@/components/ui/button";
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+  Separator,
+} from "@/components/ui";
 
 export function AccountSettings() {
   const { data: session, status } = useSession();
