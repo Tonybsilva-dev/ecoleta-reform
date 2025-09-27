@@ -7,9 +7,226 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
   extensions = [postgis]
 }
 
-// Models will be defined here as we progress through the tasks
+// ===== ENUMS =====
+
+enum Role {
+  ADMIN
+  MEMBER
+  OWNER
+}
+
+enum UserType {
+  CITIZEN
+  COLLECTOR
+  COMPANY
+  NGO
+}
+
+enum ItemStatus {
+  ACTIVE
+  INACTIVE
+  SOLD
+  DONATED
+  COLLECTED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// ===== MODELS =====
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String?
+  emailVerified DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  profile      Profile?
+  memberships  Member[]
+  createdItems Item[]
+  orders       Order[]
+  reviewerReviews Review[] @relation("ReviewerReviews")
+  revieweeReviews Review[] @relation("RevieweeReviews")
+
+  @@map("users")
+}
+
+model Profile {
+  id        String   @id @default(cuid())
+  name      String
+  avatarUrl String?
+  bio       String?
+  phone     String?
+  userType  UserType @default(CITIZEN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  website     String?
+  logoUrl     String?
+  domain      String?  @unique
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  members Member[]
+  points  Point[]
+  items   Item[]
+
+  @@map("organizations")
+}
+
+model Member {
+  id             String   @id @default(cuid())
+  role           Role     @default(MEMBER)
+  joinedAt       DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  userId         String
+  organizationId String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organizationId])
+  @@map("members")
+}
+
+model Point {
+  id           String   @id @default(cuid())
+  name         String
+  description  String?
+  address      String
+  location     Unsupported("geography(Point, 4326)")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  pointItems     PointItem[]
+
+  @@map("points")
+}
+
+model Item {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String?
+  status      ItemStatus @default(ACTIVE)
+  price       Decimal?   @db.Decimal(10, 2)
+  quantity    Int        @default(1)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Relations
+  createdById String
+  createdBy   User @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  
+  pointItems PointItem[]
+  orders     Order[]
+
+  @@map("items")
+}
+
+model PointItem {
+  id      String @id @default(cuid())
+  
+  // Relations
+  pointId String
+  itemId  String
+  point   Point @relation(fields: [pointId], references: [id], onDelete: Cascade)
+  item    Item  @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([pointId, itemId])
+  @@map("point_items")
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  status      OrderStatus @default(PENDING)
+  totalAmount Decimal?    @db.Decimal(10, 2)
+  notes       String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  userId  String
+  itemId  String
+  user    User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  item    Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  
+  payment Payment?
+
+  @@map("orders")
+}
+
+model Payment {
+  id            String        @id @default(cuid())
+  amount        Decimal       @db.Decimal(10, 2)
+  status        PaymentStatus @default(PENDING)
+  paymentMethod String?
+  transactionId String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  // Relations
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int      @db.SmallInt
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  reviewerId String
+  revieweeId String
+  reviewer   User @relation("ReviewerReviews", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewee   User @relation("RevieweeReviews", fields: [revieweeId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewerId, revieweeId])
+  @@map("reviews")
+}
