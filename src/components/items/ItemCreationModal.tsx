@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui";
 import { ItemCreationForm } from "./ItemCreationForm";
 
 interface ItemCreationModalProps {
@@ -43,6 +43,7 @@ export function ItemCreationModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto p-0">
+        <DialogTitle className="sr-only">Criar Novo Item</DialogTitle>
         <ItemCreationForm
           onComplete={handleComplete}
           onBack={handleBack}

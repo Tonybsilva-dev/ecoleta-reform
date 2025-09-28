@@ -18,7 +18,6 @@ import {
   X,
 } from "lucide-react";
 import NextImage from "next/image";
-import { useState } from "react";
 
 import {
   Button,
@@ -279,12 +278,14 @@ export function ItemPricingStep({
 export function ItemLocationStep({
   formData,
   updateFormData,
+  isGettingLocation,
+  setIsGettingLocation,
 }: {
   formData: Record<string, string>;
   updateFormData: (field: string, value: string) => void;
+  isGettingLocation: boolean;
+  setIsGettingLocation: (value: boolean) => void;
 }) {
-  const [isGettingLocation, setIsGettingLocation] = useState(false);
-
   const getCurrentLocation = () => {
     if (!navigator.geolocation) {
       alert("Geolocalização não é suportada por este navegador.");
@@ -393,12 +394,14 @@ export function ItemLocationStep({
 export function ItemImagesStep({
   formData: _formData,
   updateFormData: _updateFormData,
+  images,
+  setImages,
 }: {
   formData: Record<string, string>;
   updateFormData: (field: string, value: string) => void;
+  images: string[];
+  setImages: (images: string[]) => void;
 }) {
-  const [images, setImages] = useState<string[]>([]);
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
@@ -407,11 +410,11 @@ export function ItemImagesStep({
     const newImages = Array.from(files).map((file) =>
       URL.createObjectURL(file),
     );
-    setImages((prev) => [...prev, ...newImages].slice(0, 5)); // Máximo 5 imagens
+    setImages([...images, ...newImages].slice(0, 5)); // Máximo 5 imagens
   };
 
   const removeImage = (index: number) => {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+    setImages(images.filter((_, i) => i !== index));
   };
 
   return (
