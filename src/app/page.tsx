@@ -148,6 +148,7 @@ export default function Home() {
                         alt="Mapa Sustentável"
                         fill
                         className="object-contain p-4"
+                        priority
                       />
                       {/* Floating elements */}
                       <div className="absolute top-6 left-6 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg"></div>
