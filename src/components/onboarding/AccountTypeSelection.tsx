@@ -211,15 +211,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
           <button
             type="button"
             disabled={isLoading}
-            className={`rounded-lg px-8 py-3 font-medium text-white shadow-lg transition-all duration-300 ${
-              selectedType === UserType.CITIZEN
-                ? "bg-blue-600 hover:bg-blue-700"
-                : selectedType === UserType.COLLECTOR
-                  ? "bg-green-600 hover:bg-green-700"
-                  : selectedType === UserType.COMPANY
-                    ? "bg-purple-600 hover:bg-purple-700"
-                    : "bg-emerald-600 hover:bg-emerald-700"
-            } disabled:cursor-not-allowed disabled:opacity-50`}
+            className="flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={() => handleTypeSelection(selectedType)}
           >
             {isLoading ? (

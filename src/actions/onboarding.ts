@@ -3,13 +3,14 @@
 import { UserType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth.config";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth.config";
 import { prisma } from "@/lib/prisma";
 
 export async function selectAccountType(userType: UserType) {
   try {
     // Verificar se o usuário está autenticado
-    const session = await auth();
+    const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
       throw new Error("Usuário não autenticado");
@@ -55,7 +56,7 @@ export async function selectAccountType(userType: UserType) {
 
 export async function getAccountTypeSelectionStatus() {
   try {
-    const session = await auth();
+    const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
       return { hasSelectedRole: false, userType: null };
