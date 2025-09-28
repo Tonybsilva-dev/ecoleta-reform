@@ -1,19 +1,35 @@
 "use client";
 
-import { Package } from "lucide-react";
-import { MainLayout } from "@/components/layout";
-import { EmptyState } from "@/components/ui";
+import { Package, Plus } from "lucide-react";
+import { useState } from "react";
+import { ItemCreationModal } from "@/components/items";
+import { MainLayout, PageHeader } from "@/components/layout";
+import { Button, EmptyState } from "@/components/ui";
 
 export default function ItemsPage() {
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const handleCreateSuccess = () => {
+    // TODO: Atualizar lista de itens
+    console.log("Item criado com sucesso!");
+  };
+
   return (
     <MainLayout>
       <div className="space-y-6">
-        <div className="space-y-2">
-          <h1 className="font-bold text-3xl text-gray-900">Meus Itens</h1>
-          <p className="text-gray-600">
-            Gerencie todos os seus itens cadastrados
-          </p>
-        </div>
+        <PageHeader
+          title="Meus Itens"
+          description="Gerencie todos os seus itens cadastrados"
+          actions={
+            <Button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="flex items-center space-x-2"
+            >
+              <Plus className="h-4 w-4" />
+              <span>Criar Item</span>
+            </Button>
+          }
+        />
 
         <EmptyState
           icon={<Package className="h-12 w-12 text-gray-400" />}
@@ -21,10 +37,14 @@ export default function ItemsPage() {
           description="Você ainda não criou nenhum item. Comece adicionando seu primeiro item para reciclagem."
           action={{
             label: "Criar primeiro item",
-            onClick: () => {
-              window.location.href = "/items/create";
-            },
+            onClick: () => setIsCreateModalOpen(true),
           }}
+        />
+
+        <ItemCreationModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSuccess={handleCreateSuccess}
         />
       </div>
     </MainLayout>

@@ -9,7 +9,6 @@ import {
   Map as MapIcon,
   Menu,
   Package,
-  Plus,
   Settings,
   ShoppingCart,
   Users,
@@ -63,12 +62,6 @@ export function MainSidebar({ className }: MainSidebarProps) {
         href: "/items",
         icon: Package,
         description: "Gerencie seus itens",
-      },
-      {
-        name: "Criar Item",
-        href: "/items/create",
-        icon: Plus,
-        description: "Adicione um novo item",
       },
     ];
 

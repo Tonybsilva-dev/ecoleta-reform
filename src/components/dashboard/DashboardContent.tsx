@@ -170,10 +170,9 @@ export function DashboardContent() {
           title="Seu dashboard está vazio"
           description="Comece adicionando seus primeiros itens para reciclagem ou explore o marketplace para encontrar materiais sustentáveis."
           action={{
-            label: "Criar primeiro item",
+            label: "Ver Meus Itens",
             onClick: () => {
-              // A navegação será feita pela sidebar
-              window.location.href = "/items/create";
+              window.location.href = "/items";
             },
           }}
         />

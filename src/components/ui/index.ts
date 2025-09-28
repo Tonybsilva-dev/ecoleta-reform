@@ -1,6 +1,7 @@
 // UI components will be exported from here
 export * from "./button";
 export * from "./card";
+export * from "./dialog";
 export * from "./empty-state";
 export * from "./error-state";
 export * from "./Icon";

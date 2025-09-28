@@ -17,13 +17,23 @@ import {
 
 interface ItemCreationFormProps {
   className?: string;
+  onComplete?: (formData: any) => void;
+  onBack?: () => void;
+  isLoading?: boolean;
 }
 
-export function ItemCreationForm({ className }: ItemCreationFormProps) {
+export function ItemCreationForm({
+  className,
+  onComplete,
+  onBack,
+  isLoading: externalLoading,
+}: ItemCreationFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { showSuccess, showError, showLoading, dismiss } = useNotifications();
+
+  const isFormLoading = externalLoading || isLoading;
 
   const steps = [
     {
@@ -115,6 +125,13 @@ export function ItemCreationForm({ className }: ItemCreationFormProps) {
   ];
 
   const handleComplete = async (formData: Record<string, string>) => {
+    // Se onComplete foi fornecido, usar ele (modal)
+    if (onComplete) {
+      onComplete(formData);
+      return;
+    }
+
+    // Caso contrário, usar lógica original (página)
     setIsLoading(true);
     setError(null);
     const loadingToastId = showLoading("Criando seu item...");
@@ -187,6 +204,13 @@ export function ItemCreationForm({ className }: ItemCreationFormProps) {
   };
 
   const handleBack = () => {
+    // Se onBack foi fornecido, usar ele (modal)
+    if (onBack) {
+      onBack();
+      return;
+    }
+
+    // Caso contrário, usar lógica original (página)
     router.back();
   };
 
@@ -211,7 +235,7 @@ export function ItemCreationForm({ className }: ItemCreationFormProps) {
         steps={steps}
         onComplete={handleComplete}
         onBack={handleBack}
-        isLoading={isLoading}
+        isLoading={isFormLoading}
         title="Crie seu item no Ecoleta e contribua para um mundo mais sustentável."
         description="Liste materiais para venda, doação ou coleta e conecte-se com pessoas que valorizam a sustentabilidade."
       />
