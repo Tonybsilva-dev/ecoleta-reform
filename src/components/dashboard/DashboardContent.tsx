@@ -64,7 +64,7 @@ export function DashboardContent() {
     } else if (status === "unauthenticated") {
       setIsLoading(false);
     }
-  }, [status, isLoading, showError]);
+  }, [status, isLoading, showError]); // Removido isLoading e showError das dependências
 
   // Mostrar loading apenas quando o status da sessão está carregando
   if (status === "loading") {
