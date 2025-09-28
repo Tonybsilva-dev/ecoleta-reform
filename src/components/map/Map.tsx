@@ -2,6 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
+import type { MapThemeConfig } from "@/hooks/useMapTheme";
 
 // Dynamic import to avoid SSR issues
 const MapView = dynamic(() => import("./MapView"), {
@@ -23,6 +24,7 @@ export interface MapProps {
   className?: string;
   height?: string;
   children?: React.ReactNode;
+  theme?: MapThemeConfig;
 }
 
 export default function MapComponent(props: MapProps) {

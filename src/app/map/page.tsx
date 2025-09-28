@@ -1,11 +1,15 @@
-import { Bookmark, Clock, Filter, MapPin, Search, Star } from "lucide-react";
+"use client";
+
+import { ArrowLeft, Bookmark, Clock, MapPin, Search, Star } from "lucide-react";
 import Link from "next/link";
-import { Map as MapComponent } from "@/components/map";
+import { Map as MapComponent, ThemeSelector } from "@/components/map";
+import { useMapTheme } from "@/hooks/useMapTheme";
 import { APP_NAME } from "@/lib/constants";
 
 export default function MapPage() {
+  const { getCurrentThemeConfig } = useMapTheme();
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {/* Header */}
       <header className="sticky top-0 z-[9999] border-b bg-white/95 shadow-sm backdrop-blur-md">
         <div className="container mx-auto px-4 py-4">
@@ -25,59 +29,17 @@ export default function MapPage() {
                 <Link href="/" className="font-bold text-gray-900 text-xl">
                   {APP_NAME}
                 </Link>
-                <div className="hidden items-center space-x-2 text-gray-600 text-sm md:flex">
-                  <MapPin className="h-4 w-4" />
-                  <span>São Paulo, SP</span>
-                  <span>•</span>
-                  <span>5 km</span>
-                </div>
               </div>
             </div>
 
-            <nav
-              className="hidden items-center space-x-6 md:flex"
-              aria-label="Navegação principal"
-            >
-              <Link
-                href="/"
-                className="text-gray-600 transition-colors hover:text-gray-900"
-              >
-                Início
-              </Link>
-              <Link
-                href="#como-funciona"
-                className="text-gray-600 transition-colors hover:text-gray-900"
-              >
-                Como funciona
-              </Link>
-              <Link
-                href="#sobre"
-                className="text-gray-600 transition-colors hover:text-gray-900"
-              >
-                Sobre nós
-              </Link>
-            </nav>
-
             <div className="flex items-center space-x-3">
-              <button
-                type="button"
-                className="flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-3 py-2 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50"
-              >
-                <Filter className="h-4 w-4" />
-                <span className="hidden sm:inline">Filtros</span>
-              </button>
-              <Link
-                href="/auth/signin"
-                className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50"
-              >
-                Entrar
-              </Link>
-              <Link
-                href="/register"
-                className="flex items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-              >
-                Criar conta
-              </Link>
+              <div className="hidden items-center space-x-2 text-gray-600 text-sm md:flex">
+                <MapPin className="h-4 w-4" />
+                <span>São Paulo, SP</span>
+                <span>•</span>
+                <span>5 km</span>
+              </div>
+              <ThemeSelector />
             </div>
           </div>
         </div>
@@ -87,6 +49,28 @@ export default function MapPage() {
       <main className="flex h-[calc(100vh-80px)]">
         {/* Left Panel - Filters and Items List */}
         <div className="flex w-96 flex-col border-gray-200 border-r bg-white">
+          {/* Navigation Header */}
+          <div className="border-gray-200 border-b bg-gray-50 p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="font-semibold text-gray-900 text-lg">
+                  Mapa Sustentável
+                </h1>
+                <p className="text-gray-600 text-sm">
+                  Explore materiais próximos a você
+                </p>
+              </div>
+              <Link
+                href="/"
+                className="flex items-center space-x-1 rounded-md px-3 py-2 text-gray-600 text-sm transition-colors hover:bg-gray-200 hover:text-gray-900"
+                title="Voltar para o início"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Voltar</span>
+              </Link>
+            </div>
+          </div>
+
           {/* Search and Filters */}
           <div className="border-gray-200 border-b p-4">
             <div className="relative mb-4">
@@ -353,12 +337,13 @@ export default function MapPage() {
         </div>
 
         {/* Right Panel - Map */}
-        <div className="relative flex-1 p-24">
+        <div className="relative flex-1 rounded-sm">
           <MapComponent
             center={[-23.5505, -46.6333]} // São Paulo
             zoom={13}
             height="100%"
             className="w-full"
+            theme={getCurrentThemeConfig()}
           />
 
           {/* Map Controls */}
@@ -367,12 +352,14 @@ export default function MapPage() {
               <button
                 type="button"
                 className="flex h-8 w-8 items-center justify-center rounded hover:bg-gray-100"
+                title="Aumentar zoom"
               >
                 <span className="font-bold text-lg">+</span>
               </button>
               <button
                 type="button"
                 className="flex h-8 w-8 items-center justify-center rounded hover:bg-gray-100"
+                title="Diminuir zoom"
               >
                 <span className="font-bold text-lg">-</span>
               </button>
@@ -380,6 +367,7 @@ export default function MapPage() {
             <button
               type="button"
               className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-lg hover:bg-gray-100"
+              title="Minha localização"
             >
               <MapPin className="h-5 w-5 text-gray-600" />
             </button>
@@ -391,6 +379,17 @@ export default function MapPage() {
               <input type="checkbox" className="rounded" defaultChecked />
               <span>Buscar conforme movo o mapa</span>
             </div>
+          </div>
+
+          {/* Back to Home Button - Mobile */}
+          <div className="absolute right-4 bottom-4 md:hidden">
+            <Link
+              href="/"
+              className="flex items-center space-x-2 rounded-lg bg-green-600 px-4 py-2 text-sm text-white shadow-lg transition-colors hover:bg-green-700"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Voltar</span>
+            </Link>
           </div>
         </div>
       </main>
