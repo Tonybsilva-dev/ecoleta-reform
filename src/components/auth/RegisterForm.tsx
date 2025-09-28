@@ -81,13 +81,13 @@ export function RegisterForm({ className }: RegisterFormProps) {
     try {
       await signIn("google", { callbackUrl: "/onboarding/select-type" });
       showSuccess("Conta criada com sucesso!", "Redirecionando...");
+      // Não resetar isLoading aqui para manter o LoadingState
     } catch (error) {
       console.error("Erro ao registrar com Google:", error);
       const errorMessage = "Erro ao registrar com Google. Tente novamente.";
       setError(errorMessage);
       showError("Erro ao criar conta", errorMessage);
-    } finally {
-      setIsGoogleLoading(false);
+      setIsGoogleLoading(false); // Só resetar em caso de erro
     }
   };
 

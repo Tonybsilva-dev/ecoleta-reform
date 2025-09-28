@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Card,
   CardContent,
@@ -30,12 +30,14 @@ export function Dashboard() {
     },
   });
   const [error, setError] = useState<string | null>(null);
+  const hasLoaded = useRef(false);
 
   // Simular carregamento de dados do dashboard
   useEffect(() => {
     const loadDashboardData = async () => {
       try {
         setIsLoading(true);
+        setError(null); // Limpar erros anteriores
         // Simular delay de carregamento
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -49,6 +51,7 @@ export function Dashboard() {
             ecoPoints: 0,
           },
         });
+        hasLoaded.current = true;
       } catch (_err) {
         setError("Erro ao carregar dados do dashboard");
         showError(
@@ -60,7 +63,8 @@ export function Dashboard() {
       }
     };
 
-    if (session?.user?.id) {
+    // Só carregar se tiver sessão e não tiver carregado ainda
+    if (session?.user?.id && !hasLoaded.current) {
       loadDashboardData();
     }
   }, [session?.user?.id, showError]);
