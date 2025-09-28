@@ -2,7 +2,7 @@
 
 import { Leaf, Package, ShoppingCart } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import {
   Card,
@@ -13,58 +13,18 @@ import {
   EmptyState,
   LoadingState,
 } from "@/components/ui";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useDashboardStore } from "@/lib/stores";
 
 export function DashboardContent() {
   const { status } = useSession();
-  const { showError } = useNotifications();
-  const [isLoading, setIsLoading] = useState(false);
-  const [dashboardData, setDashboardData] = useState({
-    items: [],
-    transactions: [],
-    stats: {
-      totalItems: 0,
-      totalTransactions: 0,
-      ecoPoints: 0,
-    },
-  });
-
-  const fetchDashboardData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-
-      // Simular carregamento de dados
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // TODO: Implementar chamadas reais para API
-      setDashboardData({
-        items: [],
-        transactions: [],
-        stats: {
-          totalItems: 0,
-          totalTransactions: 0,
-          ecoPoints: 0,
-        },
-      });
-    } catch (error) {
-      console.error("Erro ao carregar dados do dashboard:", error);
-      showError(
-        "Erro ao carregar dados",
-        "Tente novamente em alguns instantes",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [showError]);
+  const { isLoading, stats, loadDashboardData } = useDashboardStore();
 
   useEffect(() => {
     // Só executar se estiver autenticado e não estiver já carregando
     if (status === "authenticated" && !isLoading) {
-      fetchDashboardData();
-    } else if (status === "unauthenticated") {
-      setIsLoading(false);
+      loadDashboardData();
     }
-  }, [status, isLoading, fetchDashboardData]);
+  }, [status, isLoading, loadDashboardData]);
 
   // Mostrar loading apenas quando o status da sessão está carregando
   if (status === "loading") {
@@ -86,7 +46,6 @@ export function DashboardContent() {
     return <LoadingState message="Carregando dados..." />;
   }
 
-  const { stats } = dashboardData;
   const hasItems = stats.totalItems > 0;
 
   return (

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -13,66 +13,20 @@ import {
   EmptyState,
   LoadingState,
 } from "@/components/ui";
-import { useNotifications } from "@/hooks/useNotifications";
+import { useDashboardStore } from "@/lib/stores";
 
 export function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { showError, dismissAll } = useNotifications();
-  const [isLoading, setIsLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState({
-    items: [],
-    transactions: [],
-    stats: {
-      totalItems: 0,
-      totalTransactions: 0,
-      ecoPoints: 0,
-    },
-  });
-  const [error, setError] = useState<string | null>(null);
-  const hasLoaded = useRef(false);
+  const { isLoading, error, stats, items, transactions, loadDashboardData } =
+    useDashboardStore();
 
-  // Função para carregar dados do dashboard
-  const loadDashboardData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null); // Limpar erros anteriores
-
-      // Limpar todos os toasts pendentes
-      dismissAll();
-
-      // Simular delay de carregamento
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Simular dados do dashboard
-      setDashboardData({
-        items: [],
-        transactions: [],
-        stats: {
-          totalItems: 0,
-          totalTransactions: 0,
-          ecoPoints: 0,
-        },
-      });
-      hasLoaded.current = true;
-    } catch (_err) {
-      setError("Erro ao carregar dados do dashboard");
-      showError(
-        "Erro ao carregar dashboard",
-        "Tente novamente em alguns instantes",
-      );
-    } finally {
-      setIsLoading(false);
-    }
-  }, [showError, dismissAll]);
-
-  // Simular carregamento de dados do dashboard
+  // Carregar dados do dashboard quando o usuário estiver autenticado
   useEffect(() => {
-    // Só carregar se tiver sessão e não tiver carregado ainda
-    if (session?.user?.id && !hasLoaded.current) {
+    if (session?.user?.id && !isLoading) {
       loadDashboardData();
     }
-  }, [session?.user?.id, loadDashboardData]);
+  }, [session?.user?.id, loadDashboardData, isLoading]);
 
   if (status === "loading") {
     return (
@@ -186,8 +140,7 @@ export function Dashboard() {
               action={{
                 label: "Tentar novamente",
                 onClick: () => {
-                  setError(null);
-                  setIsLoading(true);
+                  loadDashboardData();
                 },
               }}
             />
@@ -277,9 +230,7 @@ export function Dashboard() {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="font-bold text-2xl">
-                  {dashboardData.stats.totalItems}
-                </div>
+                <div className="font-bold text-2xl">{stats.totalItems}</div>
                 <p className="text-muted-foreground text-xs">
                   Itens cadastrados
                 </p>
@@ -310,7 +261,7 @@ export function Dashboard() {
               </CardHeader>
               <CardContent>
                 <div className="font-bold text-2xl">
-                  {dashboardData.stats.totalTransactions}
+                  {stats.totalTransactions}
                 </div>
                 <p className="text-muted-foreground text-xs">
                   Transações realizadas
@@ -339,9 +290,7 @@ export function Dashboard() {
                 </svg>
               </CardHeader>
               <CardContent>
-                <div className="font-bold text-2xl">
-                  {dashboardData.stats.ecoPoints}
-                </div>
+                <div className="font-bold text-2xl">{stats.ecoPoints}</div>
                 <p className="text-muted-foreground text-xs">
                   Pontos acumulados
                 </p>
@@ -350,8 +299,7 @@ export function Dashboard() {
           </div>
 
           {/* Main Content */}
-          {dashboardData.items.length === 0 &&
-          dashboardData.transactions.length === 0 ? (
+          {items.length === 0 && transactions.length === 0 ? (
             <EmptyState
               icon={
                 <svg
@@ -391,7 +339,7 @@ export function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground text-sm">
-                    {dashboardData.items.length} itens cadastrados
+                    {items.length} itens cadastrados
                   </p>
                 </CardContent>
               </Card>
@@ -405,7 +353,7 @@ export function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground text-sm">
-                    {dashboardData.transactions.length} transações realizadas
+                    {transactions.length} transações realizadas
                   </p>
                 </CardContent>
               </Card>
