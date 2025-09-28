@@ -1,47 +1,83 @@
-import {
-  Bookmark,
-  Clock,
-  Filter,
-  MapPin,
-  Plus,
-  Search,
-  Star,
-} from "lucide-react";
+import { Bookmark, Clock, Filter, MapPin, Search, Star } from "lucide-react";
+import Link from "next/link";
 import { Map as MapComponent } from "@/components/map";
+import { APP_NAME } from "@/lib/constants";
 
 export default function MapPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b bg-white shadow-sm">
+      <header className="sticky top-0 z-[9999] border-b bg-white/95 shadow-sm backdrop-blur-md">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="font-bold text-2xl text-gray-900">
-                Ecoleta Reform
-              </h1>
-              <div className="flex items-center space-x-2 text-gray-600 text-sm">
-                <MapPin className="h-4 w-4" />
-                <span>São Paulo, SP</span>
-                <span>•</span>
-                <span>5 km</span>
+            <div className="flex items-center space-x-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-600">
+                <svg
+                  className="h-5 w-5 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <title>Logo Ecoleta</title>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                </svg>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Link href="/" className="font-bold text-gray-900 text-xl">
+                  {APP_NAME}
+                </Link>
+                <div className="hidden items-center space-x-2 text-gray-600 text-sm md:flex">
+                  <MapPin className="h-4 w-4" />
+                  <span>São Paulo, SP</span>
+                  <span>•</span>
+                  <span>5 km</span>
+                </div>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+
+            <nav
+              className="hidden items-center space-x-6 md:flex"
+              aria-label="Navegação principal"
+            >
+              <Link
+                href="/"
+                className="text-gray-600 transition-colors hover:text-gray-900"
+              >
+                Início
+              </Link>
+              <Link
+                href="#como-funciona"
+                className="text-gray-600 transition-colors hover:text-gray-900"
+              >
+                Como funciona
+              </Link>
+              <Link
+                href="#sobre"
+                className="text-gray-600 transition-colors hover:text-gray-900"
+              >
+                Sobre nós
+              </Link>
+            </nav>
+
+            <div className="flex items-center space-x-3">
               <button
                 type="button"
-                className="flex items-center space-x-2 rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm hover:bg-gray-50"
+                className="flex items-center space-x-2 rounded-lg border border-gray-300 bg-white px-3 py-2 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50"
               >
                 <Filter className="h-4 w-4" />
-                <span>Filtros</span>
+                <span className="hidden sm:inline">Filtros</span>
               </button>
-              <button
-                type="button"
-                className="flex items-center space-x-2 rounded-md bg-green-600 px-4 py-2 font-medium text-sm text-white hover:bg-green-700"
+              <Link
+                href="/auth/signin"
+                className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50"
               >
-                <Plus className="h-4 w-4" />
-                <span>Adicionar Material</span>
-              </button>
+                Entrar
+              </Link>
+              <Link
+                href="/register"
+                className="flex items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+              >
+                Criar conta
+              </Link>
             </div>
           </div>
         </div>
@@ -317,7 +353,7 @@ export default function MapPage() {
         </div>
 
         {/* Right Panel - Map */}
-        <div className="relative flex-1">
+        <div className="relative flex-1 p-24">
           <MapComponent
             center={[-23.5505, -46.6333]} // São Paulo
             zoom={13}
