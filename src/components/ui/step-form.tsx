@@ -106,13 +106,13 @@ export function StepForm({
   };
 
   return (
-    <div className={cn("w-full", className)}>
+    <div className={cn("w-full p-8", className)}>
       {/* Step Progress Indicator */}
-      <div className="mb-6 p-8">
+      <div className="mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="font-medium text-gray-500 text-sm">
-              Passo {currentStep + 1} de {steps.length}
+            <span className="font-semibold text-2xl text-gray-900">
+              Criar Item
             </span>
           </div>
           <div className="flex space-x-2">
