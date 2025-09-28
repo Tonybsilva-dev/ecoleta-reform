@@ -24,16 +24,19 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
   } = useOnboardingStore();
 
   const { updateUserRole } = useAuthStore();
-  const { showSuccess, showError, showLoading } = useNotifications();
+  const { showSuccess, showError, showLoading, dismiss } = useNotifications();
 
   const handleTypeSelection = async (userType: UserType) => {
     setSelectedType(userType);
     setLoading(true);
     setError(null);
 
+    // Declarar loadingToastId no escopo da função
+    let loadingToastId: string | number | undefined;
+
     try {
       // Mostrar feedback de carregamento
-      showLoading("Configurando sua conta...");
+      loadingToastId = showLoading("Configurando sua conta...");
 
       // Atualizar o estado global com o novo tipo de usuário
       updateUserRole(userType);
@@ -51,6 +54,9 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
       });
 
       if (response.ok) {
+        // Dismissar o toast de loading
+        dismiss(loadingToastId);
+
         // Forçar atualização da sessão
         try {
           await fetch("/api/auth/session?update", { method: "GET" });
@@ -72,6 +78,11 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
         throw new Error(errorData.error || "Erro na requisição");
       }
     } catch (error) {
+      // Dismissar o toast de loading em caso de erro
+      if (loadingToastId) {
+        dismiss(loadingToastId);
+      }
+
       const errorMessage =
         error instanceof Error ? error.message : "Erro inesperado";
       setError(errorMessage);

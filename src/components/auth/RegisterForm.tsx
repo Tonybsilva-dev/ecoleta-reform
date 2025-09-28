@@ -21,7 +21,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { showSuccess, showError, showLoading } = useNotifications();
+  const { showSuccess, showError, showLoading, dismiss } = useNotifications();
 
   const {
     register,
@@ -35,7 +35,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
   const onSubmit = async (data: RegisterInput) => {
     setIsLoading(true);
     setError(null);
-    showLoading("Criando sua conta...");
+    const loadingToastId = showLoading("Criando sua conta...");
 
     try {
       // Fazer requisição para a API
@@ -53,6 +53,9 @@ export function RegisterForm({ className }: RegisterFormProps) {
         throw new Error(responseData.error || "Erro ao criar conta");
       }
 
+      // Dismissar o toast de loading
+      dismiss(loadingToastId);
+
       // Sucesso - mostrar toast e redirecionar
       showSuccess("Conta criada com sucesso!", "Redirecionando para login...");
 
@@ -62,6 +65,9 @@ export function RegisterForm({ className }: RegisterFormProps) {
       router.push("/auth/signin");
     } catch (error) {
       console.error("Erro no registro:", error);
+
+      // Dismissar o toast de loading em caso de erro
+      dismiss(loadingToastId);
 
       const errorMessage =
         error instanceof Error
@@ -76,14 +82,22 @@ export function RegisterForm({ className }: RegisterFormProps) {
 
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
-    showLoading("Criando conta com Google...");
+    const loadingToastId = showLoading("Criando conta com Google...");
 
     try {
       await signIn("google", { callbackUrl: "/onboarding/select-type" });
+
+      // Dismissar o toast de loading
+      dismiss(loadingToastId);
+
       showSuccess("Conta criada com sucesso!", "Redirecionando...");
       // Não resetar isLoading aqui para manter o LoadingState
     } catch (error) {
       console.error("Erro ao registrar com Google:", error);
+
+      // Dismissar o toast de loading em caso de erro
+      dismiss(loadingToastId);
+
       const errorMessage = "Erro ao registrar com Google. Tente novamente.";
       setError(errorMessage);
       showError("Erro ao criar conta", errorMessage);

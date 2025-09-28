@@ -18,7 +18,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 export function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { showSuccess, showError } = useNotifications();
+  const { showSuccess, showError, dismissAll } = useNotifications();
   const [isLoading, setIsLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState({
     items: [],
@@ -38,6 +38,10 @@ export function Dashboard() {
       try {
         setIsLoading(true);
         setError(null); // Limpar erros anteriores
+
+        // Limpar todos os toasts pendentes
+        dismissAll();
+
         // Simular delay de carregamento
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -67,7 +71,7 @@ export function Dashboard() {
     if (session?.user?.id && !hasLoaded.current) {
       loadDashboardData();
     }
-  }, [session?.user?.id, showError]);
+  }, [session?.user?.id, showError, dismissAll]);
 
   if (status === "loading") {
     return (

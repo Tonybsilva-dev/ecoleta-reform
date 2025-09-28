@@ -21,7 +21,7 @@ export function OrganizationCreationForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { showSuccess, showError, showLoading } = useNotifications();
+  const { showSuccess, showError, showLoading, dismiss } = useNotifications();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -43,7 +43,7 @@ export function OrganizationCreationForm({
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    showLoading("Criando sua organização...");
+    const loadingToastId = showLoading("Criando sua organização...");
 
     try {
       // TODO: Implementar API route para criar organização
@@ -51,6 +51,9 @@ export function OrganizationCreationForm({
 
       // Simular delay para demonstração
       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Dismissar o toast de loading
+      dismiss(loadingToastId);
 
       // TODO: Redirecionar para dashboard da organização
       console.log("Redirecionando para dashboard da organização...");
@@ -65,6 +68,10 @@ export function OrganizationCreationForm({
       router.push("/dashboard");
     } catch (error) {
       console.error("Erro ao criar organização:", error);
+
+      // Dismissar o toast de loading em caso de erro
+      dismiss(loadingToastId);
+
       const errorMessage =
         error instanceof Error ? error.message : "Erro inesperado";
       setError(errorMessage);

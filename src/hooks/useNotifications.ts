@@ -25,6 +25,10 @@ export function useNotifications() {
     toast.dismiss(toastId);
   };
 
+  const dismissAll = () => {
+    toast.dismiss();
+  };
+
   return {
     showSuccess,
     showError,
@@ -32,5 +36,6 @@ export function useNotifications() {
     showWarning,
     showLoading,
     dismiss,
+    dismissAll,
   };
 }

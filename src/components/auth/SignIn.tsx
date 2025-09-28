@@ -15,17 +15,25 @@ export function SignIn() {
     email: "",
     password: "",
   });
-  const { showSuccess, showError, showLoading } = useNotifications();
+  const { showSuccess, showError, showLoading, dismiss } = useNotifications();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    showLoading("Entrando com Google...");
+    const loadingToastId = showLoading("Entrando com Google...");
 
     try {
       await signIn("google", { callbackUrl: "/dashboard" });
+
+      // Dismissar o toast de loading
+      dismiss(loadingToastId);
+
       showSuccess("Login realizado com sucesso!", "Redirecionando...");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
+
+      // Dismissar o toast de loading em caso de erro
+      dismiss(loadingToastId);
+
       showError("Erro ao fazer login", "Tente novamente em alguns instantes");
     } finally {
       setIsLoading(false);
@@ -36,7 +44,7 @@ export function SignIn() {
     e.preventDefault();
     setIsCredentialsLoading(true);
     setCredentialsError(null);
-    showLoading("Verificando credenciais...");
+    const loadingToastId = showLoading("Verificando credenciais...");
 
     try {
       // Validação do lado do cliente
@@ -46,6 +54,7 @@ export function SignIn() {
           validationResult.error.issues[0]?.message || "Dados inválidos";
         setCredentialsError(errorMessage);
         showError("Dados inválidos", errorMessage);
+        dismiss(loadingToastId);
         setIsCredentialsLoading(false);
         return;
       }
@@ -60,7 +69,9 @@ export function SignIn() {
         const errorMessage = "Email ou senha incorretos";
         setCredentialsError(errorMessage);
         showError("Falha no login", errorMessage);
+        dismiss(loadingToastId);
       } else if (result?.ok) {
+        dismiss(loadingToastId);
         showSuccess("Login realizado com sucesso!", "Redirecionando...");
         window.location.href = "/dashboard";
       }
@@ -68,6 +79,7 @@ export function SignIn() {
       const errorMessage = "Erro de conexão. Tente novamente.";
       setCredentialsError(errorMessage);
       showError("Erro de conexão", errorMessage);
+      dismiss(loadingToastId);
     } finally {
       setIsCredentialsLoading(false);
     }
