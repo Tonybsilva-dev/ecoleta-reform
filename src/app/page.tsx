@@ -129,7 +129,7 @@ export default function Home() {
               </div>
 
               {/* Right Column - Visual */}
-              <div className="relative">
+              <div className="flex items-center justify-center">
                 <PinContainer title="Ecoleta Reform" href="/map">
                   <div className="flex h-[24rem] w-[24rem] basis-full flex-col p-6 text-slate-100/90 tracking-tight sm:basis-1/2">
                     <h3 className="!pb-3 !m-0 max-w-xs font-bold text-lg text-white">
