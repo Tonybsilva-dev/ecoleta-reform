@@ -1,8 +1,11 @@
 "use client";
 
 import { UserType } from "@prisma/client";
+import { ErrorState, LoadingState } from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
 import { useAuthStore } from "@/lib/stores/auth.store";
 import { useOnboardingStore } from "@/lib/stores/onboarding.store";
+import { cn } from "@/lib/utils";
 
 interface AccountTypeSelectionProps {
   className?: string;
@@ -21,6 +24,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
   } = useOnboardingStore();
 
   const { updateUserRole } = useAuthStore();
+  const { showSuccess, showError, showLoading } = useNotifications();
 
   const handleTypeSelection = async (userType: UserType) => {
     setSelectedType(userType);
@@ -28,6 +32,9 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
     setError(null);
 
     try {
+      // Mostrar feedback de carregamento
+      showLoading("Configurando sua conta...");
+
       // Atualizar o estado global com o novo tipo de usuário
       updateUserRole(userType);
 
@@ -51,6 +58,9 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
           // Silenciar erro de atualização de sessão
         }
 
+        // Mostrar sucesso
+        showSuccess("Conta configurada com sucesso!", "Redirecionando...");
+
         // Aguardar um pouco para garantir que o token foi atualizado
         await new Promise((resolve) => setTimeout(resolve, 1000));
 
@@ -62,7 +72,10 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
         throw new Error(errorData.error || "Erro na requisição");
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Erro inesperado");
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro inesperado";
+      setError(errorMessage);
+      showError("Erro ao configurar conta", errorMessage);
       setLoading(false);
     }
   };
@@ -126,6 +139,40 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
       ),
     },
   ];
+
+  // Mostrar loading state se estiver carregando
+  if (isLoading) {
+    return (
+      <div
+        className={cn(
+          "flex h-full w-full flex-col items-center justify-center p-8",
+          className,
+        )}
+      >
+        <LoadingState message="Configurando sua conta..." />
+      </div>
+    );
+  }
+
+  // Mostrar error state se houver erro
+  if (error) {
+    return (
+      <div
+        className={cn(
+          "flex h-full w-full flex-col items-center justify-center p-8",
+          className,
+        )}
+      >
+        <ErrorState
+          message={error}
+          onRetry={() => {
+            setError(null);
+            setLoading(false);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

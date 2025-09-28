@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/providers/AuthProvider";
+import { ToastProvider } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -25,7 +26,10 @@ export default function RootLayout({
         className={cn("min-h-screen bg-background font-funnel antialiased")}
         suppressHydrationWarning
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {children}
+          <ToastProvider />
+        </AuthProvider>
       </body>
     </html>
   );
