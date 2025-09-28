@@ -9,6 +9,8 @@ export const metadata: Metadata = {
     "Plataforma de marketplace sustentável para coleta e reciclagem de resíduos",
   icons: {
     icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 
