@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PinContainer } from "@/components/ui/3d-pin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
 
@@ -129,55 +130,53 @@ export default function Home() {
 
               {/* Right Column - Visual */}
               <div className="relative">
-                <div className="relative rounded-2xl bg-white p-8 shadow-2xl">
-                  <div className="mb-6 text-center">
-                    <h3 className="mb-2 font-semibold text-gray-900 text-xl">
-                      Explore o mapa sustentável
+                <PinContainer title="Ecoleta Reform" href="/map">
+                  <div className="flex h-[20rem] w-[20rem] basis-full flex-col p-4 text-slate-100/50 tracking-tight sm:basis-1/2">
+                    <h3 className="!pb-2 !m-0 max-w-xs font-bold text-base text-slate-100">
+                      Mapa Sustentável
                     </h3>
-                    <p className="text-gray-600">
-                      Encontre pontos de coleta próximos a você
-                    </p>
-                  </div>
-
-                  {/* Mock Map */}
-                  <div className="relative h-80 overflow-hidden rounded-lg bg-gradient-to-br from-green-100 to-blue-100">
-                    <div
-                      className="absolute inset-0 opacity-50"
-                      style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d1fae5' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                      }}
-                    ></div>
-
-                    {/* Mock Markers */}
-                    <div className="absolute top-8 left-8 h-4 w-4 animate-pulse rounded-full bg-green-500"></div>
-                    <div className="absolute top-16 right-12 h-4 w-4 animate-pulse rounded-full bg-blue-500"></div>
-                    <div className="absolute bottom-12 left-16 h-4 w-4 animate-pulse rounded-full bg-purple-500"></div>
-                    <div className="absolute right-8 bottom-20 h-4 w-4 animate-pulse rounded-full bg-orange-500"></div>
-
-                    {/* Center marker */}
-                    <div className="-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 transform">
-                      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-600">
-                        <svg
-                          className="h-4 w-4 text-white"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <title>Localização atual</title>
-                          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
-                        </svg>
+                    <div className="!m-0 !p-0 font-normal text-base">
+                      <span className="text-slate-500">
+                        Descubra pontos de coleta e materiais próximos a você.
+                        Conecte-se com nossa comunidade sustentável.
+                      </span>
+                    </div>
+                    <div className="relative mt-4 flex w-full flex-1 overflow-hidden rounded-lg bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500">
+                      {/* Mock Map Content */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60"></div>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-100"></div>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60 delay-200"></div>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-300"></div>
+                          <div className="flex h-3 w-3 items-center justify-center rounded-full bg-white">
+                            <svg
+                              className="h-2 w-2 text-green-600"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <title>Localização no mapa</title>
+                              <path
+                                fillRule="evenodd"
+                                d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-500"></div>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60 delay-600"></div>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-700"></div>
+                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60 delay-800"></div>
+                        </div>
                       </div>
+                      {/* Floating elements */}
+                      <div className="absolute top-4 left-4 h-1 w-1 animate-bounce rounded-full bg-white/80"></div>
+                      <div className="absolute top-8 right-6 h-1 w-1 animate-bounce rounded-full bg-white/60 delay-1000"></div>
+                      <div className="absolute bottom-6 left-8 h-1 w-1 animate-bounce rounded-full bg-white/80 delay-2000"></div>
+                      <div className="absolute right-4 bottom-4 h-1 w-1 animate-bounce rounded-full bg-white/60 delay-3000"></div>
                     </div>
                   </div>
-
-                  <div className="mt-4 text-center">
-                    <Link
-                      href="/map"
-                      className="flex w-full items-center justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                    >
-                      Ver mapa completo
-                    </Link>
-                  </div>
-                </div>
+                </PinContainer>
               </div>
             </div>
           </div>
