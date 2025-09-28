@@ -206,7 +206,10 @@ export function StepForm({
 
             <button
               type="button"
-              onClick={handleNext}
+              onClick={() => {
+                console.log("Button clicked, isLoading:", isLoading);
+                handleNext();
+              }}
               disabled={isLoading}
               className="rounded-xl bg-green-600 px-8 py-4 font-semibold text-white transition-colors duration-200 hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
             >

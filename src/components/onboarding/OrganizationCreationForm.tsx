@@ -158,6 +158,8 @@ export function OrganizationCreationForm({
     );
   }
 
+  console.log("OrganizationCreationForm render - isLoading:", isLoading);
+
   return (
     <div className={className || ""}>
       <StepForm

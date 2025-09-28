@@ -86,7 +86,11 @@ export const organizationStepSchemas = {
       .string()
       .optional()
       .refine(
-        (val) => !val || /^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/.test(val),
+        (val) =>
+          !val ||
+          /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*$/.test(
+            val,
+          ),
         "Domínio inválido",
       ),
   }),
