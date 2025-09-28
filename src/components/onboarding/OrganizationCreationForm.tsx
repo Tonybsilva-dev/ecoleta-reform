@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { ErrorState, StepForm } from "@/components/ui";
 import { useNotifications } from "@/hooks/useNotifications";
+import { organizationStepSchemas } from "@/lib/validations/organization.schema";
 import {
   OrganizationConfirmationStep,
   OrganizationContactStep,
@@ -31,9 +32,13 @@ export function OrganizationCreationForm({
       title: "Qual é o nome da sua organização?",
       description: "Este será o nome público da sua organização na plataforma",
       component: OrganizationNameStep,
-      validation: () => {
-        // Validação será feita no componente
-        return true;
+      validation: (formData: Record<string, string>) => {
+        try {
+          organizationStepSchemas.name.parse({ name: formData.name || "" });
+          return true;
+        } catch {
+          return false;
+        }
       },
     },
     {
@@ -41,9 +46,13 @@ export function OrganizationCreationForm({
       title: "Que tipo de organização você representa?",
       description: "Isso nos ajuda a personalizar sua experiência",
       component: OrganizationTypeStep,
-      validation: () => {
-        // Validação será feita no componente
-        return true;
+      validation: (formData: Record<string, string>) => {
+        try {
+          organizationStepSchemas.type.parse({ type: formData.type || "" });
+          return true;
+        } catch {
+          return false;
+        }
       },
     },
     {
@@ -51,18 +60,41 @@ export function OrganizationCreationForm({
       title: "Conte-nos sobre sua organização",
       description: "Compartilhe os objetivos sustentáveis da sua organização",
       component: OrganizationDescriptionStep,
+      validation: (formData: Record<string, string>) => {
+        try {
+          organizationStepSchemas.description.parse({
+            description: formData.description || "",
+          });
+          return true;
+        } catch {
+          return false;
+        }
+      },
     },
     {
       id: "contact",
       title: "Informações de contato",
       description: "Como as pessoas podem entrar em contato com vocês?",
       component: OrganizationContactStep,
+      validation: (formData: Record<string, string>) => {
+        try {
+          organizationStepSchemas.contact.parse({
+            website: formData.website || "",
+            contactEmail: formData.contactEmail || "",
+            domain: formData.domain || "",
+          });
+          return true;
+        } catch {
+          return false;
+        }
+      },
     },
     {
       id: "confirmation",
       title: "Confirme os dados",
       description: "Revise as informações antes de finalizar",
       component: OrganizationConfirmationStep,
+      validation: () => true, // Step de confirmação sempre válido
     },
   ];
 

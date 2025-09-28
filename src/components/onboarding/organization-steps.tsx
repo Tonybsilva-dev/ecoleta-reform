@@ -39,6 +39,12 @@ export function OrganizationNameStep({ formData, updateFormData }: StepProps) {
 export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
   const types = [
     {
+      id: "CITIZEN",
+      name: "Cidadão",
+      description: "Cidadão individual interessado em sustentabilidade",
+      icon: Users,
+    },
+    {
       id: "COMPANY",
       name: "Empresa",
       description: "Empresa privada com foco em sustentabilidade",
@@ -51,9 +57,9 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
       icon: Users,
     },
     {
-      id: "COOPERATIVE",
-      name: "Cooperativa",
-      description: "Cooperativa de reciclagem ou sustentabilidade",
+      id: "COLLECTOR",
+      name: "Coletor",
+      description: "Coletor individual ou cooperativa de coleta",
       icon: Users,
     },
   ];
@@ -256,9 +262,10 @@ export function OrganizationConfirmationStep({ formData }: StepProps) {
           <div className="flex justify-between">
             <span className="text-gray-600">Tipo:</span>
             <span className="font-medium">
+              {formData.type === "CITIZEN" && "Cidadão"}
               {formData.type === "COMPANY" && "Empresa"}
               {formData.type === "NGO" && "ONG"}
-              {formData.type === "COOPERATIVE" && "Cooperativa"}
+              {formData.type === "COLLECTOR" && "Coletor"}
             </span>
           </div>
 

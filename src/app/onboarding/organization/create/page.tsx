@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function CreateOrganizationPage() {
   return (
-    <div className="w-full space-y-8 rounded-lg bg-white p-8 shadow-lg">
+    <div className="h-screen w-full space-y-8 rounded-lg bg-white shadow-lg">
       <OrganizationCreationForm />
     </div>
   );
