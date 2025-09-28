@@ -131,27 +131,27 @@ export default function Home() {
               {/* Right Column - Visual */}
               <div className="relative">
                 <PinContainer title="Ecoleta Reform" href="/map">
-                  <div className="flex h-[20rem] w-[20rem] basis-full flex-col p-4 text-slate-100/50 tracking-tight sm:basis-1/2">
-                    <h3 className="!pb-2 !m-0 max-w-xs font-bold text-base text-slate-100">
+                  <div className="flex h-[24rem] w-[24rem] basis-full flex-col p-6 text-slate-100/90 tracking-tight sm:basis-1/2">
+                    <h3 className="!pb-3 !m-0 max-w-xs font-bold text-lg text-white">
                       Mapa Sustentável
                     </h3>
                     <div className="!m-0 !p-0 font-normal text-base">
-                      <span className="text-slate-500">
+                      <span className="text-slate-200">
                         Descubra pontos de coleta e materiais próximos a você.
                         Conecte-se com nossa comunidade sustentável.
                       </span>
                     </div>
-                    <div className="relative mt-4 flex w-full flex-1 overflow-hidden rounded-lg bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500">
+                    <div className="relative mt-6 flex w-full flex-1 overflow-hidden rounded-lg bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 shadow-2xl">
                       {/* Mock Map Content */}
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="grid grid-cols-3 gap-2">
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60"></div>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-100"></div>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60 delay-200"></div>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-300"></div>
-                          <div className="flex h-3 w-3 items-center justify-center rounded-full bg-white">
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/80 shadow-lg"></div>
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/70 shadow-lg delay-100"></div>
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/80 shadow-lg delay-200"></div>
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/70 shadow-lg delay-300"></div>
+                          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-white shadow-xl ring-2 ring-white/50">
                             <svg
-                              className="h-2 w-2 text-green-600"
+                              className="h-3 w-3 text-green-700"
                               fill="currentColor"
                               viewBox="0 0 20 20"
                             >
@@ -163,17 +163,17 @@ export default function Home() {
                               />
                             </svg>
                           </div>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-500"></div>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60 delay-600"></div>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/40 delay-700"></div>
-                          <div className="h-2 w-2 animate-pulse rounded-full bg-white/60 delay-800"></div>
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/70 shadow-lg delay-500"></div>
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/80 shadow-lg delay-600"></div>
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/70 shadow-lg delay-700"></div>
+                          <div className="h-3 w-3 animate-pulse rounded-full bg-white/80 shadow-lg delay-800"></div>
                         </div>
                       </div>
                       {/* Floating elements */}
-                      <div className="absolute top-4 left-4 h-1 w-1 animate-bounce rounded-full bg-white/80"></div>
-                      <div className="absolute top-8 right-6 h-1 w-1 animate-bounce rounded-full bg-white/60 delay-1000"></div>
-                      <div className="absolute bottom-6 left-8 h-1 w-1 animate-bounce rounded-full bg-white/80 delay-2000"></div>
-                      <div className="absolute right-4 bottom-4 h-1 w-1 animate-bounce rounded-full bg-white/60 delay-3000"></div>
+                      <div className="absolute top-6 left-6 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg"></div>
+                      <div className="absolute top-12 right-8 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-1000"></div>
+                      <div className="absolute bottom-8 left-12 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg delay-2000"></div>
+                      <div className="absolute right-6 bottom-6 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-3000"></div>
                     </div>
                   </div>
                 </PinContainer>
