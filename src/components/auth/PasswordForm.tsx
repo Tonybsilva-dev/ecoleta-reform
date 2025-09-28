@@ -8,10 +8,13 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  ErrorState,
   Input,
   Label,
+  LoadingState,
   Separator,
 } from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
 import { userPasswordChangeSchema } from "@/lib/validations";
 import { PasswordStrength } from "./PasswordStrength";
 
@@ -27,6 +30,7 @@ export function PasswordForm({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { showSuccess, showError, showLoading } = useNotifications();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -37,11 +41,14 @@ export function PasswordForm({
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    showLoading("Atualizando senha...");
 
     try {
       // Validação do lado do cliente
       if (formData.newPassword !== formData.confirmPassword) {
-        setError("As senhas não coincidem");
+        const errorMessage = "As senhas não coincidem";
+        setError(errorMessage);
+        showError("Erro de validação", errorMessage);
         setIsLoading(false);
         return;
       }
@@ -54,9 +61,10 @@ export function PasswordForm({
       const validationResult =
         userPasswordChangeSchema.safeParse(validationData);
       if (!validationResult.success) {
-        setError(
-          validationResult.error.issues[0]?.message || "Dados inválidos",
-        );
+        const errorMessage =
+          validationResult.error.issues[0]?.message || "Dados inválidos";
+        setError(errorMessage);
+        showError("Dados inválidos", errorMessage);
         setIsLoading(false);
         return;
       }
@@ -73,12 +81,19 @@ export function PasswordForm({
       const result = await response.json();
 
       if (!response.ok) {
-        setError(result.error || "Erro ao atualizar senha");
+        const errorMessage = result.error || "Erro ao atualizar senha";
+        setError(errorMessage);
+        showError("Erro ao atualizar senha", errorMessage);
         setIsLoading(false);
         return;
       }
 
       setSuccess(true);
+      showSuccess(
+        "Senha atualizada com sucesso!",
+        "Sua senha foi alterada com segurança",
+      );
+
       setFormData({
         currentPassword: "",
         newPassword: "",
@@ -89,7 +104,9 @@ export function PasswordForm({
         onSuccess();
       }
     } catch (_err) {
-      setError("Erro de conexão. Tente novamente.");
+      const errorMessage = "Erro de conexão. Tente novamente.";
+      setError(errorMessage);
+      showError("Erro de conexão", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -102,6 +119,14 @@ export function PasswordForm({
       [name]: value,
     }));
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        <LoadingState message="Atualizando senha..." />
+      </div>
+    );
+  }
 
   if (success) {
     return (
@@ -134,6 +159,18 @@ export function PasswordForm({
           </div>
         </CardContent>
       </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <ErrorState
+        message={error}
+        onRetry={() => {
+          setError(null);
+          setIsLoading(false);
+        }}
+      />
     );
   }
 

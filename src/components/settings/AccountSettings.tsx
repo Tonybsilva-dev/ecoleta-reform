@@ -12,25 +12,44 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  ErrorState,
+  LoadingState,
   Separator,
+  Skeleton,
 } from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
 
 export function AccountSettings() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [hasPassword, setHasPassword] = useState<boolean | null>(null);
+  const [isLoadingPassword, setIsLoadingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const { showError } = useNotifications();
 
   const checkUserPassword = useCallback(async () => {
     try {
+      setIsLoadingPassword(true);
+      setPasswordError(null);
+
       const response = await fetch("/api/user/password-status");
       if (response.ok) {
         const data = await response.json();
         setHasPassword(data.hasPassword);
+      } else {
+        throw new Error("Erro ao verificar status da senha");
       }
     } catch (error) {
       console.error("Erro ao verificar status da senha:", error);
+      setPasswordError("Erro ao verificar status da senha");
+      showError(
+        "Erro ao carregar",
+        "Não foi possível verificar o status da senha",
+      );
+    } finally {
+      setIsLoadingPassword(false);
     }
-  }, []);
+  }, [showError]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -47,13 +66,29 @@ export function AccountSettings() {
   if (status === "loading") {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-gray-700 text-xl">Carregando...</div>
+        <LoadingState message="Carregando configurações..." />
       </div>
     );
   }
 
   if (!session) {
     return null; // Should redirect by useEffect
+  }
+
+  if (passwordError) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+          <ErrorState
+            message={passwordError}
+            onRetry={() => {
+              setPasswordError(null);
+              checkUserPassword();
+            }}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -128,13 +163,13 @@ export function AccountSettings() {
                   <div className="font-medium text-gray-500 text-sm">
                     Método de Login
                   </div>
-                  <p className="text-gray-900 text-sm">
-                    {hasPassword === null
-                      ? "Verificando..."
-                      : hasPassword
-                        ? "Email/Senha + OAuth"
-                        : "OAuth (Google)"}
-                  </p>
+                  {isLoadingPassword ? (
+                    <Skeleton className="h-4 w-24" />
+                  ) : (
+                    <p className="text-gray-900 text-sm">
+                      {hasPassword ? "Email/Senha + OAuth" : "OAuth (Google)"}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <div className="font-medium text-gray-500 text-sm">
@@ -154,7 +189,7 @@ export function AccountSettings() {
             <CardHeader>
               <CardTitle className="text-lg">Configurações de Senha</CardTitle>
               <CardDescription>
-                {hasPassword === null
+                {isLoadingPassword
                   ? "Verificando status da senha..."
                   : hasPassword
                     ? "Altere sua senha para manter sua conta segura."
@@ -162,14 +197,20 @@ export function AccountSettings() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {hasPassword !== null && (
+              {isLoadingPassword ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-32" />
+                </div>
+              ) : hasPassword !== null ? (
                 <PasswordForm
                   hasExistingPassword={hasPassword}
                   onSuccess={() => {
                     setHasPassword(true);
                   }}
                 />
-              )}
+              ) : null}
             </CardContent>
           </Card>
 

@@ -2,6 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  Button,
+  ErrorState,
+  Input,
+  Label,
+  LoadingState,
+} from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface OrganizationCreationFormProps {
   className?: string;
@@ -13,6 +21,7 @@ export function OrganizationCreationForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showSuccess, showError, showLoading } = useNotifications();
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -34,6 +43,7 @@ export function OrganizationCreationForm({
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    showLoading("Criando sua organização...");
 
     try {
       // TODO: Implementar API route para criar organização
@@ -44,56 +54,57 @@ export function OrganizationCreationForm({
 
       // TODO: Redirecionar para dashboard da organização
       console.log("Redirecionando para dashboard da organização...");
+      showSuccess(
+        "Organização criada com sucesso!",
+        "Redirecionando para o dashboard...",
+      );
+
+      // Aguardar um pouco para mostrar o toast
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       router.push("/dashboard");
     } catch (error) {
       console.error("Erro ao criar organização:", error);
-      setError(error instanceof Error ? error.message : "Erro inesperado");
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro inesperado";
+      setError(errorMessage);
+      showError("Erro ao criar organização", errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Mostrar loading state se estiver carregando
+  if (isLoading) {
+    return (
+      <div className={`space-y-6 ${className || ""}`}>
+        <LoadingState message="Criando sua organização..." />
+      </div>
+    );
+  }
+
+  // Mostrar error state se houver erro
+  if (error) {
+    return (
+      <div className={`space-y-6 ${className || ""}`}>
+        <ErrorState
+          message={error}
+          onRetry={() => {
+            setError(null);
+            setIsLoading(false);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className={`space-y-6 ${className || ""}`}>
-      {/* Error Message */}
-      {error && (
-        <div className="rounded-lg bg-red-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-red-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                role="img"
-                aria-label="Ícone de erro"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="font-medium text-red-800 text-sm">Erro</h3>
-              <div className="mt-2 text-red-700 text-sm">
-                <p>{error}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Nome da Organização */}
-        <div>
-          <label
-            htmlFor="name"
-            className="mb-2 block font-medium text-gray-700 text-sm"
-          >
-            Nome da Organização *
-          </label>
-          <input
+        <div className="space-y-2">
+          <Label htmlFor="name">Nome da Organização *</Label>
+          <Input
             id="name"
             name="name"
             type="text"
@@ -101,19 +112,13 @@ export function OrganizationCreationForm({
             value={formData.name}
             onChange={handleInputChange}
             disabled={isLoading}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
             placeholder="Ex: Empresa Verde Ltda"
           />
         </div>
 
         {/* Descrição */}
-        <div>
-          <label
-            htmlFor="description"
-            className="mb-2 block font-medium text-gray-700 text-sm"
-          >
-            Descrição
-          </label>
+        <div className="space-y-2">
+          <Label htmlFor="description">Descrição</Label>
           <textarea
             id="description"
             name="description"
@@ -121,69 +126,53 @@ export function OrganizationCreationForm({
             value={formData.description}
             onChange={handleInputChange}
             disabled={isLoading}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
+            className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             placeholder="Descreva brevemente sua organização e seus objetivos sustentáveis..."
           />
         </div>
 
         {/* Website */}
-        <div>
-          <label
-            htmlFor="website"
-            className="mb-2 block font-medium text-gray-700 text-sm"
-          >
-            Website
-          </label>
-          <input
+        <div className="space-y-2">
+          <Label htmlFor="website">Website</Label>
+          <Input
             id="website"
             name="website"
             type="url"
             value={formData.website}
             onChange={handleInputChange}
             disabled={isLoading}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
             placeholder="https://www.exemplo.com"
           />
         </div>
 
         {/* Domínio */}
-        <div>
-          <label
-            htmlFor="domain"
-            className="mb-2 block font-medium text-gray-700 text-sm"
-          >
-            Domínio (opcional)
-          </label>
-          <input
+        <div className="space-y-2">
+          <Label htmlFor="domain">Domínio (opcional)</Label>
+          <Input
             id="domain"
             name="domain"
             type="text"
             value={formData.domain}
             onChange={handleInputChange}
             disabled={isLoading}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
             placeholder="exemplo.com"
           />
-          <p className="mt-1 text-gray-500 text-xs">
+          <p className="text-muted-foreground text-xs">
             Domínio personalizado para sua organização (ex: empresa.ecoleta.com)
           </p>
         </div>
 
         {/* Submit Button */}
         <div className="flex justify-end space-x-4">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={() => router.back()}
             disabled={isLoading}
-            className="rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Voltar
-          </button>
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="rounded-md border border-transparent bg-green-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          >
+          </Button>
+          <Button type="submit" disabled={isLoading}>
             {isLoading ? (
               <div className="flex items-center">
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -192,7 +181,7 @@ export function OrganizationCreationForm({
             ) : (
               "Criar Organização"
             )}
-          </button>
+          </Button>
         </div>
       </form>
 

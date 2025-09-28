@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { Card, CardContent, Separator } from "@/components/ui";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  ErrorState,
+  LoadingState,
+  Separator,
+} from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface SettingsItem {
   title: string;
@@ -15,11 +23,37 @@ interface SettingsItem {
 export function Settings() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { showError } = useNotifications();
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (status === "loading") {
+  // Simular carregamento de dados das configurações
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        setIsLoading(true);
+        // Simular delay de carregamento
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } catch (_err) {
+        setError("Erro ao carregar configurações");
+        showError(
+          "Erro ao carregar",
+          "Não foi possível carregar as configurações",
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (session?.user?.id) {
+      loadSettings();
+    }
+  }, [session?.user?.id, showError]);
+
+  if (status === "loading" || isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="text-gray-700 text-xl">Carregando...</div>
+        <LoadingState message="Carregando configurações..." />
       </div>
     );
   }
@@ -27,6 +61,22 @@ export function Settings() {
   if (!session) {
     router.push("/auth/signin");
     return null;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          <ErrorState
+            message={error}
+            onRetry={() => {
+              setError(null);
+              setIsLoading(true);
+            }}
+          />
+        </div>
+      </div>
+    );
   }
 
   const settingsItems: SettingsItem[] = [

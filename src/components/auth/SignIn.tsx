@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { ErrorState, Input, Label, LoadingState } from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
 import { userAuthenticationSchema } from "@/lib/validations";
 
 export function SignIn() {
@@ -13,13 +15,18 @@ export function SignIn() {
     email: "",
     password: "",
   });
+  const { showSuccess, showError, showLoading } = useNotifications();
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
+    showLoading("Entrando com Google...");
+
     try {
       await signIn("google", { callbackUrl: "/dashboard" });
+      showSuccess("Login realizado com sucesso!", "Redirecionando...");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
+      showError("Erro ao fazer login", "Tente novamente em alguns instantes");
     } finally {
       setIsLoading(false);
     }
@@ -29,14 +36,16 @@ export function SignIn() {
     e.preventDefault();
     setIsCredentialsLoading(true);
     setCredentialsError(null);
+    showLoading("Verificando credenciais...");
 
     try {
       // Validação do lado do cliente
       const validationResult = userAuthenticationSchema.safeParse(formData);
       if (!validationResult.success) {
-        setCredentialsError(
-          validationResult.error.issues[0]?.message || "Dados inválidos",
-        );
+        const errorMessage =
+          validationResult.error.issues[0]?.message || "Dados inválidos";
+        setCredentialsError(errorMessage);
+        showError("Dados inválidos", errorMessage);
         setIsCredentialsLoading(false);
         return;
       }
@@ -48,12 +57,17 @@ export function SignIn() {
       });
 
       if (result?.error) {
-        setCredentialsError("Email ou senha incorretos");
+        const errorMessage = "Email ou senha incorretos";
+        setCredentialsError(errorMessage);
+        showError("Falha no login", errorMessage);
       } else if (result?.ok) {
+        showSuccess("Login realizado com sucesso!", "Redirecionando...");
         window.location.href = "/dashboard";
       }
     } catch (_error) {
-      setCredentialsError("Erro de conexão. Tente novamente.");
+      const errorMessage = "Erro de conexão. Tente novamente.";
+      setCredentialsError(errorMessage);
+      showError("Erro de conexão", errorMessage);
     } finally {
       setIsCredentialsLoading(false);
     }
@@ -66,6 +80,30 @@ export function SignIn() {
       [name]: value,
     }));
   };
+
+  // Mostrar loading state se estiver carregando
+  if (isLoading || isCredentialsLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <LoadingState message="Entrando na sua conta..." />
+      </div>
+    );
+  }
+
+  // Mostrar error state se houver erro crítico
+  if (credentialsError && !isCredentialsLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <ErrorState
+          message={credentialsError}
+          onRetry={() => {
+            setCredentialsError(null);
+            setIsCredentialsLoading(false);
+          }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col lg:flex-row">
@@ -141,68 +179,41 @@ export function SignIn() {
           {/* Formulário de Email/Senha */}
           <form onSubmit={handleCredentialsSignIn} className="space-y-6">
             {credentialsError && (
-              <div className="rounded-lg bg-red-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="h-5 w-5 text-red-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      role="img"
-                      aria-label="Ícone de erro"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="font-medium text-red-800 text-sm">Erro</h3>
-                    <div className="mt-2 text-red-700 text-sm">
-                      <p>{credentialsError}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <ErrorState
+                message={credentialsError}
+                onRetry={() => {
+                  setCredentialsError(null);
+                  setIsCredentialsLoading(false);
+                }}
+                className="mb-4"
+              />
             )}
 
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-2 block font-medium text-gray-700 text-sm"
-              >
-                Email
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
                 id="email"
                 name="email"
                 type="email"
                 required
                 value={formData.email}
                 onChange={handleInputChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
                 placeholder="Digite seu email"
+                disabled={isCredentialsLoading}
               />
             </div>
 
-            <div>
-              <label
-                htmlFor="password"
-                className="mb-2 block font-medium text-gray-700 text-sm"
-              >
-                Senha
-              </label>
-              <input
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input
                 id="password"
                 name="password"
                 type="password"
                 required
                 value={formData.password}
                 onChange={handleInputChange}
-                className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
                 placeholder="Digite sua senha"
+                disabled={isCredentialsLoading}
               />
             </div>
 

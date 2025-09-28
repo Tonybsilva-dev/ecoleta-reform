@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { ErrorState, Input, Label, LoadingState } from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
 import {
   type RegisterInput,
   registerSchema,
@@ -19,6 +21,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { showSuccess, showError, showLoading } = useNotifications();
 
   const {
     register,
@@ -32,6 +35,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
   const onSubmit = async (data: RegisterInput) => {
     setIsLoading(true);
     setError(null);
+    showLoading("Criando sua conta...");
 
     try {
       // Fazer requisição para a API
@@ -49,18 +53,22 @@ export function RegisterForm({ className }: RegisterFormProps) {
         throw new Error(responseData.error || "Erro ao criar conta");
       }
 
-      // Sucesso - redirecionar para login
-      router.push(
-        "/auth/signin?message=Conta criada com sucesso! Faça login para continuar.",
-      );
+      // Sucesso - mostrar toast e redirecionar
+      showSuccess("Conta criada com sucesso!", "Redirecionando para login...");
+
+      // Aguardar um pouco para mostrar o toast
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      router.push("/auth/signin");
     } catch (error) {
       console.error("Erro no registro:", error);
 
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("Erro inesperado. Tente novamente.");
-      }
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Erro inesperado. Tente novamente.";
+      setError(errorMessage);
+      showError("Erro ao criar conta", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -68,15 +76,29 @@ export function RegisterForm({ className }: RegisterFormProps) {
 
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
+    showLoading("Criando conta com Google...");
+
     try {
       await signIn("google", { callbackUrl: "/onboarding/select-type" });
+      showSuccess("Conta criada com sucesso!", "Redirecionando...");
     } catch (error) {
       console.error("Erro ao registrar com Google:", error);
-      setError("Erro ao registrar com Google. Tente novamente.");
+      const errorMessage = "Erro ao registrar com Google. Tente novamente.";
+      setError(errorMessage);
+      showError("Erro ao criar conta", errorMessage);
     } finally {
       setIsGoogleLoading(false);
     }
   };
+
+  // Mostrar loading state se estiver carregando
+  if (isLoading || isGoogleLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <LoadingState message="Criando sua conta..." />
+      </div>
+    );
+  }
 
   return (
     <form
@@ -85,95 +107,61 @@ export function RegisterForm({ className }: RegisterFormProps) {
     >
       {/* Error Message */}
       {error && (
-        <div className="rounded-lg bg-red-50 p-4">
-          <div className="flex">
-            <div className="flex-shrink-0">
-              <svg
-                className="h-5 w-5 text-red-400"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                role="img"
-                aria-label="Ícone de erro"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </div>
-            <div className="ml-3">
-              <h3 className="font-medium text-red-800 text-sm">Erro</h3>
-              <div className="mt-2 text-red-700 text-sm">
-                <p>{error}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ErrorState
+          message={error}
+          onRetry={() => {
+            setError(null);
+            setIsLoading(false);
+            setIsGoogleLoading(false);
+          }}
+          className="mb-4"
+        />
       )}
 
       {/* Name Field */}
-      <div>
-        <label
-          htmlFor="name"
-          className="mb-2 block font-medium text-gray-700 text-sm"
-        >
-          Nome completo
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="name">Nome completo</Label>
+        <Input
           id="name"
           type="text"
           placeholder="Seu nome completo"
           {...register("name")}
           disabled={isLoading || isSubmitting}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
         />
         {errors.name && (
-          <p className="mt-1 text-red-600 text-sm">{errors.name.message}</p>
+          <p className="text-red-600 text-sm">{errors.name.message}</p>
         )}
       </div>
 
       {/* Email Field */}
-      <div>
-        <label
-          htmlFor="email"
-          className="mb-2 block font-medium text-gray-700 text-sm"
-        >
-          Email
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
           id="email"
           type="email"
           placeholder="seu@email.com"
           {...register("email")}
           disabled={isLoading || isSubmitting}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
         />
         {errors.email && (
-          <p className="mt-1 text-red-600 text-sm">{errors.email.message}</p>
+          <p className="text-red-600 text-sm">{errors.email.message}</p>
         )}
       </div>
 
       {/* Password Field */}
-      <div>
-        <label
-          htmlFor="password"
-          className="mb-2 block font-medium text-gray-700 text-sm"
-        >
-          Senha
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="password">Senha</Label>
+        <Input
           id="password"
           type="password"
           placeholder="Sua senha"
           {...register("password")}
           disabled={isLoading || isSubmitting}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
         />
         {errors.password ? (
-          <p className="mt-1 text-red-600 text-sm">{errors.password.message}</p>
+          <p className="text-red-600 text-sm">{errors.password.message}</p>
         ) : (
-          <p className="mt-1 text-gray-500 text-xs">
+          <p className="text-gray-500 text-xs">
             Mínimo 8 caracteres com letras maiúsculas, minúsculas, números e
             símbolos
           </p>
@@ -181,23 +169,17 @@ export function RegisterForm({ className }: RegisterFormProps) {
       </div>
 
       {/* Confirm Password Field */}
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="mb-2 block font-medium text-gray-700 text-sm"
-        >
-          Confirmar senha
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">Confirmar senha</Label>
+        <Input
           id="confirmPassword"
           type="password"
           placeholder="Confirme sua senha"
           {...register("confirmPassword")}
           disabled={isLoading || isSubmitting}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-green-500"
         />
         {errors.confirmPassword && (
-          <p className="mt-1 text-red-600 text-sm">
+          <p className="text-red-600 text-sm">
             {errors.confirmPassword.message}
           </p>
         )}
