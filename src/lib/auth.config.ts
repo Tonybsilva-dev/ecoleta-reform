@@ -88,18 +88,12 @@ export const authOptions: NextAuthOptions = {
           }
         }
       }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string;
 
-        // Buscar informações do perfil do usuário
+      // Sempre buscar informações atualizadas do perfil para incluir no token
+      if (token.id) {
         try {
           const profile = await prisma.profile.findUnique({
-            where: {
-              userId: token.id as string,
-            },
+            where: { userId: token.id as string },
             select: {
               hasSelectedRole: true,
               userType: true,
@@ -107,14 +101,31 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (profile) {
-            session.user.hasSelectedRole = profile.hasSelectedRole;
-            session.user.userType = profile.userType;
+            token.hasSelectedRole = profile.hasSelectedRole;
+            token.userType = profile.userType;
+            console.log("Token atualizado com perfil:", {
+              hasSelectedRole: profile.hasSelectedRole,
+              userType: profile.userType,
+            });
           }
         } catch (error) {
-          console.error("Erro ao buscar perfil do usuário:", error);
-          session.user.hasSelectedRole = false;
-          session.user.userType = null;
+          console.error("Erro ao buscar perfil no JWT callback:", error);
         }
+      }
+
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.hasSelectedRole = token.hasSelectedRole as boolean;
+        session.user.userType = token.userType as string;
+        console.log(
+          "Session callback - hasSelectedRole:",
+          token.hasSelectedRole,
+          "userType:",
+          token.userType,
+        );
       }
       return session;
     },
