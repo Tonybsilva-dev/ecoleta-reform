@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PinContainer } from "@/components/ui/3d-pin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -142,79 +143,12 @@ export default function Home() {
                       </span>
                     </div>
                     <div className="relative mt-6 flex w-full flex-1 overflow-hidden rounded-lg bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 shadow-2xl">
-                      {/* Brazil Map SVG */}
-                      <div className="absolute inset-0 flex items-center justify-center p-4">
-                        <svg
-                          className="h-full w-full text-white/90"
-                          viewBox="0 0 1000 1000"
-                          fill="currentColor"
-                        >
-                          <title>Mapa do Brasil</title>
-                          {/* Simplified Brazil Map SVG - você pode substituir por um SVG real */}
-                          <path
-                            d="M200 300 L400 200 L600 250 L700 350 L650 500 L600 650 L500 700 L300 650 L150 500 Z"
-                            fill="currentColor"
-                            opacity="0.3"
-                          />
-                          {/* Estados principais como pontos */}
-                          <circle
-                            cx="300"
-                            cy="400"
-                            r="8"
-                            fill="currentColor"
-                            opacity="0.8"
-                            className="animate-pulse"
-                          />
-                          <circle
-                            cx="500"
-                            cy="350"
-                            r="6"
-                            fill="currentColor"
-                            opacity="0.6"
-                            className="animate-pulse delay-100"
-                          />
-                          <circle
-                            cx="400"
-                            cy="500"
-                            r="7"
-                            fill="currentColor"
-                            opacity="0.7"
-                            className="animate-pulse delay-200"
-                          />
-                          <circle
-                            cx="600"
-                            cy="450"
-                            r="5"
-                            fill="currentColor"
-                            opacity="0.5"
-                            className="animate-pulse delay-300"
-                          />
-                          <circle
-                            cx="250"
-                            cy="550"
-                            r="6"
-                            fill="currentColor"
-                            opacity="0.6"
-                            className="animate-pulse delay-400"
-                          />
-                          {/* Ponto central destacado */}
-                          <circle
-                            cx="400"
-                            cy="450"
-                            r="12"
-                            fill="white"
-                            opacity="0.9"
-                            className="animate-pulse"
-                          />
-                          <circle
-                            cx="400"
-                            cy="450"
-                            r="8"
-                            fill="currentColor"
-                            opacity="0.8"
-                          />
-                        </svg>
-                      </div>
+                      <Image
+                        src="/MapChart_Map.svg"
+                        alt="Mapa Sustentável"
+                        fill
+                        className="object-contain p-4"
+                      />
                       {/* Floating elements */}
                       <div className="absolute top-6 left-6 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg"></div>
                       <div className="absolute top-12 right-8 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-1000"></div>
