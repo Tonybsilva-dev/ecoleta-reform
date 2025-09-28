@@ -59,7 +59,7 @@ export function Settings() {
   }
 
   if (!session) {
-    router.push("/auth/signin");
+    router.push("/signin");
     return null;
   }
 

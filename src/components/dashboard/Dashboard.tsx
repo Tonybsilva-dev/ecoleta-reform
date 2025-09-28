@@ -82,7 +82,7 @@ export function Dashboard() {
   }
 
   if (!session) {
-    router.push("/auth/signin");
+    router.push("/signin");
     return null;
   }
 

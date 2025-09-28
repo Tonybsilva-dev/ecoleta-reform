@@ -53,7 +53,7 @@ export function AccountSettings() {
 
   useEffect(() => {
     if (status === "unauthenticated") {
-      router.push("/auth/signin");
+      router.push("/signin");
     }
   }, [status, router]);
 

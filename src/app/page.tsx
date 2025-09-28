@@ -61,7 +61,7 @@ export default function Home() {
 
             <div className="flex items-center space-x-3">
               <Link
-                href="/auth/signin"
+                href="/signin"
                 className="flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50"
               >
                 Entrar
@@ -643,7 +643,7 @@ export default function Home() {
                 Criar conta gratuita
               </Link>
               <Link
-                href="/auth/signin"
+                href="/signin"
                 className="flex items-center justify-center gap-3 rounded-lg border border-white bg-transparent px-8 py-6 font-medium text-lg text-white shadow-sm transition-colors hover:bg-white hover:text-green-600"
               >
                 Já tenho conta

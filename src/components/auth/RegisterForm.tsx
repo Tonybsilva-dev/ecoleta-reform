@@ -62,7 +62,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
       // Aguardar um pouco para mostrar o toast
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      router.push("/auth/signin");
+      router.push("/signin");
     } catch (error) {
       console.error("Erro no registro:", error);
 
