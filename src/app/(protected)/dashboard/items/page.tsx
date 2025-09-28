@@ -1,7 +1,7 @@
 "use client";
 
 import { Package, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ItemCreationModal } from "@/components/items";
 import { MainLayout, PageHeader } from "@/components/layout";
 import { Button, EmptyState, LoadingState } from "@/components/ui";
@@ -37,7 +37,7 @@ export default function ItemsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -55,7 +55,7 @@ export default function ItemsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchItems();
