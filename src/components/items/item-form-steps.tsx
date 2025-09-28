@@ -291,7 +291,10 @@ export function ItemLocationStep({
   const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
 
   const getCurrentLocation = useCallback(() => {
+    console.log("🔍 Solicitando localização atual...");
+
     if (!navigator.geolocation) {
+      console.log("❌ Geolocalização não suportada, usando São Paulo");
       // Definir localização padrão (São Paulo) se geolocalização não estiver disponível
       updateFormData("latitude", "-23.5505");
       updateFormData("longitude", "-46.6333");
@@ -302,12 +305,13 @@ export function ItemLocationStep({
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        console.log("✅ Localização obtida:", { latitude, longitude });
         updateFormData("latitude", latitude.toString());
         updateFormData("longitude", longitude.toString());
         setIsGettingLocation(false);
       },
       (error) => {
-        console.error("Erro ao obter localização:", error);
+        console.error("❌ Erro ao obter localização:", error);
         // Definir localização padrão (São Paulo) em caso de erro
         updateFormData("latitude", "-23.5505");
         updateFormData("longitude", "-46.6333");
@@ -318,16 +322,11 @@ export function ItemLocationStep({
 
   // Solicitar localização automaticamente ao montar o componente
   useEffect(() => {
-    if (!hasRequestedLocation && !formData.latitude && !formData.longitude) {
+    if (!hasRequestedLocation) {
       setHasRequestedLocation(true);
       getCurrentLocation();
     }
-  }, [
-    hasRequestedLocation,
-    formData.latitude,
-    formData.longitude,
-    getCurrentLocation,
-  ]);
+  }, [hasRequestedLocation, getCurrentLocation]);
 
   const handleMapClick = (lat: number, lng: number) => {
     updateFormData("latitude", lat.toString());
@@ -336,6 +335,13 @@ export function ItemLocationStep({
 
   const currentLat = parseFloat(formData.latitude || "-23.5505");
   const currentLng = parseFloat(formData.longitude || "-46.6333");
+
+  console.log("📍 ItemLocationStep: Coordenadas atuais:", {
+    latitude: formData.latitude,
+    longitude: formData.longitude,
+    currentLat,
+    currentLng,
+  });
 
   return (
     <div className="space-y-6">

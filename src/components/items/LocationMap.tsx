@@ -55,10 +55,15 @@ export function LocationMap({
   ]);
 
   useEffect(() => {
+    console.log("🗺️ LocationMap: Inicializando cliente");
     setIsClient(true);
   }, []);
 
   useEffect(() => {
+    console.log("📍 LocationMap: Atualizando centro do mapa:", {
+      latitude,
+      longitude,
+    });
     setMapCenter([latitude, longitude]);
   }, [latitude, longitude]);
 
