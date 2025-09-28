@@ -8,15 +8,21 @@ import { prisma } from "@/lib/prisma";
 
 export async function selectAccountType(userType: UserType) {
   try {
+    console.log("=== INICIANDO selectAccountType ===");
+    console.log("userType recebido:", userType);
+
     // Verificar se o usuário está autenticado
     const session = await getServerSession(authOptions);
+    console.log("session encontrada:", !!session);
+    console.log("user.id:", session?.user?.id);
 
     if (!session?.user?.id) {
       throw new Error("Usuário não autenticado");
     }
 
     // Atualizar o perfil do usuário com o tipo selecionado
-    await prisma.profile.update({
+    console.log("Atualizando perfil no banco...");
+    const updatedProfile = await prisma.profile.update({
       where: {
         userId: session.user.id,
       },
@@ -28,6 +34,7 @@ export async function selectAccountType(userType: UserType) {
         user: true,
       },
     });
+    console.log("Perfil atualizado:", updatedProfile);
 
     // Revalidar o cache da página e tags
     revalidatePath("/onboarding/select-type");

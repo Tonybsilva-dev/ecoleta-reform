@@ -2,7 +2,6 @@
 
 import { UserType } from "@prisma/client";
 import { useState } from "react";
-import { selectAccountType } from "@/actions/onboarding";
 
 interface AccountTypeSelectionProps {
   className?: string;
@@ -19,24 +18,27 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
     setError(null);
 
     try {
-      await selectAccountType(userType);
+      console.log("Enviando requisição para API...");
+      const response = await fetch("/api/onboarding/select-type", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userType }),
+      });
 
-      // Aguardar um pouco para garantir que a sessão seja atualizada
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const data = await response.json();
+      console.log("Resposta da API:", data);
 
-      // Redirecionar baseado no tipo de conta selecionado
-      switch (userType) {
-        case UserType.CITIZEN:
-        case UserType.COLLECTOR:
-          window.location.href = "/dashboard";
-          break;
-        case UserType.COMPANY:
-        case UserType.NGO:
-          window.location.href = "/onboarding/organization/create";
-          break;
-        default:
-          window.location.href = "/dashboard";
-          break;
+      if (!response.ok) {
+        throw new Error(data.error || "Erro ao selecionar tipo de conta");
+      }
+
+      if (data.success && data.redirectUrl) {
+        console.log("Redirecionando para:", data.redirectUrl);
+        window.location.href = data.redirectUrl;
+      } else {
+        throw new Error("Resposta inválida da API");
       }
     } catch (error) {
       console.error("Erro ao selecionar tipo de conta:", error);
