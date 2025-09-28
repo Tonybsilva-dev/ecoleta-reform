@@ -71,6 +71,28 @@ export function SignIn() {
     <div className="flex min-h-screen flex-col lg:flex-row">
       {/* Left Column - Promotional */}
       <div className="hidden w-full items-center justify-center bg-green-600 p-8 lg:flex lg:w-1/3">
+        {/* Botão de voltar */}
+        <Link
+          href="/"
+          className="absolute top-6 left-6 flex items-center text-white opacity-80 transition-opacity hover:opacity-100"
+        >
+          <svg
+            className="mr-2 h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <title>Voltar</title>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
+            />
+          </svg>
+          <span className="font-medium text-sm">Voltar</span>
+        </Link>
+
         <div className="text-white">
           <div className="mb-8 flex items-center">
             <div className="mr-3 h-8 w-8 rounded-lg bg-white" />
