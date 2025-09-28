@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { OrganizationCreationForm } from "@/components/onboarding/OrganizationCreationForm";
+import { OrganizationCreationLayout } from "@/components/onboarding/OrganizationCreationLayout";
 
 export const metadata: Metadata = {
   title: "Criar Organização - Ecoleta",
@@ -9,8 +10,8 @@ export const metadata: Metadata = {
 
 export default function CreateOrganizationPage() {
   return (
-    <div className="h-screen w-full space-y-8 rounded-lg bg-white shadow-lg">
+    <OrganizationCreationLayout>
       <OrganizationCreationForm />
-    </div>
+    </OrganizationCreationLayout>
   );
 }

@@ -160,6 +160,29 @@ export function OrganizationCreationForm({
 
   return (
     <div className={className || ""}>
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+            <svg
+              className="h-6 w-6 text-green-600"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <title>Ícone de Organização</title>
+              <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" />
+            </svg>
+          </div>
+        </div>
+        <h2 className="mb-3 font-bold text-3xl text-gray-900">
+          Crie sua organização
+        </h2>
+        <p className="text-gray-600 text-lg">
+          Configure sua organização no Ecoleta e comece a fazer a diferença no
+          meio ambiente.
+        </p>
+      </div>
+
       <StepForm
         steps={steps}
         onComplete={handleComplete}
