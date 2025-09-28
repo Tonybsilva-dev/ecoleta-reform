@@ -287,6 +287,17 @@ export function OrganizationConfirmationStep({ formData }: StepProps) {
               <span className="font-medium">{formData.contactEmail}</span>
             </div>
           )}
+
+          {formData.domain && (
+            <div className="flex justify-between">
+              <span className="text-gray-600">Domínio:</span>
+              <span className="font-medium text-green-600">
+                {formData.domain.includes(".")
+                  ? formData.domain
+                  : `${formData.domain}.ecoleta.com`}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
