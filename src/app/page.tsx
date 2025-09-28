@@ -7,6 +7,14 @@ import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
+      {/* Skip Link for Keyboard Navigation */}
+      <a
+        href="#main-content"
+        className="sr-only z-50 rounded-md bg-green-600 px-4 py-2 font-medium text-white transition-all focus:not-sr-only focus:absolute focus:top-4 focus:left-4"
+      >
+        Pular para o conteúdo principal
+      </a>
+
       {/* Header */}
       <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
@@ -27,7 +35,10 @@ export default function Home() {
               </span>
             </div>
 
-            <nav className="hidden items-center space-x-6 md:flex">
+            <nav
+              className="hidden items-center space-x-6 md:flex"
+              aria-label="Navegação principal"
+            >
               <Link
                 href="#como-funciona"
                 className="text-gray-600 transition-colors hover:text-gray-900"
@@ -67,7 +78,11 @@ export default function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-green-50 to-blue-50">
+      <main
+        id="main-content"
+        className="relative overflow-hidden bg-gradient-to-br from-green-50 to-blue-50"
+        aria-label="Seção principal - Apresentação do Ecoleta"
+      >
         <div className="container mx-auto px-4 py-20">
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
@@ -131,41 +146,47 @@ export default function Home() {
 
               {/* Right Column - Visual */}
               <div className="flex items-center justify-center">
-                <PinContainer title="Ecoleta Reform" href="/map">
-                  <div className="flex h-[24rem] w-[24rem] basis-full flex-col p-6 text-slate-100/90 tracking-tight sm:basis-1/2">
-                    <h3 className="!pb-3 !m-0 max-w-xs font-bold text-lg text-white">
-                      Mapa Sustentável
-                    </h3>
-                    <div className="!m-0 !p-0 font-normal text-base">
-                      <span className="text-slate-200">
-                        Descubra pontos de coleta e materiais próximos a você.
-                        Conecte-se com nossa comunidade sustentável.
-                      </span>
+                <aside aria-label="Mapa interativo sustentável">
+                  <PinContainer title="Ecoleta Reform" href="/map">
+                    <div className="flex h-[24rem] w-[24rem] basis-full flex-col p-6 text-slate-100/90 tracking-tight sm:basis-1/2">
+                      <h3 className="!pb-3 !m-0 max-w-xs font-bold text-lg text-white">
+                        Mapa Sustentável
+                      </h3>
+                      <div className="!m-0 !p-0 font-normal text-base">
+                        <span className="text-slate-200">
+                          Descubra pontos de coleta e materiais próximos a você.
+                          Conecte-se com nossa comunidade sustentável.
+                        </span>
+                      </div>
+                      <div className="relative mt-6 flex w-full flex-1 overflow-hidden rounded-lg bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 shadow-2xl">
+                        <Image
+                          src="/MapChart_Map.png"
+                          alt="Mapa Sustentável"
+                          fill
+                          className="object-contain p-4"
+                          priority
+                        />
+                        {/* Floating elements */}
+                        <div className="absolute top-6 left-6 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg"></div>
+                        <div className="absolute top-12 right-8 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-1000"></div>
+                        <div className="absolute bottom-8 left-12 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg delay-2000"></div>
+                        <div className="absolute right-6 bottom-6 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-3000"></div>
+                      </div>
                     </div>
-                    <div className="relative mt-6 flex w-full flex-1 overflow-hidden rounded-lg bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 shadow-2xl">
-                      <Image
-                        src="/MapChart_Map.svg"
-                        alt="Mapa Sustentável"
-                        fill
-                        className="object-contain p-4"
-                        priority
-                      />
-                      {/* Floating elements */}
-                      <div className="absolute top-6 left-6 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg"></div>
-                      <div className="absolute top-12 right-8 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-1000"></div>
-                      <div className="absolute bottom-8 left-12 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg delay-2000"></div>
-                      <div className="absolute right-6 bottom-6 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-3000"></div>
-                    </div>
-                  </div>
-                </PinContainer>
+                  </PinContainer>
+                </aside>
               </div>
             </div>
           </div>
         </div>
-      </section>
+      </main>
 
       {/* How it Works Section */}
-      <section id="como-funciona" className="bg-white py-20">
+      <section
+        id="como-funciona"
+        className="bg-white py-20"
+        aria-label="Como funciona - Processo de uso da plataforma"
+      >
         <div className="container mx-auto px-4">
           <div className="mx-auto mb-16 max-w-4xl text-center">
             <h2 className="mb-4 font-bold text-4xl text-gray-900">
@@ -265,7 +286,11 @@ export default function Home() {
       </section>
 
       {/* Impact Section */}
-      <section id="impacto" className="bg-green-50 py-20">
+      <section
+        id="impacto"
+        className="bg-green-50 py-20"
+        aria-label="Nosso impacto - Estatísticas e resultados"
+      >
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-6xl">
             <div className="grid gap-12 lg:grid-cols-2">
@@ -345,7 +370,7 @@ export default function Home() {
               <div className="relative">
                 <div className="rounded-2xl bg-white p-8 shadow-xl">
                   <h3 className="mb-6 text-center font-semibold text-gray-900 text-xl">
-                    Metas para 2024
+                    Metas para 2026
                   </h3>
 
                   <div className="space-y-6">
@@ -402,7 +427,10 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="bg-white py-20">
+      <section
+        className="bg-white py-20"
+        aria-label="Recursos e funcionalidades da plataforma"
+      >
         <div className="container mx-auto px-4">
           <div className="mx-auto mb-16 max-w-4xl text-center">
             <h2 className="mb-4 font-bold text-4xl text-gray-900">
@@ -593,7 +621,10 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-green-600 py-20">
+      <section
+        className="bg-green-600 py-20"
+        aria-label="Chamada para ação - Comece sua jornada sustentável"
+      >
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-4xl text-center">
             <h2 className="mb-6 font-bold text-4xl text-white">
