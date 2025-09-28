@@ -41,6 +41,12 @@ export default withAuth(
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
+    // Se o usuário está na página de select-type mas já selecionou o tipo
+    if (hasSelectedRole && pathname === "/onboarding/select-type") {
+      console.log("Usuário já selecionou tipo, redirecionando para dashboard");
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
     console.log("Permitindo acesso normal");
     return NextResponse.next();
   },

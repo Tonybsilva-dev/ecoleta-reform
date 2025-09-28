@@ -38,11 +38,9 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
         console.log("Redirecionando para:", data.redirectUrl);
         console.log("Dados completos da resposta:", data);
 
-        // Forçar redirecionamento
-        setTimeout(() => {
-          console.log("Executando redirecionamento...");
-          window.location.href = data.redirectUrl;
-        }, 100);
+        // Forçar refresh da página para atualizar a sessão
+        console.log("Forçando refresh da página para atualizar sessão...");
+        window.location.reload();
       } else {
         console.error("Resposta inválida:", data);
         throw new Error("Resposta inválida da API");

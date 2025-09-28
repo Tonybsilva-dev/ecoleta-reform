@@ -48,11 +48,16 @@ export async function POST(request: NextRequest) {
     });
     console.log("Perfil atualizado:", updatedProfile);
 
+    // Forçar atualização da sessão
+    const updatedSession = await getServerSession(authOptions);
+    console.log("Sessão após atualização:", updatedSession);
+
     // Retornar sucesso
     return NextResponse.json({
       success: true,
       profile: updatedProfile,
       redirectUrl: getRedirectUrl(userType as UserType),
+      sessionUpdated: true,
     });
   } catch (error) {
     console.error("Erro na API selectAccountType:", error);
