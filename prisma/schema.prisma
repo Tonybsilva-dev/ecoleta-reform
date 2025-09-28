@@ -208,7 +208,7 @@ model Material {
   id          String   @id @default(cuid())
   name        String   @unique
   description String?
-  category    String?  // e.g., "Plastic", "Glass", "Metal", "Paper"
+  category    String? // e.g., "Plastic", "Glass", "Metal", "Paper"
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -220,15 +220,15 @@ model Material {
 }
 
 model Item {
-  id          String     @id @default(cuid())
+  id          String                                 @id @default(cuid())
   title       String
   description String?
-  status      ItemStatus @default(ACTIVE)
-  price       Decimal?   @db.Decimal(10, 2)
-  quantity    Int        @default(1)
+  status      ItemStatus                             @default(ACTIVE)
+  price       Decimal?                               @db.Decimal(10, 2)
+  quantity    Int                                    @default(1)
   location    Unsupported("geography(Point, 4326)")?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime                               @default(now())
+  updatedAt   DateTime                               @updatedAt
 
   // Relations
   createdById String
@@ -240,7 +240,7 @@ model Item {
   materialId String?
   material   Material? @relation(fields: [materialId], references: [id], onDelete: SetNull)
 
-  images    ItemImage[]
+  images     ItemImage[]
   pointItems PointItem[]
   orders     Order[]
 

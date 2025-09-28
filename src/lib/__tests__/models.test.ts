@@ -1,10 +1,5 @@
-import {
-  type Item,
-  type Material,
-  PrismaClient,
-  type User,
-} from "@prisma/client";
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { PrismaClient } from "@prisma/client";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
 const prisma = new PrismaClient();
 
@@ -79,12 +74,9 @@ describe("Material, Item, and ItemImage Models", () => {
   });
 
   describe("Item Model", () => {
-    let material: Material;
-    let user: User;
-
-    beforeAll(async () => {
+    it("should create an item with material relationship", async () => {
       // Create test material
-      material = await prisma.material.create({
+      const material = await prisma.material.create({
         data: {
           name: "Papel",
           category: "Paper",
@@ -92,15 +84,13 @@ describe("Material, Item, and ItemImage Models", () => {
       });
 
       // Create test user
-      user = await prisma.user.create({
+      const user = await prisma.user.create({
         data: {
           email: "test@example.com",
           name: "Test User",
         },
       });
-    });
 
-    it("should create an item with material relationship", async () => {
       const item = await prisma.item.create({
         data: {
           title: "Papelão para reciclagem",
@@ -134,6 +124,14 @@ describe("Material, Item, and ItemImage Models", () => {
     });
 
     it("should create an item without material (optional relationship)", async () => {
+      // Create test user
+      const user = await prisma.user.create({
+        data: {
+          email: "test2@example.com",
+          name: "Test User 2",
+        },
+      });
+
       const item = await prisma.item.create({
         data: {
           title: "Item sem material específico",
@@ -153,18 +151,16 @@ describe("Material, Item, and ItemImage Models", () => {
   });
 
   describe("ItemImage Model", () => {
-    let item: Item;
-
-    beforeAll(async () => {
-      // Create test item
+    it("should create item images with proper relationships", async () => {
+      // Create test user and item
       const user = await prisma.user.create({
         data: {
-          email: "test2@example.com",
-          name: "Test User 2",
+          email: "test3@example.com",
+          name: "Test User 3",
         },
       });
 
-      item = await prisma.item.create({
+      const item = await prisma.item.create({
         data: {
           title: "Item com imagens",
           description: "Item para testar imagens",
@@ -172,9 +168,7 @@ describe("Material, Item, and ItemImage Models", () => {
           createdById: user.id,
         },
       });
-    });
 
-    it("should create item images with proper relationships", async () => {
       const image1 = await prisma.itemImage.create({
         data: {
           url: "https://example.com/image1.jpg",
@@ -212,8 +206,8 @@ describe("Material, Item, and ItemImage Models", () => {
       // Create a new item with images
       const user = await prisma.user.create({
         data: {
-          email: "test3@example.com",
-          name: "Test User 3",
+          email: "test4@example.com",
+          name: "Test User 4",
         },
       });
 
@@ -258,8 +252,8 @@ describe("Material, Item, and ItemImage Models", () => {
 
       const user = await prisma.user.create({
         data: {
-          email: "test4@example.com",
-          name: "Test User 4",
+          email: "test5@example.com",
+          name: "Test User 5",
         },
       });
 
