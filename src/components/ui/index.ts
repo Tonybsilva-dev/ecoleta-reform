@@ -9,6 +9,7 @@ export * from "./input";
 export * from "./label";
 export * from "./loading-state";
 export * from "./progress";
+export * from "./select";
 export * from "./separator";
 export * from "./skeleton";
 export * from "./step-form";

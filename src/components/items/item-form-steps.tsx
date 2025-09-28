@@ -1,10 +1,35 @@
 "use client";
 
-import { CheckCircle, Image, MapPin } from "lucide-react";
+import {
+  CheckCircle,
+  DollarSign,
+  FileText,
+  Gift,
+  Image,
+  MapPin,
+  Package,
+  Recycle,
+  Shirt,
+  Smartphone,
+  Sprout,
+  Truck,
+  Wine,
+  Wrench,
+  X,
+} from "lucide-react";
 import NextImage from "next/image";
 import { useState } from "react";
 
-import { Button, Input, Label } from "@/components/ui";
+import {
+  Button,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 // Step 1: Informações Básicas
@@ -63,14 +88,19 @@ export function ItemMaterialStep({
   updateFormData: (field: string, value: string) => void;
 }) {
   const materials = [
-    { id: "plastic", name: "Plástico", icon: "♻️" },
-    { id: "paper", name: "Papel", icon: "📄" },
-    { id: "glass", name: "Vidro", icon: "🍶" },
-    { id: "metal", name: "Metal", icon: "🔩" },
-    { id: "electronic", name: "Eletrônico", icon: "📱" },
-    { id: "organic", name: "Orgânico", icon: "🌱" },
-    { id: "textile", name: "Têxtil", icon: "👕" },
-    { id: "other", name: "Outro", icon: "📦" },
+    { id: "plastic", name: "Plástico", icon: Recycle, color: "text-green-600" },
+    { id: "paper", name: "Papel", icon: FileText, color: "text-blue-600" },
+    { id: "glass", name: "Vidro", icon: Wine, color: "text-cyan-600" },
+    { id: "metal", name: "Metal", icon: Wrench, color: "text-gray-600" },
+    {
+      id: "electronic",
+      name: "Eletrônico",
+      icon: Smartphone,
+      color: "text-purple-600",
+    },
+    { id: "organic", name: "Orgânico", icon: Sprout, color: "text-green-500" },
+    { id: "textile", name: "Têxtil", icon: Shirt, color: "text-pink-600" },
+    { id: "other", name: "Outro", icon: Package, color: "text-orange-600" },
   ];
 
   return (
@@ -80,22 +110,25 @@ export function ItemMaterialStep({
           Tipo de Material *
         </Label>
         <div className="grid grid-cols-2 gap-3">
-          {materials.map((material) => (
-            <button
-              key={material.id}
-              type="button"
-              onClick={() => updateFormData("materialType", material.id)}
-              className={cn(
-                "flex items-center space-x-3 rounded-lg border-2 p-4 text-left transition-all duration-200",
-                formData.materialType === material.id
-                  ? "border-green-500 bg-green-50 text-green-700"
-                  : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50",
-              )}
-            >
-              <span className="text-2xl">{material.icon}</span>
-              <span className="font-medium">{material.name}</span>
-            </button>
-          ))}
+          {materials.map((material) => {
+            const IconComponent = material.icon;
+            return (
+              <button
+                key={material.id}
+                type="button"
+                onClick={() => updateFormData("materialType", material.id)}
+                className={cn(
+                  "flex items-center space-x-3 rounded-lg border-2 p-4 text-left transition-all duration-200",
+                  formData.materialType === material.id
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50",
+                )}
+              >
+                <IconComponent className={cn("h-6 w-6", material.color)} />
+                <span className="font-medium">{material.name}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -121,20 +154,23 @@ export function ItemMaterialStep({
           <Label htmlFor="unit" className="font-medium text-gray-700">
             Unidade
           </Label>
-          <select
-            id="unit"
+          <Select
             value={formData.unit || "unidade"}
-            onChange={(e) => updateFormData("unit", e.target.value)}
-            className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200"
+            onValueChange={(value: string) => updateFormData("unit", value)}
           >
-            <option value="unidade">Unidade</option>
-            <option value="kg">Quilograma (kg)</option>
-            <option value="g">Grama (g)</option>
-            <option value="litro">Litro</option>
-            <option value="metro">Metro</option>
-            <option value="caixa">Caixa</option>
-            <option value="saco">Saco</option>
-          </select>
+            <SelectTrigger className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200">
+              <SelectValue placeholder="Unidade" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="unidade">Unidade</SelectItem>
+              <SelectItem value="kg">Quilograma (kg)</SelectItem>
+              <SelectItem value="g">Grama (g)</SelectItem>
+              <SelectItem value="litro">Litro</SelectItem>
+              <SelectItem value="metro">Metro</SelectItem>
+              <SelectItem value="caixa">Caixa</SelectItem>
+              <SelectItem value="saco">Saco</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>
@@ -154,19 +190,22 @@ export function ItemPricingStep({
       id: "sale",
       name: "Venda",
       description: "Vender por um preço específico",
-      icon: "💰",
+      icon: DollarSign,
+      color: "text-green-600",
     },
     {
       id: "donation",
       name: "Doação",
       description: "Doar gratuitamente",
-      icon: "🎁",
+      icon: Gift,
+      color: "text-pink-600",
     },
     {
       id: "collection",
       name: "Coleta",
       description: "Solicitar coleta gratuita",
-      icon: "🚛",
+      icon: Truck,
+      color: "text-blue-600",
     },
   ];
 
@@ -177,29 +216,32 @@ export function ItemPricingStep({
           Tipo de Transação *
         </Label>
         <div className="space-y-3">
-          {transactionTypes.map((type) => (
-            <button
-              key={type.id}
-              type="button"
-              onClick={() => updateFormData("transactionType", type.id)}
-              className={cn(
-                "w-full rounded-lg border-2 p-4 text-left transition-all duration-200",
-                formData.transactionType === type.id
-                  ? "border-green-500 bg-green-50 text-green-700"
-                  : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50",
-              )}
-            >
-              <div className="flex items-center space-x-3">
-                <span className="text-2xl">{type.icon}</span>
-                <div>
-                  <div className="font-medium">{type.name}</div>
-                  <div className="text-gray-500 text-sm">
-                    {type.description}
+          {transactionTypes.map((type) => {
+            const IconComponent = type.icon;
+            return (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() => updateFormData("transactionType", type.id)}
+                className={cn(
+                  "w-full rounded-lg border-2 p-4 text-left transition-all duration-200",
+                  formData.transactionType === type.id
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50",
+                )}
+              >
+                <div className="flex items-center space-x-3">
+                  <IconComponent className={cn("h-6 w-6", type.color)} />
+                  <div>
+                    <div className="font-medium">{type.name}</div>
+                    <div className="text-gray-500 text-sm">
+                      {type.description}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -423,9 +465,9 @@ export function ItemImagesStep({
                   <button
                     type="button"
                     onClick={() => removeImage(index)}
-                    className="-top-2 -right-2 absolute h-6 w-6 rounded-full bg-red-500 text-sm text-white hover:bg-red-600"
+                    className="-top-2 -right-2 absolute flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white hover:bg-red-600"
                   >
-                    ×
+                    <X className="h-3 w-3" />
                   </button>
                 </div>
               ))}
@@ -446,28 +488,55 @@ export function ItemConfirmationStep({
   const getTransactionTypeText = (type: string) => {
     switch (type) {
       case "sale":
-        return "💰 Venda";
+        return "Venda";
       case "donation":
-        return "🎁 Doação";
+        return "Doação";
       case "collection":
-        return "🚛 Coleta";
+        return "Coleta";
       default:
         return "Não especificado";
     }
   };
 
+  const getTransactionTypeIcon = (type: string) => {
+    switch (type) {
+      case "sale":
+        return DollarSign;
+      case "donation":
+        return Gift;
+      case "collection":
+        return Truck;
+      default:
+        return Package;
+    }
+  };
+
   const getMaterialTypeText = (type: string) => {
     const materials: Record<string, string> = {
-      plastic: "♻️ Plástico",
-      paper: "📄 Papel",
-      glass: "🍶 Vidro",
-      metal: "🔩 Metal",
-      electronic: "📱 Eletrônico",
-      organic: "🌱 Orgânico",
-      textile: "👕 Têxtil",
-      other: "📦 Outro",
+      plastic: "Plástico",
+      paper: "Papel",
+      glass: "Vidro",
+      metal: "Metal",
+      electronic: "Eletrônico",
+      organic: "Orgânico",
+      textile: "Têxtil",
+      other: "Outro",
     };
     return materials[type] || "Não especificado";
+  };
+
+  const getMaterialTypeIcon = (type: string) => {
+    const materials: Record<string, any> = {
+      plastic: Recycle,
+      paper: FileText,
+      glass: Wine,
+      metal: Wrench,
+      electronic: Smartphone,
+      organic: Sprout,
+      textile: Shirt,
+      other: Package,
+    };
+    return materials[type] || Package;
   };
 
   return (
@@ -510,11 +579,19 @@ export function ItemConfirmationStep({
             Material e Quantidade
           </h4>
           <div className="space-y-2 text-sm">
-            <div>
-              <span className="text-gray-600">Tipo:</span>{" "}
-              <span className="font-medium">
-                {getMaterialTypeText(formData.materialType || "")}
-              </span>
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-600">Tipo:</span>
+              <div className="flex items-center space-x-2">
+                {(() => {
+                  const MaterialIcon = getMaterialTypeIcon(
+                    formData.materialType || "",
+                  );
+                  return <MaterialIcon className="h-4 w-4 text-gray-600" />;
+                })()}
+                <span className="font-medium">
+                  {getMaterialTypeText(formData.materialType || "")}
+                </span>
+              </div>
             </div>
             <div>
               <span className="text-gray-600">Quantidade:</span>{" "}
@@ -528,11 +605,19 @@ export function ItemConfirmationStep({
         <div className="border-gray-200 border-b pb-4">
           <h4 className="mb-2 font-medium text-gray-900">Transação</h4>
           <div className="space-y-2 text-sm">
-            <div>
-              <span className="text-gray-600">Tipo:</span>{" "}
-              <span className="font-medium">
-                {getTransactionTypeText(formData.transactionType || "")}
-              </span>
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-600">Tipo:</span>
+              <div className="flex items-center space-x-2">
+                {(() => {
+                  const TransactionIcon = getTransactionTypeIcon(
+                    formData.transactionType || "",
+                  );
+                  return <TransactionIcon className="h-4 w-4 text-gray-600" />;
+                })()}
+                <span className="font-medium">
+                  {getTransactionTypeText(formData.transactionType || "")}
+                </span>
+              </div>
             </div>
             {formData.transactionType === "sale" && formData.price && (
               <div>

@@ -23,7 +23,7 @@ export default function ItemsPage() {
           actions={
             <Button
               onClick={() => setIsCreateModalOpen(true)}
-              className="rounded-md bg-green-600 px-4 py-2 font-medium text-sm text-white hover:bg-green-700"
+              className="flex cursor-pointer items-center justify-center gap-3 rounded-lg bg-green-600 px-8 py-6 font-medium text-lg text-white shadow-sm transition-colors hover:bg-green-700"
             >
               <Plus className="h-4 w-4" />
               <span>Criar Item</span>
