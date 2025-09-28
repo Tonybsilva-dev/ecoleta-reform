@@ -1,7 +1,7 @@
 "use server";
 
 import type { UserType } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth.config";
 import { prisma } from "@/lib/prisma";
@@ -29,9 +29,11 @@ export async function selectAccountType(userType: UserType) {
       },
     });
 
-    // Revalidar o cache da página
+    // Revalidar o cache da página e tags
     revalidatePath("/onboarding/select-type");
     revalidatePath("/dashboard");
+    revalidateTag("user-session");
+    revalidateTag("user-profile");
 
     // O redirecionamento será feito no cliente após o sucesso
   } catch (error) {
