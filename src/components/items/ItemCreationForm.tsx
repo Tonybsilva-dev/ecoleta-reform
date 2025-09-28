@@ -1,0 +1,218 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+import { ErrorState, StepForm } from "@/components/ui";
+import { useNotifications } from "@/hooks/useNotifications";
+import { createItemSchema } from "@/lib/validations/item.schema";
+import {
+  ItemBasicInfoStep,
+  ItemConfirmationStep,
+  ItemImagesStep,
+  ItemLocationStep,
+  ItemMaterialStep,
+  ItemPricingStep,
+} from "./item-form-steps";
+
+interface ItemCreationFormProps {
+  className?: string;
+}
+
+export function ItemCreationForm({ className }: ItemCreationFormProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { showSuccess, showError, showLoading, dismiss } = useNotifications();
+
+  const steps = [
+    {
+      id: "basic",
+      title: "Informações básicas do item",
+      description: "Comece descrevendo o que você está oferecendo",
+      component: ItemBasicInfoStep,
+      validation: (formData: Record<string, string>) => {
+        try {
+          createItemSchema.pick({ title: true, description: true }).parse({
+            title: formData.title || "",
+            description: formData.description || "",
+          });
+          return true;
+        } catch {
+          return false;
+        }
+      },
+    },
+    {
+      id: "material",
+      title: "Tipo de material e quantidade",
+      description: "Especifique o material e quantas unidades você tem",
+      component: ItemMaterialStep,
+      validation: (formData: Record<string, string>) => {
+        try {
+          createItemSchema.pick({ quantity: true }).parse({
+            quantity: parseInt(formData.quantity || "1", 10),
+          });
+          return !!(formData.materialType && formData.quantity);
+        } catch {
+          return false;
+        }
+      },
+    },
+    {
+      id: "pricing",
+      title: "Preço e tipo de transação",
+      description: "Como você quer disponibilizar este item?",
+      component: ItemPricingStep,
+      validation: (formData: Record<string, string>) => {
+        if (!formData.transactionType) return false;
+
+        if (formData.transactionType === "sale") {
+          try {
+            createItemSchema.pick({ price: true }).parse({
+              price: parseFloat(formData.price || "0"),
+            });
+            return !!(formData.price && parseFloat(formData.price) >= 0);
+          } catch {
+            return false;
+          }
+        }
+
+        return true;
+      },
+    },
+    {
+      id: "location",
+      title: "Localização do item",
+      description: "Onde o item está localizado?",
+      component: ItemLocationStep,
+      validation: (formData: Record<string, string>) => {
+        try {
+          createItemSchema.pick({ latitude: true, longitude: true }).parse({
+            latitude: parseFloat(formData.latitude || "0"),
+            longitude: parseFloat(formData.longitude || "0"),
+          });
+          return !!(formData.latitude && formData.longitude);
+        } catch {
+          return false;
+        }
+      },
+    },
+    {
+      id: "images",
+      title: "Fotos do item",
+      description: "Adicione fotos para mostrar seu item",
+      component: ItemImagesStep,
+      validation: () => true, // Imagens são opcionais
+    },
+    {
+      id: "confirmation",
+      title: "Confirme os dados",
+      description: "Revise as informações antes de publicar",
+      component: ItemConfirmationStep,
+      validation: () => true, // Step de confirmação sempre válido
+    },
+  ];
+
+  const handleComplete = async (formData: Record<string, string>) => {
+    setIsLoading(true);
+    setError(null);
+    const loadingToastId = showLoading("Criando seu item...");
+
+    try {
+      // Preparar dados para envio
+      const itemData = {
+        title: formData.title,
+        description: formData.description,
+        quantity: parseInt(formData.quantity || "1", 10),
+        materialType: formData.materialType,
+        unit: formData.unit || "unidade",
+        transactionType: formData.transactionType,
+        price: formData.price ? parseFloat(formData.price) : undefined,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
+        longitude: formData.longitude
+          ? parseFloat(formData.longitude)
+          : undefined,
+        address: formData.address,
+        // TODO: Implementar upload de imagens
+        imageUrls: [],
+        imageAltTexts: [],
+      };
+
+      // Validar dados finais
+      const validatedData = createItemSchema.parse(itemData);
+
+      // Enviar para API
+      const response = await fetch("/api/items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(validatedData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao criar item");
+      }
+
+      const result = await response.json();
+
+      // Dismissar o toast de loading
+      dismiss(loadingToastId);
+
+      showSuccess(
+        "Item criado com sucesso!",
+        "Seu item foi publicado e já está visível no mapa.",
+      );
+
+      // Aguardar um pouco para mostrar o toast
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Redirecionar para a página do item ou dashboard
+      router.push(`/items/${result.id}`);
+    } catch (error) {
+      console.error("Erro ao criar item:", error);
+
+      // Dismissar o toast de loading em caso de erro
+      dismiss(loadingToastId);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro inesperado";
+      setError(errorMessage);
+      showError("Erro ao criar item", errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBack = () => {
+    router.back();
+  };
+
+  // Mostrar error state se houver erro
+  if (error) {
+    return (
+      <div className={`space-y-6 ${className || ""}`}>
+        <ErrorState
+          message={error}
+          onRetry={() => {
+            setError(null);
+            setIsLoading(false);
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className={className || ""}>
+      <StepForm
+        steps={steps}
+        onComplete={handleComplete}
+        onBack={handleBack}
+        isLoading={isLoading}
+      />
+    </div>
+  );
+}

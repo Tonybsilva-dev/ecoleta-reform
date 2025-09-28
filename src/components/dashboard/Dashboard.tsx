@@ -18,7 +18,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 export function Dashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { showSuccess, showError, dismissAll } = useNotifications();
+  const { showError, dismissAll } = useNotifications();
   const [isLoading, setIsLoading] = useState(true);
   const [dashboardData, setDashboardData] = useState({
     items: [],
@@ -207,6 +207,18 @@ export function Dashboard() {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link
+                href="/items/create"
+                className="rounded-md bg-green-600 px-4 py-2 font-medium text-sm text-white hover:bg-green-700"
+              >
+                + Criar Item
+              </Link>
+              <Link
+                href="/map"
+                className="rounded-md bg-blue-600 px-4 py-2 font-medium text-sm text-white hover:bg-blue-700"
+              >
+                Ver Mapa
+              </Link>
               <span className="text-gray-700 text-sm">
                 Olá, {session.user?.name || session.user?.email}
               </span>
@@ -361,12 +373,9 @@ export function Dashboard() {
               title="Seu dashboard está vazio"
               description="Comece adicionando seus primeiros itens para reciclagem ou explore o marketplace para encontrar materiais sustentáveis."
               action={{
-                label: "Adicionar primeiro item",
+                label: "Criar primeiro item",
                 onClick: () => {
-                  showSuccess(
-                    "Em breve!",
-                    "Funcionalidade de adicionar itens será implementada",
-                  );
+                  router.push("/items/create");
                 },
               }}
             />

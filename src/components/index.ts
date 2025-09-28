@@ -9,6 +9,9 @@ export * from "./auth/ProtectedComponent";
 export * from "./auth/RegisterForm";
 export * from "./auth/SignIn";
 
+// Item components
+export * from "./items";
+
 // Map components
 export * from "./map";
 
