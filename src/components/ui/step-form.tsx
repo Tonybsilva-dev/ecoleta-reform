@@ -21,6 +21,8 @@ interface StepFormProps {
   onBack?: () => void;
   className?: string;
   isLoading?: boolean;
+  title?: string;
+  description?: string;
 }
 
 export function StepForm({
@@ -29,6 +31,8 @@ export function StepForm({
   onBack,
   className,
   isLoading = false,
+  title = "Configure sua organização no Ecoleta e comece a fazer a diferença.",
+  description = "Crie seu perfil de organização e conecte-se com uma comunidade sustentável para transformar resíduos em recursos valiosos.",
 }: StepFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -118,11 +122,10 @@ export function StepForm({
         {/* Main Content */}
         <div className="space-y-6">
           <h1 className="font-bold text-3xl text-white leading-tight">
-            Configure sua organização no Ecoleta e comece a fazer a diferença.
+            {title}
           </h1>
           <p className="text-green-100 text-lg leading-relaxed">
-            Crie seu perfil de organização e conecte-se com uma comunidade
-            sustentável para transformar resíduos em recursos valiosos.
+            {description}
           </p>
         </div>
 

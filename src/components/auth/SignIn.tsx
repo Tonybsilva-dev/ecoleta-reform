@@ -73,7 +73,12 @@ export function SignIn() {
       } else if (result?.ok) {
         dismiss(loadingToastId);
         showSuccess("Login realizado com sucesso!", "Redirecionando...");
-        window.location.href = "/dashboard";
+        // Aguardar um pouco para mostrar o toast de sucesso antes de redirecionar
+        setTimeout(() => {
+          window.location.href = "/dashboard";
+        }, 1500);
+        // Não definir isLoading como false aqui para manter o loading state
+        return;
       }
     } catch (_error) {
       const errorMessage = "Erro de conexão. Tente novamente.";

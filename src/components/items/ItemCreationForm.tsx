@@ -212,6 +212,8 @@ export function ItemCreationForm({ className }: ItemCreationFormProps) {
         onComplete={handleComplete}
         onBack={handleBack}
         isLoading={isLoading}
+        title="Crie seu item no Ecoleta e contribua para um mundo mais sustentável."
+        description="Liste materiais para venda, doação ou coleta e conecte-se com pessoas que valorizam a sustentabilidade."
       />
     </div>
   );
