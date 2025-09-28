@@ -71,20 +71,24 @@ export const organizationStepSchemas = {
   contact: z.object({
     website: z
       .string()
-      .url("URL do website inválida")
       .optional()
-      .or(z.literal("")),
+      .refine(
+        (val) => !val || z.string().url().safeParse(val).success,
+        "URL do website inválida",
+      ),
 
     contactEmail: z
       .string()
-      .email("Email de contato inválido")
-      .min(1, "Email de contato é obrigatório"),
+      .min(1, "Email de contato é obrigatório")
+      .email("Email de contato inválido"),
 
     domain: z
       .string()
-      .regex(/^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/, "Domínio inválido")
       .optional()
-      .or(z.literal("")),
+      .refine(
+        (val) => !val || /^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/.test(val),
+        "Domínio inválido",
+      ),
   }),
 };
 
