@@ -1,8 +1,7 @@
 "use server";
 
-import { UserType } from "@prisma/client";
+import type { UserType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth.config";
 import { prisma } from "@/lib/prisma";
@@ -34,21 +33,12 @@ export async function selectAccountType(userType: UserType) {
     revalidatePath("/onboarding/select-type");
     revalidatePath("/dashboard");
 
-    // Redirecionar baseado no tipo de conta selecionado
-    switch (userType) {
-      case UserType.CITIZEN:
-      case UserType.COLLECTOR:
-        redirect("/dashboard");
-        break;
-      case UserType.COMPANY:
-      case UserType.NGO:
-        redirect("/onboarding/organization/create");
-        break;
-      default:
-        redirect("/dashboard");
-        break;
-    }
+    // O redirecionamento será feito no cliente após o sucesso
   } catch (error) {
+    // Se for um redirect, re-lançar para não ser tratado como erro
+    if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+      throw error;
+    }
     console.error("Erro ao selecionar tipo de conta:", error);
     throw new Error("Erro interno do servidor. Tente novamente.");
   }

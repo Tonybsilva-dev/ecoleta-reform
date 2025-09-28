@@ -20,11 +20,24 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
 
     try {
       await selectAccountType(userType);
-      // O redirecionamento será feito pelo server action
+
+      // Redirecionar baseado no tipo de conta selecionado
+      switch (userType) {
+        case UserType.CITIZEN:
+        case UserType.COLLECTOR:
+          window.location.href = "/dashboard";
+          break;
+        case UserType.COMPANY:
+        case UserType.NGO:
+          window.location.href = "/onboarding/organization/create";
+          break;
+        default:
+          window.location.href = "/dashboard";
+          break;
+      }
     } catch (error) {
       console.error("Erro ao selecionar tipo de conta:", error);
       setError(error instanceof Error ? error.message : "Erro inesperado");
-    } finally {
       setIsLoading(false);
     }
   };
