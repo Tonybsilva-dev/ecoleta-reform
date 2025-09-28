@@ -22,6 +22,7 @@ export default withAuth(
     const hasSelectedRole = Boolean(token?.hasSelectedRole);
     const userType = token?.userType as UserType | undefined;
     const userId = token?.id as string | undefined;
+    const userRole = token?.role as string | undefined;
 
     // Identificar tipo de página (para uso futuro)
     // const pageType = getPageType(pathname);
@@ -32,22 +33,35 @@ export default withAuth(
     }
 
     // Verificar redirecionamentos baseados no fluxo de onboarding
-    // Só verificar redirecionamentos se o usuário estiver autenticado e não estiver no fluxo de onboarding
-    if (
-      userType &&
-      hasSelectedRole !== undefined &&
-      !pathname.startsWith("/onboarding")
-    ) {
-      const redirectUrl = getRedirectUrl(userType, hasSelectedRole, pathname);
-      if (redirectUrl) {
-        return NextResponse.redirect(new URL(redirectUrl, req.url));
+    // Só verificar redirecionamentos se o usuário estiver autenticado
+    if (userType && hasSelectedRole !== undefined) {
+      // Se é ADMIN, sempre redirecionar para /admin (exceto se já estiver lá)
+      if (
+        userRole === "ADMIN" &&
+        pathname !== "/admin" &&
+        !pathname.startsWith("/admin/")
+      ) {
+        return NextResponse.redirect(new URL("/admin", req.url));
+      }
+
+      // Para outros usuários, verificar redirecionamentos normais
+      if (!pathname.startsWith("/onboarding")) {
+        const redirectUrl = getRedirectUrl(
+          userType,
+          hasSelectedRole,
+          pathname,
+          userRole,
+        );
+        if (redirectUrl) {
+          return NextResponse.redirect(new URL(redirectUrl, req.url));
+        }
       }
     }
 
     // Verificar permissões CASL para páginas protegidas
     if (hasSelectedRole && userType && userId) {
       // Verificar se o usuário tem permissão para acessar a rota
-      if (!canAccessRoute(pathname, userType, userId)) {
+      if (!canAccessRoute(pathname, userType, userId, userRole)) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
     }

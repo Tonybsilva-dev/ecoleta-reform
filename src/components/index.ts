@@ -1,5 +1,8 @@
 // Reusable UI components
 
+// Admin components
+export * from "./admin";
+
 // Auth components
 export * from "./auth/BackButton";
 export * from "./auth/ProtectedComponent";

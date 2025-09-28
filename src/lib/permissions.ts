@@ -157,9 +157,6 @@ export function createAbilityFor(
       can("read", "Item");
       break;
 
-    // ADMIN não está no UserType, está no Role
-    // Será implementado quando tivermos o sistema de roles completo
-
     default:
       // Usuários não autenticados só podem ler itens públicos
       can("read", "Item");
@@ -167,6 +164,16 @@ export function createAbilityFor(
       can("read", "Review");
       break;
   }
+
+  return build();
+}
+
+// Função específica para criar abilities de ADMIN
+export function createAdminAbility(): AppAbility {
+  const { can, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
+
+  // ADMIN tem acesso total a tudo
+  can("manage", "all");
 
   return build();
 }

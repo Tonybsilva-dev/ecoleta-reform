@@ -1,20 +1,7 @@
 "use client";
 
-import L from "leaflet";
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
-
-// Fix for default markers in Leaflet with Next.js
-delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)
-  ._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-  iconUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-  shadowUrl:
-    "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
 
 export interface MapViewProps {
   center?: [number, number];
@@ -32,28 +19,44 @@ export default function MapView({
   children,
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
+  const mapInstanceRef = useRef<any>(null);
 
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
-    // Initialize map
-    const map = L.map(mapRef.current).setView(center, zoom);
+    // Dynamic import of Leaflet to avoid SSR issues
+    import("leaflet").then((L) => {
+      if (!mapRef.current) return;
 
-    // Use theme configuration or default to light theme
-    const themeConfig = {
-      tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    };
+      // Fix for default markers in Leaflet with Next.js
+      delete (L.Icon.Default.prototype as any)._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
+        iconUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
+        shadowUrl:
+          "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
+      });
 
-    // Add tile layer based on theme
-    L.tileLayer(themeConfig.tileUrl, {
-      attribution: themeConfig.attribution,
-      maxZoom: 19,
-    }).addTo(map);
+      // Initialize map
+      const map = L.map(mapRef.current).setView(center, zoom);
 
-    mapInstanceRef.current = map;
+      // Use theme configuration or default to light theme
+      const themeConfig = {
+        tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      };
+
+      // Add tile layer based on theme
+      L.tileLayer(themeConfig.tileUrl, {
+        attribution: themeConfig.attribution,
+        maxZoom: 19,
+      }).addTo(map);
+
+      mapInstanceRef.current = map;
+    });
 
     // Cleanup function
     return () => {

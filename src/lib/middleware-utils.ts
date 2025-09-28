@@ -17,7 +17,7 @@ export type PageType =
  * Configuração de rotas protegidas por tipo de usuário
  */
 export const PROTECTED_ROUTES: Record<string, UserType[]> = {
-  "/admin": [], // Apenas ADMIN (implementar futuramente)
+  "/admin": [], // Apenas ADMIN (role especial)
   "/organization": ["COMPANY", "NGO"],
   "/dashboard/admin": [], // Apenas ADMIN
   "/dashboard/collector": ["COLLECTOR"],
@@ -48,16 +48,14 @@ export function canAccessRoute(
   pathname: string,
   userType: UserType,
   _userId: string,
+  userRole?: string, // Adicionar role do usuário
 ): boolean {
-  // TODO: Usar ability para verificações mais granulares no futuro
-  // const ability = createAbilityFor(userType, userId);
-
   // Verificar rotas específicas
   for (const [route, allowedTypes] of Object.entries(PROTECTED_ROUTES)) {
     if (pathname.startsWith(route)) {
       if (allowedTypes.length === 0) {
         // Rotas que requerem role especial (como ADMIN)
-        return false; // Por enquanto, bloquear até implementar roles completas
+        return userRole === "ADMIN";
       }
       return allowedTypes.includes(userType);
     }
@@ -73,6 +71,7 @@ export function getRedirectUrl(
   userType: UserType,
   hasSelectedRole: boolean,
   currentPath: string,
+  userRole?: string,
 ): string | null {
   // Se não selecionou role ainda, ir para seleção
   if (!hasSelectedRole) {
@@ -84,6 +83,10 @@ export function getRedirectUrl(
     if (userType === "COMPANY" || userType === "NGO") {
       return "/onboarding/organization/create";
     }
+    // Se é ADMIN, redirecionar para /admin
+    if (userRole === "ADMIN") {
+      return "/admin";
+    }
     return "/dashboard";
   }
 
@@ -92,6 +95,10 @@ export function getRedirectUrl(
     currentPath.startsWith("/onboarding") &&
     currentPath !== "/onboarding/organization/create"
   ) {
+    // Se é ADMIN, redirecionar para /admin
+    if (userRole === "ADMIN") {
+      return "/admin";
+    }
     return "/dashboard";
   }
 
