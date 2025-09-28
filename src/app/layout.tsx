@@ -33,6 +33,7 @@ export default function RootLayout({
           geistSans.variable,
           geistMono.variable,
         )}
+        suppressHydrationWarning
       >
         <AuthProvider>{children}</AuthProvider>
       </body>
