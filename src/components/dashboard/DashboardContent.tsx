@@ -30,40 +30,41 @@ export function DashboardContent() {
   });
 
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        setIsLoading(true);
+    // Só executar se estiver autenticado e não estiver já carregando
+    if (status === "authenticated" && !isLoading) {
+      const fetchDashboardData = async () => {
+        try {
+          setIsLoading(true);
 
-        // Simular carregamento de dados
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+          // Simular carregamento de dados
+          await new Promise((resolve) => setTimeout(resolve, 1000));
 
-        // TODO: Implementar chamadas reais para API
-        setDashboardData({
-          items: [],
-          transactions: [],
-          stats: {
-            totalItems: 0,
-            totalTransactions: 0,
-            ecoPoints: 0,
-          },
-        });
-      } catch (error) {
-        console.error("Erro ao carregar dados do dashboard:", error);
-        showError(
-          "Erro ao carregar dados",
-          "Tente novamente em alguns instantes",
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
+          // TODO: Implementar chamadas reais para API
+          setDashboardData({
+            items: [],
+            transactions: [],
+            stats: {
+              totalItems: 0,
+              totalTransactions: 0,
+              ecoPoints: 0,
+            },
+          });
+        } catch (error) {
+          console.error("Erro ao carregar dados do dashboard:", error);
+          showError(
+            "Erro ao carregar dados",
+            "Tente novamente em alguns instantes",
+          );
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
-    if (status === "authenticated") {
       fetchDashboardData();
     } else if (status === "unauthenticated") {
       setIsLoading(false);
     }
-  }, [status, showError]);
+  }, [status, isLoading, showError]);
 
   // Mostrar loading apenas quando o status da sessão está carregando
   if (status === "loading") {
