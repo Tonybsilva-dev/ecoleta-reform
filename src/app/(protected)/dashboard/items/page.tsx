@@ -1,70 +1,24 @@
 "use client";
 
 import { Package, Plus } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ItemCreationModal } from "@/components/items";
 import { MainLayout, PageHeader } from "@/components/layout";
 import { Button, EmptyState, LoadingState } from "@/components/ui";
-
-interface Item {
-  id: string;
-  title: string;
-  description: string | null;
-  price: number | null;
-  quantity: number;
-  status: string;
-  createdAt: string;
-  material?: {
-    id: string;
-    name: string;
-  } | null;
-  organization?: {
-    id: string;
-    name: string;
-    verified: boolean;
-  } | null;
-  images: Array<{
-    id: string;
-    url: string;
-    altText: string;
-    isPrimary: boolean;
-  }>;
-}
+import { useItemsStore } from "@/lib/stores";
 
 export default function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [items, setItems] = useState<Item[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchItems = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await fetch("/api/items");
-      if (!response.ok) {
-        throw new Error("Erro ao carregar itens");
-      }
-
-      const result = await response.json();
-      setItems(result.data.items || []);
-    } catch (err) {
-      console.error("Erro ao carregar itens:", err);
-      setError(err instanceof Error ? err.message : "Erro desconhecido");
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+  const { items, isLoading, error, loadItems } = useItemsStore();
 
   useEffect(() => {
-    fetchItems();
-  }, [fetchItems]);
+    loadItems();
+  }, [loadItems]);
 
-  const handleCreateSuccess = () => {
+  const handleCreateSuccess = async () => {
     console.log("Item criado com sucesso!");
     // Recarregar a lista de itens
-    fetchItems();
+    await loadItems();
   };
 
   if (isLoading) {
@@ -109,7 +63,7 @@ export default function ItemsPage() {
           />
           <div className="py-8 text-center">
             <p className="mb-4 text-red-600">Erro ao carregar itens: {error}</p>
-            <Button onClick={fetchItems} variant="outline">
+            <Button onClick={() => loadItems()} variant="outline">
               Tentar Novamente
             </Button>
           </div>

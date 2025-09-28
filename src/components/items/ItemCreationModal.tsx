@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui";
+import { useItemsStore } from "@/lib/stores";
 import { ItemCreationForm } from "./ItemCreationForm";
 
 interface ItemCreationModalProps {
@@ -15,10 +15,9 @@ export function ItemCreationModal({
   onClose,
   onSuccess,
 }: ItemCreationModalProps) {
-  const [isLoading, setIsLoading] = useState(false);
+  const { createItem, isLoading } = useItemsStore();
 
   const handleComplete = async (formData: Record<string, string>) => {
-    setIsLoading(true);
     try {
       // Preparar dados para envio
       const itemData = {
@@ -39,31 +38,18 @@ export function ItemCreationModal({
         imageAltTexts: [],
       };
 
-      // Enviar para API
-      const response = await fetch("/api/items", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(itemData),
-      });
+      // Usar o store para criar o item
+      const newItem = await createItem(itemData);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Erro ao criar item");
+      if (newItem) {
+        console.log("Item criado com sucesso:", newItem);
+        // Fechar modal e chamar callback de sucesso
+        onClose();
+        onSuccess?.();
       }
-
-      const result = await response.json();
-      console.log("Item criado com sucesso:", result);
-
-      // Fechar modal e chamar callback de sucesso
-      onClose();
-      onSuccess?.();
     } catch (error) {
       console.error("Erro ao criar item:", error);
       // TODO: Mostrar toast de erro
-    } finally {
-      setIsLoading(false);
     }
   };
 

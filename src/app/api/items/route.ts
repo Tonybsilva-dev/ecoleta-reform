@@ -48,21 +48,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Preparar dados para criação
-    const itemData: {
-      title: string;
-      description?: string | null;
-      price?: number | null;
-      quantity: number;
-      materialId?: string | null;
-      organizationId?: string | null;
-      createdById: string;
-      status: string;
-      location?: {
-        type: string;
-        coordinates: number[];
-      };
-    } = {
+    // Preparar dados para criação (sem location)
+    const itemData = {
       title: validatedData.title,
       description: validatedData.description || null,
       price: validatedData.price
@@ -75,18 +62,9 @@ export async function POST(request: NextRequest) {
       status: "ACTIVE" as const,
     };
 
-    // Adicionar coordenadas geográficas se fornecidas
-    if (validatedData.latitude && validatedData.longitude) {
-      // Usar PostGIS para inserir ponto geográfico
-      itemData.location = {
-        type: "Point",
-        coordinates: [validatedData.longitude, validatedData.latitude],
-      };
-    }
-
     // Criar o item no banco de dados
     const item = await prisma.item.create({
-      data: itemData as any,
+      data: itemData,
       include: {
         material: true,
         organization: {
@@ -106,6 +84,15 @@ export async function POST(request: NextRequest) {
         images: true,
       },
     });
+
+    // Adicionar coordenadas geográficas usando SQL raw se fornecidas
+    if (validatedData.latitude && validatedData.longitude) {
+      await prisma.$executeRaw`
+        UPDATE items 
+        SET location = ST_Point(${validatedData.longitude}, ${validatedData.latitude})::geography
+        WHERE id = ${item.id}
+      `;
+    }
 
     // Criar imagens se fornecidas
     if (validatedData.imageUrls && validatedData.imageUrls.length > 0) {
