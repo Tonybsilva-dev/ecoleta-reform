@@ -123,7 +123,11 @@ export function SignIn() {
       <div className="hidden w-full items-center justify-center bg-green-600 p-8 lg:flex lg:w-1/3">
         {/* Botão de voltar */}
         <Link
-          href="/"
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            window.history.back();
+          }}
           className="absolute top-6 left-6 flex items-center text-white opacity-80 transition-opacity hover:opacity-100"
         >
           <svg

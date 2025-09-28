@@ -1,5 +1,12 @@
+import type { UserType } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
+import {
+  canAccessRoute,
+  getRedirectUrl,
+  isApiRoute,
+  isPublicRoute,
+} from "@/lib/middleware-utils";
 
 export default withAuth(
   function middleware(req) {
@@ -11,46 +18,33 @@ export default withAuth(
       return NextResponse.next();
     }
 
-    // Verificar se o usuário já selecionou o tipo de conta
-    const hasSelectedRole = token.hasSelectedRole ?? false;
-    const isOnboardingPage = pathname.startsWith("/onboarding");
-    const isAuthPage =
-      pathname.startsWith("/auth") || pathname.startsWith("/register");
-    const isPublicPage = pathname === "/" || pathname.startsWith("/api/auth");
-    const isApiRoute = pathname.startsWith("/api/");
+    // Extrair informações do token
+    const hasSelectedRole = Boolean(token?.hasSelectedRole);
+    const userType = token?.userType as UserType | undefined;
+    const userId = token?.id as string | undefined;
+
+    // Identificar tipo de página (para uso futuro)
+    // const pageType = getPageType(pathname);
 
     // Permitir acesso a todas as rotas de API
-    if (isApiRoute) {
+    if (isApiRoute(pathname)) {
       return NextResponse.next();
     }
 
-    // Se o usuário não selecionou o tipo de conta e não está na página de onboarding
-    if (!hasSelectedRole && !isOnboardingPage && !isAuthPage && !isPublicPage) {
-      return NextResponse.redirect(new URL("/onboarding/select-type", req.url));
-    }
-
-    // Se o usuário já selecionou o tipo de conta e está tentando acessar a página de onboarding
-    // EXCETO se estiver na página de criação de organização (fluxo normal para empresas/ONGs)
-    if (
-      hasSelectedRole &&
-      isOnboardingPage &&
-      pathname !== "/onboarding/organization/create"
-    ) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
-
-    // Se o usuário está na página de select-type mas já selecionou o tipo
-    // Só redirecionar se não estiver no processo de seleção (evitar loop)
-    if (hasSelectedRole && pathname === "/onboarding/select-type") {
-      // Verificar se é empresa ou ONG que precisa criar organização
-      const userType = token.userType;
-
-      if (userType === "COMPANY" || userType === "NGO") {
-        return NextResponse.redirect(
-          new URL("/onboarding/organization/create", req.url),
-        );
+    // Verificar redirecionamentos baseados no fluxo de onboarding
+    if (userType) {
+      const redirectUrl = getRedirectUrl(userType, hasSelectedRole, pathname);
+      if (redirectUrl) {
+        return NextResponse.redirect(new URL(redirectUrl, req.url));
       }
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+
+    // Verificar permissões CASL para páginas protegidas
+    if (hasSelectedRole && userType && userId) {
+      // Verificar se o usuário tem permissão para acessar a rota
+      if (!canAccessRoute(pathname, userType, userId)) {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
     }
 
     return NextResponse.next();
@@ -61,12 +55,7 @@ export default withAuth(
         const { pathname } = req.nextUrl;
 
         // Permitir acesso às páginas públicas
-        if (
-          pathname === "/" ||
-          pathname.startsWith("/api/auth") ||
-          pathname.startsWith("/auth") ||
-          pathname.startsWith("/register")
-        ) {
+        if (isPublicRoute(pathname)) {
           return true;
         }
 
@@ -82,6 +71,7 @@ export const config = {
     "/dashboard/:path*",
     "/profile/:path*",
     "/admin/:path*",
+    "/organization/:path*",
     "/api/protected/:path*",
     "/onboarding/:path*",
     "/",
