@@ -81,7 +81,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`space-y-4 ${className || ""}`}
+      className={`space-y-6 ${className || ""}`}
     >
       {/* Error Message */}
       {error && (
@@ -220,7 +220,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
       </button>
 
       {/* Divisor */}
-      <div className="relative">
+      <div className="relative my-8">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-gray-300 border-t" />
         </div>

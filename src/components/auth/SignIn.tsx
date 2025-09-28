@@ -117,7 +117,7 @@ export function SignIn() {
           </div>
 
           {/* Formulário de Email/Senha */}
-          <form onSubmit={handleCredentialsSignIn} className="space-y-4">
+          <form onSubmit={handleCredentialsSignIn} className="space-y-6">
             {credentialsError && (
               <div className="rounded-lg bg-red-50 p-4">
                 <div className="flex">
@@ -201,7 +201,7 @@ export function SignIn() {
           </form>
 
           {/* Divisor */}
-          <div className="relative">
+          <div className="relative my-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-gray-300 border-t" />
             </div>
@@ -250,7 +250,7 @@ export function SignIn() {
           </div>
 
           {/* Link para registro */}
-          <div className="text-center">
+          <div className="mt-8 text-center">
             <p className="text-gray-600 text-sm">
               Não tem uma conta?{" "}
               <Link
@@ -262,7 +262,7 @@ export function SignIn() {
             </p>
           </div>
 
-          <div className="text-center text-gray-600 text-sm">
+          <div className="mt-6 text-center text-gray-600 text-sm">
             <p>
               Ao continuar, você concorda com nossos{" "}
               <a href="/terms" className="text-green-600 hover:text-green-500">
