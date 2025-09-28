@@ -8,3 +8,4 @@ export {
   ItemMaterialStep,
   ItemPricingStep,
 } from "./item-form-steps";
+export { LocationMap } from "./LocationMap";

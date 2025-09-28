@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import NextImage from "next/image";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   Button,
@@ -30,6 +31,7 @@ import {
   SelectValue,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { LocationMap } from "./LocationMap";
 
 // Step 1: Informações Básicas
 export function ItemBasicInfoStep({
@@ -286,9 +288,13 @@ export function ItemLocationStep({
   isGettingLocation: boolean;
   setIsGettingLocation: (value: boolean) => void;
 }) {
-  const getCurrentLocation = () => {
+  const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
+
+  const getCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      alert("Geolocalização não é suportada por este navegador.");
+      // Definir localização padrão (São Paulo) se geolocalização não estiver disponível
+      updateFormData("latitude", "-23.5505");
+      updateFormData("longitude", "-46.6333");
       return;
     }
 
@@ -302,11 +308,34 @@ export function ItemLocationStep({
       },
       (error) => {
         console.error("Erro ao obter localização:", error);
-        alert("Erro ao obter localização. Você pode inserir manualmente.");
+        // Definir localização padrão (São Paulo) em caso de erro
+        updateFormData("latitude", "-23.5505");
+        updateFormData("longitude", "-46.6333");
         setIsGettingLocation(false);
       },
     );
+  }, [updateFormData, setIsGettingLocation]);
+
+  // Solicitar localização automaticamente ao montar o componente
+  useEffect(() => {
+    if (!hasRequestedLocation && !formData.latitude && !formData.longitude) {
+      setHasRequestedLocation(true);
+      getCurrentLocation();
+    }
+  }, [
+    hasRequestedLocation,
+    formData.latitude,
+    formData.longitude,
+    getCurrentLocation,
+  ]);
+
+  const handleMapClick = (lat: number, lng: number) => {
+    updateFormData("latitude", lat.toString());
+    updateFormData("longitude", lng.toString());
   };
+
+  const currentLat = parseFloat(formData.latitude || "-23.5505");
+  const currentLng = parseFloat(formData.longitude || "-46.6333");
 
   return (
     <div className="space-y-6">
@@ -315,20 +344,35 @@ export function ItemLocationStep({
           Localização do Item *
         </Label>
         <p className="mb-4 text-gray-600 text-sm">
-          A localização é necessária para que outros usuários possam encontrar
-          seu item no mapa.
+          Clique no mapa para definir a localização do seu item. A localização é
+          necessária para que outros usuários possam encontrá-lo.
         </p>
 
+        {/* Mapa Interativo */}
+        <div className="mb-4">
+          <LocationMap
+            latitude={currentLat}
+            longitude={currentLng}
+            onLocationChange={handleMapClick}
+            className="w-full"
+          />
+          <p className="mt-2 text-center text-gray-500 text-sm">
+            💡 Clique no mapa para definir a localização exata do seu item
+          </p>
+        </div>
+
+        {/* Botão para usar localização atual */}
         <Button
           type="button"
           onClick={getCurrentLocation}
           disabled={isGettingLocation}
+          variant="outline"
           className="mb-4 w-full"
         >
           {isGettingLocation ? (
             <div className="flex items-center">
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Obtendo localização...
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-green-500 border-t-transparent" />
+              Obtendo sua localização...
             </div>
           ) : (
             <div className="flex items-center">
@@ -338,37 +382,15 @@ export function ItemLocationStep({
           )}
         </Button>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <Label htmlFor="latitude" className="font-medium text-gray-700">
-              Latitude
-            </Label>
-            <Input
-              id="latitude"
-              type="number"
-              step="any"
-              placeholder="Ex: -23.5505"
-              value={formData.latitude || ""}
-              onChange={(e) => updateFormData("latitude", e.target.value)}
-              className="mt-2"
-            />
-          </div>
-          <div>
-            <Label htmlFor="longitude" className="font-medium text-gray-700">
-              Longitude
-            </Label>
-            <Input
-              id="longitude"
-              type="number"
-              step="any"
-              placeholder="Ex: -46.6333"
-              value={formData.longitude || ""}
-              onChange={(e) => updateFormData("longitude", e.target.value)}
-              className="mt-2"
-            />
-          </div>
-        </div>
+        {/* Campos ocultos para latitude e longitude */}
+        <input type="hidden" name="latitude" value={formData.latitude || ""} />
+        <input
+          type="hidden"
+          name="longitude"
+          value={formData.longitude || ""}
+        />
 
+        {/* Endereço opcional */}
         <div className="mt-4">
           <Label htmlFor="address" className="font-medium text-gray-700">
             Endereço (opcional)
@@ -529,7 +551,10 @@ export function ItemConfirmationStep({
   };
 
   const getMaterialTypeIcon = (type: string) => {
-    const materials: Record<string, any> = {
+    const materials: Record<
+      string,
+      React.ComponentType<{ className?: string }>
+    > = {
       plastic: Recycle,
       paper: FileText,
       glass: Wine,
