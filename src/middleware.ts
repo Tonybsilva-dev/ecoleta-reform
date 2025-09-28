@@ -42,6 +42,14 @@ export default withAuth(
     // Se o usuário está na página de select-type mas já selecionou o tipo
     // Só redirecionar se não estiver no processo de seleção (evitar loop)
     if (hasSelectedRole && pathname === "/onboarding/select-type") {
+      // Verificar se é empresa ou ONG que precisa criar organização
+      const userType = token.userType;
+
+      if (userType === "COMPANY" || userType === "NGO") {
+        return NextResponse.redirect(
+          new URL("/onboarding/organization/create", req.url),
+        );
+      }
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
