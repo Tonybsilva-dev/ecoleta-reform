@@ -291,7 +291,10 @@ export function ItemLocationStep({
   const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
 
   const getCurrentLocation = useCallback(() => {
+    console.log("🔍 Solicitando localização atual...");
+
     if (!navigator.geolocation) {
+      console.log("❌ Geolocalização não suportada, usando São Paulo");
       // Definir localização padrão (São Paulo) se geolocalização não estiver disponível
       updateFormData("latitude", "-23.5505");
       updateFormData("longitude", "-46.6333");
@@ -302,12 +305,13 @@ export function ItemLocationStep({
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        console.log("✅ Localização obtida:", { latitude, longitude });
         updateFormData("latitude", latitude.toString());
         updateFormData("longitude", longitude.toString());
         setIsGettingLocation(false);
       },
       (error) => {
-        console.error("Erro ao obter localização:", error);
+        console.error("❌ Erro ao obter localização:", error);
         // Definir localização padrão (São Paulo) em caso de erro
         updateFormData("latitude", "-23.5505");
         updateFormData("longitude", "-46.6333");

@@ -59,6 +59,19 @@ function MapClickHandler({
   return null;
 }
 
+// Componente para atualizar o centro do mapa
+function MapCenterUpdater({ center }: { center: [number, number] }) {
+  const { useMap } = require("react-leaflet");
+  const map = useMap();
+
+  useEffect(() => {
+    console.log("🗺️ MapCenterUpdater: Atualizando centro do mapa para:", center);
+    map.setView(center, map.getZoom());
+  }, [map, center]);
+
+  return null;
+}
+
 export function LocationMap({
   latitude,
   longitude,
@@ -76,6 +89,10 @@ export function LocationMap({
   }, []);
 
   useEffect(() => {
+    console.log("📍 LocationMap: Atualizando centro do mapa:", {
+      latitude,
+      longitude,
+    });
     setMapCenter([latitude, longitude]);
   }, [latitude, longitude]);
 
@@ -108,6 +125,7 @@ export function LocationMap({
         />
         <Marker position={[latitude, longitude]} />
         <MapClickHandler onLocationChange={onLocationChange} />
+        <MapCenterUpdater center={mapCenter} />
       </MapContainer>
     </div>
   );
