@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-
 import { ItemCreationForm } from "@/components/items/ItemCreationForm";
+import { MainLayout } from "@/components/layout";
 
 export const metadata: Metadata = {
   title: "Criar Item | Ecoleta",
@@ -9,8 +9,10 @@ export const metadata: Metadata = {
 
 export default function CreateItemPage() {
   return (
-    <main className="min-h-screen bg-gray-50">
-      <ItemCreationForm />
-    </main>
+    <MainLayout className="py-12">
+      <div className="mx-auto w-full max-w-2xl">
+        <ItemCreationForm />
+      </div>
+    </MainLayout>
   );
 }

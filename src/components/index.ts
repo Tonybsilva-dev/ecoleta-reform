@@ -12,6 +12,9 @@ export * from "./auth/SignIn";
 // Item components
 export * from "./items";
 
+// Layout components
+export * from "./layout";
+
 // Map components
 export * from "./map";
 
