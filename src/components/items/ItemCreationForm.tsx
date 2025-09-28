@@ -17,7 +17,7 @@ import {
 
 interface ItemCreationFormProps {
   className?: string;
-  onComplete?: (formData: any) => void;
+  onComplete?: (formData: Record<string, string>) => void;
   onBack?: () => void;
   isLoading?: boolean;
 }
@@ -236,8 +236,6 @@ export function ItemCreationForm({
         onComplete={handleComplete}
         onBack={handleBack}
         isLoading={isFormLoading}
-        title="Crie seu item no Ecoleta e contribua para um mundo mais sustentável."
-        description="Liste materiais para venda, doação ou coleta e conecte-se com pessoas que valorizam a sustentabilidade."
       />
     </div>
   );

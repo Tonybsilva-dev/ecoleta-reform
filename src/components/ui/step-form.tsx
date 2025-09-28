@@ -21,8 +21,6 @@ interface StepFormProps {
   onBack?: () => void;
   className?: string;
   isLoading?: boolean;
-  title?: string;
-  description?: string;
 }
 
 export function StepForm({
@@ -31,8 +29,6 @@ export function StepForm({
   onBack,
   className,
   isLoading = false,
-  title = "Configure sua organização no Ecoleta e comece a fazer a diferença.",
-  description = "Crie seu perfil de organização e conecte-se com uma comunidade sustentável para transformar resíduos em recursos valiosos.",
 }: StepFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -110,121 +106,106 @@ export function StepForm({
   };
 
   return (
-    <div className={cn("flex min-h-screen", className)}>
-      {/* Left Column - Progress Section */}
-      <div className="hidden flex-col justify-between bg-green-600 p-8 lg:flex lg:w-1/3">
-        {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <div className="h-8 w-8 rounded bg-white"></div>
-          <span className="font-bold text-white text-xl">Ecoleta</span>
-        </div>
-
-        {/* Main Content */}
-        <div className="space-y-6">
-          <h1 className="font-bold text-3xl text-white leading-tight">
-            {title}
-          </h1>
-          <p className="text-green-100 text-lg leading-relaxed">
-            {description}
-          </p>
-        </div>
-
-        {/* Step Indicator */}
-        <div className="flex space-x-2">
-          {steps.map((step, index) => (
-            <div
-              key={step.id}
-              className={`h-1 rounded ${
-                index <= currentStep ? "w-8 bg-white" : "w-4 bg-green-300"
-              }`}
-            />
-          ))}
+    <div className={cn("w-full", className)}>
+      {/* Step Progress Indicator */}
+      <div className="mb-6 p-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="font-medium text-gray-500 text-sm">
+              Passo {currentStep + 1} de {steps.length}
+            </span>
+          </div>
+          <div className="flex space-x-2">
+            {steps.map((step, index) => (
+              <div
+                key={step.id}
+                className={cn(
+                  "h-2 w-8 rounded-full transition-colors",
+                  index <= currentStep ? "bg-green-600" : "bg-gray-200",
+                )}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Right Column - Step Content */}
-      <div className="flex w-full flex-col justify-center bg-white px-8 py-12 lg:w-2/3">
-        <div className="mx-auto w-full max-w-2xl">
-          <div
-            className={cn(
-              "transition-all duration-300 ease-in-out",
-              isTransitioning
-                ? "translate-x-4 transform opacity-0"
-                : "translate-x-0 transform opacity-100",
-            )}
-          >
-            {/* Step Header */}
-            <div className="mb-8 text-center">
-              <h2 className="mb-3 font-bold text-3xl text-gray-900">
-                {currentStepData.title}
-              </h2>
-              {currentStepData.description && (
-                <p className="text-gray-600 text-lg">
-                  {currentStepData.description}
-                </p>
-              )}
-            </div>
+      {/* Step Content */}
+      <div
+        className={cn(
+          "transition-all duration-300 ease-in-out",
+          isTransitioning
+            ? "translate-x-4 transform opacity-0"
+            : "translate-x-0 transform opacity-100",
+        )}
+      >
+        {/* Step Header */}
+        <div className="mb-6">
+          <h2 className="mb-2 font-semibold text-gray-900 text-xl">
+            {currentStepData.title}
+          </h2>
+          {currentStepData.description && (
+            <p className="text-gray-600">{currentStepData.description}</p>
+          )}
+        </div>
 
-            {/* Step Component */}
-            <div className="mb-8">
-              {currentStepData.component({ formData, updateFormData })}
-            </div>
+        {/* Step Component */}
+        <div className="mb-6">
+          {currentStepData.component({ formData, updateFormData })}
+        </div>
 
-            {/* Validation Error */}
-            {validationError && (
-              <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
-                <div className="flex">
-                  <div className="flex-shrink-0">
-                    <svg
-                      className="h-5 w-5 text-red-400"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <title>Ícone de Erro</title>
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-red-800 text-sm">{validationError}</p>
-                  </div>
-                </div>
+        {/* Validation Error */}
+        {validationError && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-5 w-5 text-red-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <title>Ícone de Erro</title>
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
               </div>
+              <div className="ml-3">
+                <p className="text-red-800 text-sm">{validationError}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <div className="flex items-center justify-between space-x-4 border-gray-200 border-t pt-4">
+          <button
+            type="button"
+            onClick={handleBack}
+            disabled={isLoading}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 text-sm transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isFirstStep ? "Voltar" : "Anterior"}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleNext}
+            disabled={isLoading}
+            className="rounded-lg bg-green-600 px-4 py-2 font-medium text-sm text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isLoading ? (
+              <div className="flex items-center">
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                Processando...
+              </div>
+            ) : isLastStep ? (
+              "Finalizar"
+            ) : (
+              "Continuar"
             )}
-          </div>
-
-          {/* Navigation */}
-          <div className="flex items-center justify-between space-x-4">
-            <button
-              type="button"
-              onClick={handleBack}
-              disabled={isLoading}
-              className="rounded-xl border-2 border-gray-300 bg-white px-8 py-4 font-semibold text-gray-700 transition-colors duration-200 hover:border-gray-400 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isFirstStep ? "Voltar" : "Anterior"}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleNext}
-              disabled={isLoading}
-              className="rounded-xl bg-green-600 px-8 py-4 font-semibold text-white transition-colors duration-200 hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isLoading ? (
-                <div className="flex items-center">
-                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Processando...
-                </div>
-              ) : isLastStep ? (
-                "Finalizar"
-              ) : (
-                "Continuar"
-              )}
-            </button>
-          </div>
+          </button>
         </div>
       </div>
     </div>

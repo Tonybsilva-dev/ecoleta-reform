@@ -1,12 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui";
+import { Dialog, DialogContent } from "@/components/ui";
 import { ItemCreationForm } from "./ItemCreationForm";
 
 interface ItemCreationModalProps {
@@ -22,7 +17,7 @@ export function ItemCreationModal({
 }: ItemCreationModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleComplete = async (formData: any) => {
+  const handleComplete = async (formData: Record<string, string>) => {
     setIsLoading(true);
     try {
       // TODO: Implementar criação de item via API
@@ -47,17 +42,12 @@ export function ItemCreationModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Criar Novo Item</DialogTitle>
-        </DialogHeader>
-        <div className="mt-4">
-          <ItemCreationForm
-            onComplete={handleComplete}
-            onBack={handleBack}
-            isLoading={isLoading}
-          />
-        </div>
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto p-0">
+        <ItemCreationForm
+          onComplete={handleComplete}
+          onBack={handleBack}
+          isLoading={isLoading}
+        />
       </DialogContent>
     </Dialog>
   );
