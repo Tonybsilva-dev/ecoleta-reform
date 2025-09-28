@@ -56,17 +56,6 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
 
   const accountTypes = [
     {
-      type: UserType.COMPANY,
-      title: "Organização",
-      description: "Gerencie a coleta de resíduos da sua empresa ou ONG",
-      icon: (
-        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-          <title>Ícone de Organização</title>
-          <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" />
-        </svg>
-      ),
-    },
-    {
       type: UserType.CITIZEN,
       title: "Cidadão",
       description: "Descarte seus resíduos de forma consciente",
@@ -74,6 +63,39 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
         <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
           <title>Ícone de Cidadão</title>
           <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+      ),
+    },
+    {
+      type: UserType.COLLECTOR,
+      title: "Coletor",
+      description: "Coleta resíduos da comunidade e ganhe por isso",
+      icon: (
+        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+          <title>Ícone de Coletor</title>
+          <path d="M19 7h-3V6a4 4 0 0 0-8 0v1H5a1 1 0 0 0-1 1v11a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V8a1 1 0 0 0-1-1zM10 6a2 2 0 0 1 4 0v1h-4V6zm8 13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V9h2v1a1 1 0 0 0 2 0V9h4v1a1 1 0 0 0 2 0V9h2v10z" />
+        </svg>
+      ),
+    },
+    {
+      type: UserType.COMPANY,
+      title: "Empresa",
+      description: "Gerencie a coleta de resíduos da sua empresa",
+      icon: (
+        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+          <title>Ícone de Empresa</title>
+          <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z" />
+        </svg>
+      ),
+    },
+    {
+      type: UserType.NGO,
+      title: "ONG",
+      description: "Gerencie a coleta de resíduos da sua ONG",
+      icon: (
+        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+          <title>Ícone de ONG</title>
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
         </svg>
       ),
     },
@@ -165,7 +187,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
           )}
 
           {/* Account Type Options */}
-          <div className="mb-8 space-y-4">
+          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {accountTypes.map((accountType) => (
               <button
                 key={accountType.type}
@@ -178,7 +200,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
                     : "border-gray-200 bg-white hover:border-green-300 hover:bg-green-50"
                 } disabled:cursor-not-allowed disabled:opacity-50`}
               >
-                <div className="flex items-center space-x-4">
+                <div className="flex flex-col items-center space-y-4 text-center">
                   <div
                     className={`rounded-lg p-3 ${
                       selectedType === accountType.type
@@ -188,7 +210,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
                   >
                     {accountType.icon}
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-grow">
                     <h3
                       className={`font-semibold text-lg ${
                         selectedType === accountType.type
