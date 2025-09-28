@@ -3,7 +3,6 @@
 import L from "leaflet";
 import { useEffect, useRef } from "react";
 import "leaflet/dist/leaflet.css";
-import type { MapThemeConfig } from "@/hooks/useMapTheme";
 
 // Fix for default markers in Leaflet with Next.js
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)
@@ -23,7 +22,6 @@ export interface MapViewProps {
   className?: string;
   height?: string;
   children?: React.ReactNode;
-  theme?: MapThemeConfig;
 }
 
 export default function MapView({
@@ -32,7 +30,6 @@ export default function MapView({
   className = "",
   height = "400px",
   children,
-  theme,
 }: MapViewProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
@@ -44,7 +41,7 @@ export default function MapView({
     const map = L.map(mapRef.current).setView(center, zoom);
 
     // Use theme configuration or default to light theme
-    const themeConfig = theme || {
+    const themeConfig = {
       tileUrl: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
         '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -65,7 +62,7 @@ export default function MapView({
         mapInstanceRef.current = null;
       }
     };
-  }, [center, zoom, theme]);
+  }, [center, zoom]);
 
   return (
     <div ref={mapRef} className={`w-full ${className}`} style={{ height }}>
