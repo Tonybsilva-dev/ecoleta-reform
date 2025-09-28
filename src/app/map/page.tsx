@@ -2,12 +2,10 @@
 
 import { ArrowLeft, Bookmark, Clock, MapPin, Search, Star } from "lucide-react";
 import Link from "next/link";
-import { Map as MapComponent, ThemeSelector } from "@/components/map";
-import { useMapTheme } from "@/hooks/useMapTheme";
+import { Map as MapComponent } from "@/components/map";
 import { APP_NAME } from "@/lib/constants";
 
 export default function MapPage() {
-  const { getCurrentThemeConfig } = useMapTheme();
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -39,7 +37,6 @@ export default function MapPage() {
                 <span>•</span>
                 <span>5 km</span>
               </div>
-              <ThemeSelector />
             </div>
           </div>
         </div>
@@ -343,7 +340,6 @@ export default function MapPage() {
             zoom={13}
             height="100%"
             className="w-full"
-            theme={getCurrentThemeConfig()}
           />
 
           {/* Map Controls */}
