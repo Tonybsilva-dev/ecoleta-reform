@@ -48,7 +48,7 @@ export default function MapPage() {
       {/* Main Content */}
       <main className="flex h-[calc(100vh-80px)]">
         {/* Left Panel - Filters and Items List */}
-        <div className="flex w-96 flex-col border-gray-200 border-r bg-white">
+        <div className="flex w-100 flex-col border-gray-200 border-r bg-white">
           {/* Navigation Header */}
           <div className="border-gray-200 border-b bg-gray-50 p-4">
             <div className="flex items-center justify-between">
