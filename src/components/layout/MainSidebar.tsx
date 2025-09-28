@@ -53,13 +53,13 @@ export function MainSidebar({ className }: MainSidebarProps) {
       },
       {
         name: "Mapa",
-        href: "/map",
+        href: "/dashboard/map",
         icon: MapIcon,
         description: "Explore itens próximos a você",
       },
       {
         name: "Meus Itens",
-        href: "/items",
+        href: "/dashboard/items",
         icon: Package,
         description: "Gerencie seus itens",
       },
@@ -96,13 +96,13 @@ export function MainSidebar({ className }: MainSidebarProps) {
     baseItems.push(
       {
         name: "Métricas",
-        href: "/metrics",
+        href: "/dashboard/metrics",
         icon: BarChart3,
         description: "Acompanhe seu impacto",
       },
       {
         name: "EcoPoints",
-        href: "/ecopoints",
+        href: "/dashboard/ecopoints",
         icon: Leaf,
         description: "Seus pontos sustentáveis",
       },
@@ -111,7 +111,7 @@ export function MainSidebar({ className }: MainSidebarProps) {
     // Adicionar configurações no final
     baseItems.push({
       name: "Configurações",
-      href: "/settings",
+      href: "/dashboard/settings",
       icon: Settings,
       description: "Configurações da conta",
     });

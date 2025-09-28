@@ -172,7 +172,7 @@ export function DashboardContent() {
           action={{
             label: "Ver Meus Itens",
             onClick: () => {
-              window.location.href = "/items";
+              window.location.href = "/dashboard/items";
             },
           }}
         />
