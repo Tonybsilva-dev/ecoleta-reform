@@ -21,6 +21,7 @@ interface StepFormProps {
   onBack?: () => void;
   className?: string;
   isLoading?: boolean;
+  title?: string;
 }
 
 export function StepForm({
@@ -29,6 +30,7 @@ export function StepForm({
   onBack,
   className,
   isLoading = false,
+  title = "Formulário",
 }: StepFormProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -112,7 +114,7 @@ export function StepForm({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="font-semibold text-2xl text-gray-900">
-              Criar Item
+              {title}
             </span>
           </div>
           <div className="flex space-x-2">

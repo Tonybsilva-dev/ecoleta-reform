@@ -188,6 +188,7 @@ export function OrganizationCreationForm({
         onComplete={handleComplete}
         onBack={handleBack}
         isLoading={isLoading}
+        title="Criar Organização"
       />
     </div>
   );
