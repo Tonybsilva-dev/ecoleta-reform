@@ -5,13 +5,17 @@ import { authOptions } from "@/lib/auth.config";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest) {
-  try {
-    console.log("=== API ROUTE: selectAccountType ===");
+  return handleSelectType(request);
+}
 
+export async function GET(request: NextRequest) {
+  return handleSelectType(request);
+}
+
+async function handleSelectType(request: NextRequest) {
+  try {
     // Verificar se o usuário está autenticado
     const session = await getServerSession(authOptions);
-    console.log("session encontrada:", !!session);
-    console.log("user.id:", session?.user?.id);
 
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -20,10 +24,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Obter o userType do body
-    const body = await request.json();
-    const { userType } = body;
-    console.log("userType recebido:", userType);
+    // Obter o userType do body (POST) ou query params (GET)
+    let userType: string | null;
+    if (request.method === "POST") {
+      const body = await request.json();
+      userType = body.userType;
+    } else {
+      const { searchParams } = new URL(request.url);
+      userType = searchParams.get("userType");
+    }
 
     if (!userType) {
       return NextResponse.json(
@@ -33,7 +42,6 @@ export async function POST(request: NextRequest) {
     }
 
     // Atualizar o perfil do usuário com o tipo selecionado
-    console.log("Atualizando perfil no banco...");
     const updatedProfile = await prisma.profile.update({
       where: {
         userId: session.user.id,
@@ -46,18 +54,14 @@ export async function POST(request: NextRequest) {
         user: true,
       },
     });
-    console.log("Perfil atualizado:", updatedProfile);
 
-    // Forçar atualização da sessão
-    const updatedSession = await getServerSession(authOptions);
-    console.log("Sessão após atualização:", updatedSession);
+    // Retornar sucesso com JSON
+    const redirectUrl = getRedirectUrl(userType as UserType);
 
-    // Retornar sucesso
     return NextResponse.json({
       success: true,
       profile: updatedProfile,
-      redirectUrl: getRedirectUrl(userType as UserType),
-      sessionUpdated: true,
+      redirectUrl,
     });
   } catch (error) {
     console.error("Erro na API selectAccountType:", error);

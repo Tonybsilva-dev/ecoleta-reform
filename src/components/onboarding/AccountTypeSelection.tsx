@@ -1,24 +1,40 @@
 "use client";
 
 import { UserType } from "@prisma/client";
-import { useState } from "react";
+import { useAuthStore } from "@/lib/stores/auth.store";
+import { useOnboardingStore } from "@/lib/stores/onboarding.store";
 
 interface AccountTypeSelectionProps {
   className?: string;
 }
 
 export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
-  const [selectedType, setSelectedType] = useState<UserType | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    selectedType,
+    isLoading,
+    error,
+    isRedirecting,
+    setSelectedType,
+    setLoading,
+    setError,
+    setRedirecting,
+  } = useOnboardingStore();
+
+  const { updateUserRole } = useAuthStore();
 
   const handleTypeSelection = async (userType: UserType) => {
     setSelectedType(userType);
-    setIsLoading(true);
+    setLoading(true);
     setError(null);
 
     try {
-      console.log("Enviando requisição para API...");
+      // Atualizar o estado global com o novo tipo de usuário
+      updateUserRole(userType);
+
+      // Marcar como redirecionando
+      setRedirecting(true);
+
+      // Fazer requisição POST
       const response = await fetch("/api/onboarding/select-type", {
         method: "POST",
         headers: {
@@ -27,30 +43,40 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
         body: JSON.stringify({ userType }),
       });
 
-      const data = await response.json();
-      console.log("Resposta da API:", data);
+      if (response.ok) {
+        // Forçar atualização da sessão
+        try {
+          await fetch("/api/auth/session?update", { method: "GET" });
+        } catch (_sessionError) {
+          // Silenciar erro de atualização de sessão
+        }
 
-      if (!response.ok) {
-        throw new Error(data.error || "Erro ao selecionar tipo de conta");
-      }
+        // Aguardar um pouco para garantir que o token foi atualizado
+        await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      if (data.success && data.redirectUrl) {
-        console.log("Redirecionando para:", data.redirectUrl);
-        console.log("Dados completos da resposta:", data);
-
-        // Aguardar um pouco para garantir que o token seja atualizado
-        setTimeout(() => {
-          console.log("Executando redirecionamento...");
-          window.location.href = data.redirectUrl;
-        }, 1000);
+        // Redirecionar manualmente
+        const redirectUrl = getRedirectUrl(userType);
+        window.location.href = redirectUrl;
       } else {
-        console.error("Resposta inválida:", data);
-        throw new Error("Resposta inválida da API");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro na requisição");
       }
     } catch (error) {
-      console.error("Erro ao selecionar tipo de conta:", error);
       setError(error instanceof Error ? error.message : "Erro inesperado");
-      setIsLoading(false);
+      setLoading(false);
+    }
+  };
+
+  const getRedirectUrl = (userType: UserType): string => {
+    switch (userType) {
+      case UserType.CITIZEN:
+      case UserType.COLLECTOR:
+        return "/dashboard";
+      case UserType.COMPANY:
+      case UserType.NGO:
+        return "/onboarding/organization/create";
+      default:
+        return "/dashboard";
     }
   };
 
@@ -102,7 +128,10 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
   ];
 
   return (
-    <div className={`flex min-h-screen ${className || ""}`}>
+    <div
+      className={`flex min-h-screen ${className || ""}`}
+      style={{ position: "relative" }}
+    >
       {/* Left Column - Promotional Section */}
       <div className="hidden flex-col justify-between bg-green-600 p-8 lg:flex lg:w-1/3">
         {/* Logo */}
@@ -187,14 +216,18 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
           )}
 
           {/* Account Type Options */}
-          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div
+            className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2"
+            style={{ position: "relative", zIndex: 2 }}
+          >
             {accountTypes.map((accountType) => (
               <button
                 key={accountType.type}
                 type="button"
                 onClick={() => setSelectedType(accountType.type)}
                 disabled={isLoading}
-                className={`w-full rounded-xl border-2 p-6 text-left transition-all duration-200 ${
+                style={{ position: "relative", zIndex: 1 }}
+                className={`w-full cursor-pointer rounded-xl border-2 p-6 text-left transition-all duration-200 ${
                   selectedType === accountType.type
                     ? "border-green-500 bg-green-50"
                     : "border-gray-200 bg-white hover:border-green-300 hover:bg-green-50"
@@ -255,7 +288,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
           {selectedType && (
             <button
               type="button"
-              disabled={isLoading}
+              disabled={isLoading || isRedirecting}
               className="w-full rounded-xl bg-green-600 px-6 py-4 font-semibold text-white transition-colors duration-200 hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
               onClick={() => handleTypeSelection(selectedType)}
             >
@@ -263,6 +296,11 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
                 <div className="flex items-center justify-center">
                   <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   Processando...
+                </div>
+              ) : isRedirecting ? (
+                <div className="flex items-center justify-center">
+                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Redirecionando...
                 </div>
               ) : (
                 "Próximo Passo"

@@ -1,4 +1,5 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import type { UserType } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -103,10 +104,6 @@ export const authOptions: NextAuthOptions = {
           if (profile) {
             token.hasSelectedRole = profile.hasSelectedRole;
             token.userType = profile.userType;
-            console.log("Token atualizado com perfil:", {
-              hasSelectedRole: profile.hasSelectedRole,
-              userType: profile.userType,
-            });
           }
         } catch (error) {
           console.error("Erro ao buscar perfil no JWT callback:", error);
@@ -119,13 +116,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.id as string;
         session.user.hasSelectedRole = token.hasSelectedRole as boolean;
-        session.user.userType = token.userType as any;
-        console.log(
-          "Session callback - hasSelectedRole:",
-          token.hasSelectedRole,
-          "userType:",
-          token.userType,
-        );
+        session.user.userType = token.userType as UserType;
       }
       return session;
     },

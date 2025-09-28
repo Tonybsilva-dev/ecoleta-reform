@@ -6,14 +6,8 @@ export default withAuth(
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
 
-    console.log("=== MIDDLEWARE ===");
-    console.log("pathname:", pathname);
-    console.log("token:", token);
-    console.log("hasSelectedRole:", token?.hasSelectedRole);
-
     // Se o usuário não está autenticado, permitir acesso às páginas de auth
     if (!token) {
-      console.log("Usuário não autenticado, permitindo acesso");
       return NextResponse.next();
     }
 
@@ -23,31 +17,34 @@ export default withAuth(
     const isAuthPage =
       pathname.startsWith("/auth") || pathname.startsWith("/register");
     const isPublicPage = pathname === "/" || pathname.startsWith("/api/auth");
+    const isApiRoute = pathname.startsWith("/api/");
 
-    console.log("hasSelectedRole:", hasSelectedRole);
-    console.log("isOnboardingPage:", isOnboardingPage);
-    console.log("isAuthPage:", isAuthPage);
-    console.log("isPublicPage:", isPublicPage);
+    // Permitir acesso a todas as rotas de API
+    if (isApiRoute) {
+      return NextResponse.next();
+    }
 
     // Se o usuário não selecionou o tipo de conta e não está na página de onboarding
     if (!hasSelectedRole && !isOnboardingPage && !isAuthPage && !isPublicPage) {
-      console.log("Redirecionando para select-type (não selecionou role)");
       return NextResponse.redirect(new URL("/onboarding/select-type", req.url));
     }
 
     // Se o usuário já selecionou o tipo de conta e está tentando acessar a página de onboarding
-    if (hasSelectedRole && isOnboardingPage) {
-      console.log("Redirecionando para dashboard (já selecionou role)");
+    // EXCETO se estiver na página de criação de organização (fluxo normal para empresas/ONGs)
+    if (
+      hasSelectedRole &&
+      isOnboardingPage &&
+      pathname !== "/onboarding/organization/create"
+    ) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
     // Se o usuário está na página de select-type mas já selecionou o tipo
+    // Só redirecionar se não estiver no processo de seleção (evitar loop)
     if (hasSelectedRole && pathname === "/onboarding/select-type") {
-      console.log("Usuário já selecionou tipo, redirecionando para dashboard");
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
 
-    console.log("Permitindo acesso normal");
     return NextResponse.next();
   },
   {
