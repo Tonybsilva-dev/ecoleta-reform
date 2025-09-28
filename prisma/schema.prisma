@@ -204,14 +204,29 @@ model Point {
   @@map("points")
 }
 
+model Material {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  category    String?  // e.g., "Plastic", "Glass", "Metal", "Paper"
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  items Item[]
+
+  @@map("materials")
+}
+
 model Item {
   id          String     @id @default(cuid())
   title       String
   description String?
-  imageUrl    String?
   status      ItemStatus @default(ACTIVE)
   price       Decimal?   @db.Decimal(10, 2)
   quantity    Int        @default(1)
+  location    Unsupported("geography(Point, 4326)")?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 
@@ -222,10 +237,29 @@ model Item {
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
 
+  materialId String?
+  material   Material? @relation(fields: [materialId], references: [id], onDelete: SetNull)
+
+  images    ItemImage[]
   pointItems PointItem[]
   orders     Order[]
 
   @@map("items")
+}
+
+model ItemImage {
+  id        String   @id @default(cuid())
+  url       String
+  altText   String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@map("item_images")
 }
 
 model PointItem {
