@@ -39,16 +39,10 @@ export function OrganizationNameStep({ formData, updateFormData }: StepProps) {
 export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
   const types = [
     {
-      id: "CITIZEN",
-      name: "Cidadão",
-      description: "Cidadão individual interessado em sustentabilidade",
+      id: "COLLECTOR",
+      name: "Cooperativa",
+      description: "Cooperativa de coleta ou reciclagem",
       icon: Users,
-    },
-    {
-      id: "COMPANY",
-      name: "Empresa",
-      description: "Empresa privada com foco em sustentabilidade",
-      icon: Building2,
     },
     {
       id: "NGO",
@@ -57,10 +51,10 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
       icon: Users,
     },
     {
-      id: "COLLECTOR",
-      name: "Coletor",
-      description: "Coletor individual ou cooperativa de coleta",
-      icon: Users,
+      id: "COMPANY",
+      name: "Empresa",
+      description: "Empresa privada com foco em sustentabilidade",
+      icon: Building2,
     },
   ];
 
@@ -73,10 +67,11 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        {types.map((type) => {
+      <div className="grid grid-cols-2 gap-4">
+        {types.map((type, index) => {
           const Icon = type.icon;
           const isSelected = formData.type === type.id;
+          const isLastItem = index === types.length - 1;
 
           return (
             <button
@@ -87,7 +82,7 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
                 isSelected
                   ? "border-green-500 bg-green-50"
                   : "border-gray-200 bg-white hover:border-green-300 hover:bg-green-50"
-              }`}
+              } ${isLastItem ? "col-span-2" : ""}`}
             >
               <div className="flex flex-col items-center space-y-4 text-center">
                 <div
@@ -262,10 +257,9 @@ export function OrganizationConfirmationStep({ formData }: StepProps) {
           <div className="flex justify-between">
             <span className="text-gray-600">Tipo:</span>
             <span className="font-medium">
-              {formData.type === "CITIZEN" && "Cidadão"}
-              {formData.type === "COMPANY" && "Empresa"}
+              {formData.type === "COLLECTOR" && "Cooperativa"}
               {formData.type === "NGO" && "ONG"}
-              {formData.type === "COLLECTOR" && "Coletor"}
+              {formData.type === "COMPANY" && "Empresa"}
             </span>
           </div>
 

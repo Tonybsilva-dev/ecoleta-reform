@@ -12,8 +12,8 @@ export const organizationCreationSchema = z.object({
     ),
 
   type: z
-    .enum(["CITIZEN", "COLLECTOR", "COMPANY", "NGO"])
-    .refine((val) => ["CITIZEN", "COMPANY", "NGO", "COLLECTOR"].includes(val), {
+    .enum(["COLLECTOR", "NGO", "COMPANY"])
+    .refine((val) => ["COLLECTOR", "NGO", "COMPANY"].includes(val), {
       message: "Tipo de organização não permitido",
     }),
 
@@ -55,13 +55,10 @@ export const organizationStepSchemas = {
 
   type: z.object({
     type: z
-      .enum(["CITIZEN", "COLLECTOR", "COMPANY", "NGO"])
-      .refine(
-        (val) => ["CITIZEN", "COMPANY", "NGO", "COLLECTOR"].includes(val),
-        {
-          message: "Tipo de organização não permitido",
-        },
-      ),
+      .enum(["COLLECTOR", "NGO", "COMPANY"])
+      .refine((val) => ["COLLECTOR", "NGO", "COMPANY"].includes(val), {
+        message: "Tipo de organização não permitido",
+      }),
   }),
 
   description: z.object({
