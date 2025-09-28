@@ -18,7 +18,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 export function DashboardContent() {
   const { status } = useSession();
   const { showError } = useNotifications();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [dashboardData, setDashboardData] = useState({
     items: [],
     transactions: [],
@@ -60,13 +60,17 @@ export function DashboardContent() {
 
     if (status === "authenticated") {
       fetchDashboardData();
+    } else if (status === "unauthenticated") {
+      setIsLoading(false);
     }
   }, [status, showError]);
 
-  if (status === "loading" || isLoading) {
+  // Mostrar loading apenas quando o status da sessão está carregando
+  if (status === "loading") {
     return <LoadingState message="Carregando seu dashboard..." />;
   }
 
+  // Mostrar erro de acesso se não estiver autenticado
   if (status === "unauthenticated") {
     return (
       <EmptyState
@@ -74,6 +78,11 @@ export function DashboardContent() {
         description="Você precisa estar logado para acessar o dashboard"
       />
     );
+  }
+
+  // Mostrar loading apenas quando estiver carregando dados específicos
+  if (isLoading) {
+    return <LoadingState message="Carregando dados..." />;
   }
 
   const { stats } = dashboardData;
