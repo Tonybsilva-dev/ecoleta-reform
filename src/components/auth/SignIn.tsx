@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { userAuthenticationSchema } from "@/lib/validations";
@@ -209,6 +210,19 @@ export function SignIn() {
             )}
             {isLoading ? "Entrando..." : "Entrar com Google"}
           </button>
+        </div>
+
+        {/* Link para registro */}
+        <div className="text-center">
+          <p className="text-gray-600 text-sm">
+            Não tem uma conta?{" "}
+            <Link
+              href="/register"
+              className="font-medium text-green-600 hover:text-green-500"
+            >
+              Criar conta
+            </Link>
+          </p>
         </div>
 
         <div className="text-center text-gray-600 text-sm">

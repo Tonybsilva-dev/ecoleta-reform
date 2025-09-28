@@ -133,14 +133,15 @@ model Authenticator {
 }
 
 model Profile {
-  id        String   @id @default(cuid())
-  name      String
-  avatarUrl String?
-  bio       String?
-  phone     String?
-  userType  UserType @default(CITIZEN)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String
+  avatarUrl       String?
+  bio             String?
+  phone           String?
+  userType        UserType @default(CITIZEN)
+  hasSelectedRole Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relations
   userId String @unique

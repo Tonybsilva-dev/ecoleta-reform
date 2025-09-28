@@ -69,6 +69,28 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
+
+        // Buscar informações do perfil do usuário
+        try {
+          const profile = await prisma.profile.findUnique({
+            where: {
+              userId: token.id as string,
+            },
+            select: {
+              hasSelectedRole: true,
+              userType: true,
+            },
+          });
+
+          if (profile) {
+            session.user.hasSelectedRole = profile.hasSelectedRole;
+            session.user.userType = profile.userType;
+          }
+        } catch (error) {
+          console.error("Erro ao buscar perfil do usuário:", error);
+          session.user.hasSelectedRole = false;
+          session.user.userType = null;
+        }
       }
       return session;
     },
