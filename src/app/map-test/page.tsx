@@ -9,8 +9,13 @@ export default function MapTestPage() {
             Teste do Mapa Leaflet
           </h1>
           <p className="text-gray-600">
-            Esta página testa a integração do Leaflet com Next.js
+            Página de desenvolvimento para testar a integração do Leaflet
           </p>
+          <div className="mt-2 text-blue-600 text-sm">
+            <a href="/map" className="hover:underline">
+              → Ver página principal do mapa
+            </a>
+          </div>
         </div>
 
         <div className="space-y-4">
