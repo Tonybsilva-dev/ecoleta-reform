@@ -5,7 +5,7 @@ import { ToastProvider } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Ecoleta - Marketplace Sustentável",
+  title: "Ecoleta Reform - Marketplace Sustentável",
   description:
     "Plataforma de marketplace sustentável para coleta e reciclagem de resíduos",
   icons: {
