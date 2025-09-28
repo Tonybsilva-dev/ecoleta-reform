@@ -39,6 +39,14 @@ export const createItemSchema = z.object({
 
   materialId: z.string().cuid("ID do material inválido").optional(),
 
+  materialType: z.string().optional(),
+
+  unit: z.string().optional(),
+
+  transactionType: z.string().optional(),
+
+  address: z.string().optional(),
+
   organizationId: z.string().cuid("ID da organização inválido").optional(),
 
   // Coordenadas geográficas (latitude e longitude)

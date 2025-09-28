@@ -20,17 +20,48 @@ export function ItemCreationModal({
   const handleComplete = async (formData: Record<string, string>) => {
     setIsLoading(true);
     try {
-      // TODO: Implementar criação de item via API
-      console.log("Dados do item:", formData);
+      // Preparar dados para envio
+      const itemData = {
+        title: formData.title,
+        description: formData.description,
+        quantity: parseInt(formData.quantity || "1", 10),
+        materialType: formData.materialType,
+        unit: formData.unit || "unidade",
+        transactionType: formData.transactionType,
+        price: formData.price ? parseFloat(formData.price) : undefined,
+        latitude: formData.latitude ? parseFloat(formData.latitude) : undefined,
+        longitude: formData.longitude
+          ? parseFloat(formData.longitude)
+          : undefined,
+        address: formData.address,
+        // TODO: Implementar upload de imagens
+        imageUrls: [],
+        imageAltTexts: [],
+      };
 
-      // Simular delay da API
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Enviar para API
+      const response = await fetch("/api/items", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(itemData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao criar item");
+      }
+
+      const result = await response.json();
+      console.log("Item criado com sucesso:", result);
 
       // Fechar modal e chamar callback de sucesso
       onClose();
       onSuccess?.();
     } catch (error) {
       console.error("Erro ao criar item:", error);
+      // TODO: Mostrar toast de erro
     } finally {
       setIsLoading(false);
     }

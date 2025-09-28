@@ -183,7 +183,7 @@ export function ItemCreationForm({
         throw new Error(errorData.error || "Erro ao criar item");
       }
 
-      const result = await response.json();
+      await response.json();
 
       // Dismissar o toast de loading
       dismiss(loadingToastId);
@@ -196,8 +196,8 @@ export function ItemCreationForm({
       // Aguardar um pouco para mostrar o toast
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Redirecionar para a página do item ou dashboard
-      router.push(`/items/${result.id}`);
+      // Redirecionar para a página de itens do dashboard
+      router.push("/dashboard/items");
     } catch (error) {
       console.error("Erro ao criar item:", error);
 
