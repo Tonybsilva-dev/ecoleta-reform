@@ -4,8 +4,6 @@ import { type ReactNode, useState } from "react";
 
 import { cn } from "@/lib/utils";
 
-import { Button } from "./button";
-
 interface Step {
   id: string;
   title: string;
@@ -39,6 +37,10 @@ export function StepForm({
   const currentStepData = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
+
+  if (!currentStepData) {
+    return null;
+  }
 
   const handleNext = () => {
     // Validar step atual se necessário
@@ -77,85 +79,98 @@ export function StepForm({
   };
 
   return (
-    <div className={cn("mx-auto w-full max-w-2xl", className)}>
-      {/* Progress Bar */}
-      <div className="mb-8">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="font-medium text-muted-foreground text-sm">
-            Passo {currentStep + 1} de {steps.length}
-          </span>
-          <span className="text-muted-foreground text-sm">
-            {Math.round(((currentStep + 1) / steps.length) * 100)}%
-          </span>
+    <div className={cn("flex min-h-screen", className)}>
+      {/* Left Column - Progress Section */}
+      <div className="hidden flex-col justify-between bg-green-600 p-8 lg:flex lg:w-1/3">
+        {/* Logo */}
+        <div className="flex items-center space-x-3">
+          <div className="h-8 w-8 rounded bg-white"></div>
+          <span className="font-bold text-white text-xl">Ecoleta</span>
         </div>
-        <div className="h-2 w-full rounded-full bg-gray-200">
+
+        {/* Main Content */}
+        <div className="space-y-6">
+          <h1 className="font-bold text-3xl text-white leading-tight">
+            Configure sua organização no Ecoleta e comece a fazer a diferença.
+          </h1>
+          <p className="text-green-100 text-lg leading-relaxed">
+            Crie seu perfil de organização e conecte-se com uma comunidade
+            sustentável para transformar resíduos em recursos valiosos.
+          </p>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="flex space-x-2">
+          {steps.map((step, index) => (
+            <div
+              key={step.id}
+              className={`h-1 rounded ${
+                index <= currentStep ? "w-8 bg-white" : "w-4 bg-green-300"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Right Column - Step Content */}
+      <div className="flex w-full flex-col justify-center bg-white px-8 py-12 lg:w-2/3">
+        <div className="mx-auto w-full max-w-2xl">
           <div
-            className="h-2 rounded-full bg-green-500 transition-all duration-300 ease-out"
-            style={{
-              width: `${((currentStep + 1) / steps.length) * 100}%`,
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Step Content */}
-      <div className="min-h-[400px]">
-        <div
-          className={cn(
-            "transition-all duration-300 ease-in-out",
-            isTransitioning
-              ? "translate-x-4 transform opacity-0"
-              : "translate-x-0 transform opacity-100",
-          )}
-        >
-          {/* Step Header */}
-          <div className="mb-8 text-center">
-            <h2 className="mb-2 font-bold text-2xl text-gray-900">
-              {currentStepData.title}
-            </h2>
-            {currentStepData.description && (
-              <p className="text-gray-600 text-lg">
-                {currentStepData.description}
-              </p>
+            className={cn(
+              "transition-all duration-300 ease-in-out",
+              isTransitioning
+                ? "translate-x-4 transform opacity-0"
+                : "translate-x-0 transform opacity-100",
             )}
+          >
+            {/* Step Header */}
+            <div className="mb-8 text-center">
+              <h2 className="mb-3 font-bold text-3xl text-gray-900">
+                {currentStepData.title}
+              </h2>
+              {currentStepData.description && (
+                <p className="text-gray-600 text-lg">
+                  {currentStepData.description}
+                </p>
+              )}
+            </div>
+
+            {/* Step Component */}
+            <div className="mb-8">
+              {currentStepData.component({ formData, updateFormData })}
+            </div>
           </div>
 
-          {/* Step Component */}
-          <div className="mb-8">
-            {currentStepData.component({ formData, updateFormData })}
+          {/* Navigation */}
+          <div className="flex items-center justify-between space-x-4">
+            <button
+              type="button"
+              onClick={handleBack}
+              disabled={isLoading}
+              className="rounded-xl border-2 border-gray-300 bg-white px-8 py-4 font-semibold text-gray-700 transition-colors duration-200 hover:border-gray-400 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isFirstStep ? "Voltar" : "Anterior"}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleNext}
+              disabled={isLoading}
+              className="rounded-xl bg-green-600 px-8 py-4 font-semibold text-white transition-colors duration-200 hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {isLoading ? (
+                <div className="flex items-center">
+                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Processando...
+                </div>
+              ) : isLastStep ? (
+                "Finalizar"
+              ) : (
+                "Continuar"
+              )}
+            </button>
           </div>
         </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex items-center justify-between border-t pt-6">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleBack}
-          disabled={isLoading}
-          className="px-8"
-        >
-          {isFirstStep ? "Voltar" : "Anterior"}
-        </Button>
-
-        <Button
-          type="button"
-          onClick={handleNext}
-          disabled={isLoading}
-          className="px-8"
-        >
-          {isLoading ? (
-            <div className="flex items-center">
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-              Processando...
-            </div>
-          ) : isLastStep ? (
-            "Finalizar"
-          ) : (
-            "Continuar"
-          )}
-        </Button>
       </div>
     </div>
   );

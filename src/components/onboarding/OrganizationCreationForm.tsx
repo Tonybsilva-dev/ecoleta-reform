@@ -127,15 +127,13 @@ export function OrganizationCreationForm({
   }
 
   return (
-    <div className={`min-h-screen bg-gray-50 py-12 ${className || ""}`}>
-      <div className="container mx-auto px-4">
-        <StepForm
-          steps={steps}
-          onComplete={handleComplete}
-          onBack={handleBack}
-          isLoading={isLoading}
-        />
-      </div>
+    <div className={className || ""}>
+      <StepForm
+        steps={steps}
+        onComplete={handleComplete}
+        onBack={handleBack}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

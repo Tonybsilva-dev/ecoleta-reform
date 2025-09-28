@@ -13,9 +13,10 @@ interface StepProps {
 export function OrganizationNameStep({ formData, updateFormData }: StepProps) {
   return (
     <div className="space-y-6">
-      <div className="mb-8 flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <Building2 className="h-8 w-8 text-green-600" />
+      {/* Icon */}
+      <div className="mb-6 flex justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <Building2 className="h-6 w-6 text-green-600" />
         </div>
       </div>
 
@@ -59,7 +60,14 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4">
+      {/* Icon */}
+      <div className="mb-6 flex justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <Building2 className="h-6 w-6 text-green-600" />
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
         {types.map((type) => {
           const Icon = type.icon;
           const isSelected = formData.type === type.id;
@@ -69,33 +77,52 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
               key={type.id}
               type="button"
               onClick={() => updateFormData("type", type.id)}
-              className={`rounded-xl border-2 p-6 text-left transition-all duration-200 ${
+              className={`w-full cursor-pointer rounded-xl border-2 p-6 text-left transition-all duration-200 ${
                 isSelected
                   ? "border-green-500 bg-green-50"
-                  : "border-gray-200 hover:border-gray-300"
+                  : "border-gray-200 bg-white hover:border-green-300 hover:bg-green-50"
               }`}
             >
-              <div className="flex items-start space-x-4">
+              <div className="flex flex-col items-center space-y-4 text-center">
                 <div
-                  className={`flex h-12 w-12 items-center justify-center rounded-lg ${
-                    isSelected ? "bg-green-100" : "bg-gray-100"
+                  className={`rounded-lg p-3 ${
+                    isSelected
+                      ? "bg-green-500 text-white"
+                      : "bg-gray-100 text-gray-600"
                   }`}
                 >
-                  <Icon
-                    className={`h-6 w-6 ${
-                      isSelected ? "text-green-600" : "text-gray-600"
-                    }`}
-                  />
+                  <Icon className="h-6 w-6" />
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-gray-900 text-lg">
+                <div className="flex-grow">
+                  <h3
+                    className={`font-semibold text-lg ${
+                      isSelected ? "text-green-900" : "text-gray-900"
+                    }`}
+                  >
                     {type.name}
                   </h3>
-                  <p className="mt-1 text-gray-600">{type.description}</p>
+                  <p
+                    className={`text-sm ${
+                      isSelected ? "text-green-700" : "text-gray-600"
+                    }`}
+                  >
+                    {type.description}
+                  </p>
                 </div>
                 {isSelected && (
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500">
-                    <div className="h-2 w-2 rounded-full bg-white" />
+                    <svg
+                      className="h-4 w-4 text-white"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <title>Ícone de Selecionado</title>
+                      <path
+                        fillRule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   </div>
                 )}
               </div>
@@ -114,9 +141,10 @@ export function OrganizationDescriptionStep({
 }: StepProps) {
   return (
     <div className="space-y-6">
-      <div className="mb-8 flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-          <FileText className="h-8 w-8 text-blue-600" />
+      {/* Icon */}
+      <div className="mb-6 flex justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <FileText className="h-6 w-6 text-green-600" />
         </div>
       </div>
 
@@ -142,9 +170,10 @@ export function OrganizationContactStep({
 }: StepProps) {
   return (
     <div className="space-y-6">
-      <div className="mb-8 flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-purple-100">
-          <Globe className="h-8 w-8 text-purple-600" />
+      {/* Icon */}
+      <div className="mb-6 flex justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <Globe className="h-6 w-6 text-green-600" />
         </div>
       </div>
 
@@ -206,9 +235,10 @@ export function OrganizationContactStep({
 export function OrganizationConfirmationStep({ formData }: StepProps) {
   return (
     <div className="space-y-6">
-      <div className="mb-8 flex justify-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <Building2 className="h-8 w-8 text-green-600" />
+      {/* Icon */}
+      <div className="mb-6 flex justify-center">
+        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <Building2 className="h-6 w-6 text-green-600" />
         </div>
       </div>
 
