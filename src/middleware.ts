@@ -15,6 +15,10 @@ export default withAuth(
 
     // Se o usuário não está autenticado, permitir acesso às páginas de auth
     if (!token) {
+      // Bloquear acesso a /admin se não estiver autenticado
+      if (pathname.startsWith("/admin")) {
+        return NextResponse.redirect(new URL("/auth/signin", req.url));
+      }
       return NextResponse.next();
     }
 
@@ -62,6 +66,10 @@ export default withAuth(
     if (hasSelectedRole && userType && userId) {
       // Verificar se o usuário tem permissão para acessar a rota
       if (!canAccessRoute(pathname, userType, userId, userRole)) {
+        // Se tentou acessar /admin sem ser ADMIN, redirecionar para login
+        if (pathname.startsWith("/admin") && userRole !== "ADMIN") {
+          return NextResponse.redirect(new URL("/auth/signin", req.url));
+        }
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
     }
@@ -76,6 +84,11 @@ export default withAuth(
         // Permitir acesso às páginas públicas
         if (isPublicRoute(pathname)) {
           return true;
+        }
+
+        // Bloquear acesso a /admin se não estiver autenticado
+        if (pathname.startsWith("/admin")) {
+          return !!token;
         }
 
         // Para outras páginas, requer autenticação
