@@ -60,9 +60,33 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
+
+        // Se é um novo usuário via OAuth (Google), criar perfil automaticamente
+        if (account?.provider === "google") {
+          try {
+            // Verificar se o perfil já existe
+            const existingProfile = await prisma.profile.findUnique({
+              where: { userId: user.id },
+            });
+
+            // Se não existe, criar um perfil padrão
+            if (!existingProfile) {
+              await prisma.profile.create({
+                data: {
+                  name: user.name || "Usuário",
+                  userId: user.id,
+                  userType: "CITIZEN", // Tipo padrão
+                  hasSelectedRole: false, // Usuário precisará selecionar o tipo
+                },
+              });
+            }
+          } catch (error) {
+            console.error("Erro ao criar perfil para usuário OAuth:", error);
+          }
+        }
       }
       return token;
     },

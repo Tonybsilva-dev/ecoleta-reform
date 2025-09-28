@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
@@ -68,10 +69,10 @@ export function RegisterForm({ className }: RegisterFormProps) {
   const handleGoogleSignUp = async () => {
     setIsGoogleLoading(true);
     try {
-      // TODO: Implementar Google OAuth para registro
-      console.log("Google OAuth registration not implemented yet");
+      await signIn("google", { callbackUrl: "/onboarding/select-type" });
     } catch (error) {
       console.error("Erro ao registrar com Google:", error);
+      setError("Erro ao registrar com Google. Tente novamente.");
     } finally {
       setIsGoogleLoading(false);
     }
