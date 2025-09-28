@@ -65,7 +65,6 @@ function MapCenterUpdater({ center }: { center: [number, number] }) {
   const map = useMap();
 
   useEffect(() => {
-    console.log("🗺️ MapCenterUpdater: Atualizando centro do mapa para:", center);
     map.setView(center, map.getZoom());
   }, [map, center]);
 
@@ -89,10 +88,6 @@ export function LocationMap({
   }, []);
 
   useEffect(() => {
-    console.log("📍 LocationMap: Atualizando centro do mapa:", {
-      latitude,
-      longitude,
-    });
     setMapCenter([latitude, longitude]);
   }, [latitude, longitude]);
 
