@@ -119,7 +119,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user.id = token.id as string;
         session.user.hasSelectedRole = token.hasSelectedRole as boolean;
-        session.user.userType = token.userType as any;
+        session.user.userType = token.userType as string;
         console.log(
           "Session callback - hasSelectedRole:",
           token.hasSelectedRole,

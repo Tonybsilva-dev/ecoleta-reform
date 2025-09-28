@@ -4,48 +4,48 @@
 
 /* FunnelDisplay Font Family */
 @font-face {
-  font-family: 'FunnelDisplay';
-  src: url('/fonts/FunnelDisplay-Light.ttf') format('truetype');
+  font-family: "FunnelDisplay";
+  src: url("/fonts/FunnelDisplay-Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'FunnelDisplay';
-  src: url('/fonts/FunnelDisplay-Regular.ttf') format('truetype');
+  font-family: "FunnelDisplay";
+  src: url("/fonts/FunnelDisplay-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'FunnelDisplay';
-  src: url('/fonts/FunnelDisplay-Medium.ttf') format('truetype');
+  font-family: "FunnelDisplay";
+  src: url("/fonts/FunnelDisplay-Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'FunnelDisplay';
-  src: url('/fonts/FunnelDisplay-SemiBold.ttf') format('truetype');
+  font-family: "FunnelDisplay";
+  src: url("/fonts/FunnelDisplay-SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'FunnelDisplay';
-  src: url('/fonts/FunnelDisplay-Bold.ttf') format('truetype');
+  font-family: "FunnelDisplay";
+  src: url("/fonts/FunnelDisplay-Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'FunnelDisplay';
-  src: url('/fonts/FunnelDisplay-ExtraBold.ttf') format('truetype');
+  font-family: "FunnelDisplay";
+  src: url("/fonts/FunnelDisplay-ExtraBold.ttf") format("truetype");
   font-weight: 800;
   font-style: normal;
   font-display: swap;
@@ -55,16 +55,19 @@
 html,
 body,
 * {
-  font-family: 'FunnelDisplay', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+  font-family:
+    "FunnelDisplay", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif !important;
 }
 
 /* Sobrescrever regras específicas do Tailwind */
 .font-sans {
-  font-family: 'FunnelDisplay', sans-serif !important;
+  font-family: "FunnelDisplay", sans-serif !important;
 }
 
 .font-funnel {
-  font-family: 'FunnelDisplay', sans-serif !important;
+  font-family: "FunnelDisplay", sans-serif !important;
 }
 
 :root {
@@ -135,7 +138,6 @@ body,
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.527 0.154 150.069);
 }
-
 
 @layer base {
   * {

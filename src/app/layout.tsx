@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Ecoleta - Marketplace Sustentável",
   description:
     "Plataforma de marketplace sustentável para coleta e reciclagem de resíduos",
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
