@@ -2,7 +2,6 @@
 
 import { Leaf, Package, ShoppingCart } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
 
 import {
   Card,
@@ -17,14 +16,9 @@ import { useDashboardStore } from "@/lib/stores";
 
 export function DashboardContent() {
   const { status } = useSession();
-  const { isLoading, stats, loadDashboardData } = useDashboardStore();
+  const { isLoading, stats } = useDashboardStore();
 
-  useEffect(() => {
-    // Só executar se estiver autenticado e não estiver já carregando
-    if (status === "authenticated" && !isLoading) {
-      loadDashboardData();
-    }
-  }, [status, isLoading, loadDashboardData]);
+  // Remover useEffect duplicado - o Dashboard.tsx já chama loadDashboardData
 
   // Mostrar loading apenas quando o status da sessão está carregando
   if (status === "loading") {

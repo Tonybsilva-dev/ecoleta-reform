@@ -23,10 +23,10 @@ export function Dashboard() {
 
   // Carregar dados do dashboard quando o usuário estiver autenticado
   useEffect(() => {
-    if (session?.user?.id && !isLoading) {
+    if (session?.user?.id) {
       loadDashboardData();
     }
-  }, [session?.user?.id, loadDashboardData, isLoading]);
+  }, [session?.user?.id, loadDashboardData]);
 
   if (status === "loading") {
     return (

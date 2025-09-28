@@ -47,6 +47,7 @@ interface DashboardState {
   stats: DashboardStats;
   items: DashboardItem[];
   transactions: DashboardTransaction[];
+  hasLoaded: boolean; // Flag para evitar múltiplas chamadas
 
   // Actions
   setLoading: (loading: boolean) => void;
@@ -61,6 +62,7 @@ interface DashboardState {
 const initialState = {
   isLoading: false,
   error: null,
+  hasLoaded: false,
   stats: {
     totalItems: 0,
     totalTransactions: 0,
@@ -86,10 +88,10 @@ export const useDashboardStore = create<DashboardState>()(
       setTransactions: (transactions) => set({ transactions }),
 
       loadDashboardData: async () => {
-        const { isLoading } = get();
+        const { isLoading, hasLoaded } = get();
 
-        // Evitar múltiplas chamadas simultâneas
-        if (isLoading) return;
+        // Evitar múltiplas chamadas simultâneas ou se já carregou
+        if (isLoading || hasLoaded) return;
 
         set({ isLoading: true, error: null });
 
@@ -114,12 +116,14 @@ export const useDashboardStore = create<DashboardState>()(
             items: [],
             transactions: [],
             isLoading: false,
+            hasLoaded: true, // Marcar como carregado
           });
         } catch (error) {
           console.error("Erro ao carregar dados do dashboard:", error);
           set({
             error: error instanceof Error ? error.message : "Erro desconhecido",
             isLoading: false,
+            hasLoaded: false, // Permitir tentar novamente
           });
         }
       },
