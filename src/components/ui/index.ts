@@ -10,4 +10,5 @@ export * from "./loading-state";
 export * from "./progress";
 export * from "./separator";
 export * from "./skeleton";
+export * from "./step-form";
 export * from "./toast";
