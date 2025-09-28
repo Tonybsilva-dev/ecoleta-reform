@@ -32,7 +32,12 @@ export default withAuth(
     }
 
     // Verificar redirecionamentos baseados no fluxo de onboarding
-    if (userType) {
+    // Só verificar redirecionamentos se o usuário estiver autenticado e não estiver no fluxo de onboarding
+    if (
+      userType &&
+      hasSelectedRole !== undefined &&
+      !pathname.startsWith("/onboarding")
+    ) {
       const redirectUrl = getRedirectUrl(userType, hasSelectedRole, pathname);
       if (redirectUrl) {
         return NextResponse.redirect(new URL(redirectUrl, req.url));

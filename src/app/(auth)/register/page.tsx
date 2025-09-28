@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BackButton } from "@/components/auth/BackButton";
+import { BackButton } from "@/components";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata: Metadata = {
