@@ -793,7 +793,7 @@ export default function Home() {
           </div>
 
           <div className="mt-12 border-gray-800 border-t pt-8 text-center text-gray-400">
-            <p>&copy; 2024 {APP_NAME}. Todos os direitos reservados.</p>
+            <p>&copy; 2025 {APP_NAME}. Todos os direitos reservados.</p>
           </div>
         </div>
       </footer>
