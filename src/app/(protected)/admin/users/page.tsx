@@ -2,7 +2,14 @@
 
 import { Building2, Mail, MapPin, Phone } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -31,7 +38,7 @@ import {
 import { useNotifications } from "@/hooks/useNotifications";
 import { useAdminUsersStore } from "@/lib/stores/admin-users.store";
 
-export default function AdminUsersPage() {
+function AdminUsersPageInner() {
   const router = useRouter();
   const params = useSearchParams();
   const { showError, showSuccess, showInfo } = useNotifications();
@@ -497,5 +504,45 @@ export default function AdminUsersPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminUsersPage() {
+  function AdminUsersSkeleton() {
+    return (
+      <div className="space-y-6 p-4" aria-busy="true" aria-live="polite">
+        <div>
+          <div className="mb-2 h-7 w-40 rounded bg-gray-200" />
+          <div className="flex gap-2">
+            <div className="h-10 w-80 rounded bg-gray-200" />
+            <div className="h-10 w-28 rounded bg-gray-200" />
+          </div>
+        </div>
+        <div className="rounded-md border">
+          {[1, 2, 3, 4, 5, 6].map((rowId) => (
+            <div
+              key={`row-skel-${rowId}`}
+              className="animate-pulse border-b px-4 py-4 last:border-b-0"
+            >
+              <div className="flex items-center justify-between">
+                <div className="space-y-2">
+                  <div className="h-4 w-48 rounded bg-gray-200" />
+                  <div className="h-3 w-32 rounded bg-gray-200" />
+                </div>
+                <div className="flex gap-3">
+                  <div className="h-8 w-32 rounded bg-gray-200" />
+                  <div className="h-8 w-20 rounded bg-gray-200" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <Suspense fallback={<AdminUsersSkeleton />}>
+      <AdminUsersPageInner />
+    </Suspense>
   );
 }

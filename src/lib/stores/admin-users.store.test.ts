@@ -77,4 +77,40 @@ describe("admin-users.store (optimistic updates)", () => {
     expect(state.error).toBeTruthy();
     expect(state.isUpdatingId).toBeNull();
   });
+
+  it("should optimistically change role and keep state on success", async () => {
+    setUsers([user]);
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn()
+        .mockResolvedValue({ ok: true, json: async () => ({ success: true }) }),
+    );
+
+    const store = useAdminUsersStore;
+    const { updateUser } = store.getState();
+    await updateUser("u1", { role: "OWNER" });
+
+    const state = store.getState();
+    const u = state.users.find((x) => x.id === "u1");
+    expect(u?.profile?.role).toBe("OWNER");
+    expect(state.error).toBeNull();
+  });
+
+  it("should revert role on failure and set error", async () => {
+    setUsers([user]);
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) }),
+    );
+
+    const store = useAdminUsersStore;
+    const { updateUser } = store.getState();
+    await updateUser("u1", { role: "OWNER" });
+
+    const state = store.getState();
+    const u = state.users.find((x) => x.id === "u1");
+    expect(u?.profile?.role).toBe("MEMBER");
+    expect(state.error).toBeTruthy();
+  });
 });
