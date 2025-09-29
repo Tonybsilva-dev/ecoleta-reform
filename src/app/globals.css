@@ -59,16 +59,16 @@ body,
   font-family:
     "FunnelDisplay", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif !important;
+    sans-serif;
 }
 
 /* Sobrescrever regras específicas do Tailwind */
 .font-sans {
-  font-family: "FunnelDisplay", sans-serif !important;
+  font-family: "FunnelDisplay", sans-serif;
 }
 
 .font-funnel {
-  font-family: "FunnelDisplay", sans-serif !important;
+  font-family: "FunnelDisplay", sans-serif;
 }
 
 :root {

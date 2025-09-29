@@ -140,6 +140,7 @@ model Profile {
   phone           String?
   userType        UserType @default(CITIZEN)
   role            Role?    @default(MEMBER)
+  isActive        Boolean  @default(true)
   hasSelectedRole Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
