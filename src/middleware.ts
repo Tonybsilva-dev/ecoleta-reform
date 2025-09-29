@@ -10,6 +10,10 @@ import {
 
 export default withAuth(
   function middleware(req) {
+    // Bypass completo em ambiente de E2E para facilitar testes de UI
+    if (process.env.E2E_TEST === "true") {
+      return NextResponse.next();
+    }
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
 

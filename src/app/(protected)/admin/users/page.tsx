@@ -321,7 +321,11 @@ function AdminUsersPageInner() {
                       <td className="px-4 py-3 text-sm">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="outline" size="sm">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              data-testid="user-actions"
+                            >
                               Ações
                             </Button>
                           </DropdownMenuTrigger>

@@ -68,3 +68,5 @@ development_logs/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+test-results
