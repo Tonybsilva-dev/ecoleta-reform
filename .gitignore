@@ -70,3 +70,6 @@ development_logs/
 .env.sentry-build-plugin
 
 test-results
+
+# Local dev logs (not pushed)
+dev-logs/
