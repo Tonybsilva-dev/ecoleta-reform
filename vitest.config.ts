@@ -14,7 +14,17 @@ export default defineConfig({
         singleFork: true, // Run all tests in a single fork to avoid database conflicts
       },
     },
-    exclude: ["tests/e2e/**", "playwright.config.ts", "**/test-results/**"],
+    exclude: [
+      "tests/e2e/**",
+      "playwright.config.ts",
+      "**/test-results/**",
+      "node_modules/**",
+    ],
+    deps: {
+      // não inlinar dependências para evitar pegar testes internos
+      inline: [],
+      external: [/node_modules/],
+    },
   },
   resolve: {
     alias: {
