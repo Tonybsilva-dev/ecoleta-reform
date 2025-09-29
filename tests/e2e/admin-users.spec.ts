@@ -1,16 +1,5 @@
 import { expect, test } from "@playwright/test";
 
-// Helper: força token ADMIN via cookie quando rodando E2E
-test.beforeEach(async ({ context }) => {
-  await context.addCookies([
-    {
-      name: "next-auth.session-token",
-      value: "e2e-admin-token",
-      url: "http://localhost:3000",
-    },
-  ]);
-});
-
 test("admin/users - open page, see heading and table controls", async ({
   page,
 }) => {
