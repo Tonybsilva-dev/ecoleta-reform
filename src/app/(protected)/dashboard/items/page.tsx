@@ -1,6 +1,7 @@
 "use client";
 
 import { Package, Plus } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ItemCreationModal } from "@/components/items";
 import { MainLayout, PageHeader } from "@/components/layout";
@@ -102,9 +103,11 @@ export default function ItemsPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
-              <div
+              <Link
                 key={item.id}
-                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm"
+                href={`/dashboard/items/${item.id}`}
+                aria-label={`Ver detalhes do item ${item.title}`}
+                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md"
               >
                 <div className="mb-4">
                   <h3 className="font-semibold text-gray-900 text-lg">
@@ -125,7 +128,7 @@ export default function ItemsPage() {
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-500">Preço:</span>
                       <span className="font-medium text-green-600">
-                        R$ {item.price.toFixed(2)}
+                        R$ {Number(item.price).toFixed(2)}
                       </span>
                     </div>
                   )}
@@ -149,7 +152,7 @@ export default function ItemsPage() {
                   Criado em{" "}
                   {new Date(item.createdAt).toLocaleDateString("pt-BR")}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}

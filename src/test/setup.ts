@@ -1,6 +1,22 @@
 import "@testing-library/jest-dom";
 import React from "react";
 
+// Fail-fast safety: ensure tests run against a dedicated TEST database
+if (process.env.NODE_ENV === "test") {
+  const dbUrl = process.env.DATABASE_URL ?? "";
+  const looksLikeTestDb = /(_test|testdb|_e2e|_ci)/i.test(dbUrl);
+  if (!looksLikeTestDb) {
+    // Prevent accidental deletions on dev/prod databases
+    // eslint-disable-next-line no-console
+    console.error(
+      "[SAFEGUARD] Tests estão usando DATABASE_URL sem sufixo de teste. Configure uma base dedicada (ex.: *_test) ou exporte DATABASE_URL antes de rodar os testes.",
+    );
+    throw new Error(
+      "DATABASE_URL inválida para ambiente de testes. Use uma base isolada contendo 'test' no nome.",
+    );
+  }
+}
+
 // Mock Next.js router
 vi.mock("next/navigation", () => ({
   useRouter: () => ({

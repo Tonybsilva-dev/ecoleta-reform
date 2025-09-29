@@ -69,7 +69,7 @@ development_logs/
 # Sentry Config File
 .env.sentry-build-plugin
 
-test-results
+test-results/
 
 # Local dev logs (not pushed)
 dev-logs/
