@@ -27,7 +27,7 @@ interface ItemDetailsClientProps {
 }
 
 export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [item, setItem] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -85,6 +85,8 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
+              role="img"
+              aria-label="Ícone de cadeado"
             >
               <path
                 strokeLinecap="round"

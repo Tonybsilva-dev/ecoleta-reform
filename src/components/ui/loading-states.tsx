@@ -67,12 +67,15 @@ export function ItemDetailsSkeleton() {
           <Skeleton className="aspect-square w-full rounded-lg" />
         </div>
         <div className="space-y-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-lg border p-3">
-              <Skeleton className="mb-2 h-3 w-16" />
-              <Skeleton className="h-6 w-24" />
-            </div>
-          ))}
+          {Array.from({ length: 4 }, (_, i) => {
+            const uniqueKey = `skeleton-${Date.now()}-${i}`;
+            return (
+              <div key={uniqueKey} className="rounded-lg border p-3">
+                <Skeleton className="mb-2 h-3 w-16" />
+                <Skeleton className="h-6 w-24" />
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

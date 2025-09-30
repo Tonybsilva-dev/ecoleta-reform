@@ -19,7 +19,7 @@ describe("Dashboard item details (server)", () => {
 
   it("should render item title", async () => {
     // Mock da resposta da API
-    (global.fetch as any).mockResolvedValueOnce({
+    (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         id: "it_1",
