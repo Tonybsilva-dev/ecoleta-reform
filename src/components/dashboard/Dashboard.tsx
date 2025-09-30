@@ -168,7 +168,7 @@ export function Dashboard() {
                 + Criar Item
               </Link>
               <Link
-                href="/map"
+                href="/dashboard/map"
                 className="rounded-md bg-blue-600 px-4 py-2 font-medium text-sm text-white hover:bg-blue-700"
               >
                 Ver Mapa

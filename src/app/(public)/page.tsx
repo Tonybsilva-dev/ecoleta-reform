@@ -187,7 +187,7 @@ export default function Home() {
 
                         {/* Botão de ação */}
                         <Link
-                          href="/map"
+                          href="/dashboard/map"
                           className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/20 px-6 py-3 font-medium text-white backdrop-blur-sm transition-all hover:scale-105 hover:bg-white/30"
                         >
                           <svg
@@ -771,7 +771,7 @@ export default function Home() {
                 </li>
                 <li>
                   <Link
-                    href="/map"
+                    href="/dashboard/map"
                     className="transition-colors hover:text-white"
                   >
                     Mapa
