@@ -19,7 +19,7 @@ interface TestItem {
 // Cast helper
 const asTestItem = (v: unknown) => v as TestItem;
 
-type WithItems = { items?: Array<{ materialId?: string }> } | null;
+type WithItems = { items: Array<{ materialId?: string }> } | null;
 
 describe("Material, Item, and ItemImage Models (in-memory)", () => {
   beforeEach(async () => {
