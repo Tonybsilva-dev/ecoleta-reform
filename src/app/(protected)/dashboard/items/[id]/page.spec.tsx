@@ -19,7 +19,7 @@ describe("Dashboard item details (server)", () => {
 
   it("should render item title", async () => {
     // Mock da resposta da API
-    (global.fetch as jest.MockedFunction<typeof fetch>).mockResolvedValueOnce({
+    (global.fetch as any).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         id: "it_1",
@@ -31,7 +31,6 @@ describe("Dashboard item details (server)", () => {
       }),
     });
 
-    // @ts-expect-error server component
     const ui = await Page({ params: Promise.resolve({ id: "it_1" }) });
     render(ui);
 
