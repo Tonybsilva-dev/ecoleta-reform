@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
@@ -199,27 +200,7 @@ export default function Home() {
                         href="/map"
                         className="-translate-x-1/2 absolute bottom-8 left-1/2 z-10 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white/20 px-6 py-3 font-medium text-white backdrop-blur-sm transition-all hover:scale-105 hover:bg-white/30"
                       >
-                        <svg
-                          className="h-5 w-5"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          role="img"
-                          aria-label="Ícone de localização"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                        </svg>
+                        <MapPin className="h-5 w-5" />
                         Explorar Mapa
                       </Link>
                     </div>
