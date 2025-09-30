@@ -74,13 +74,16 @@ model User {
   sessions Session[]
 
   // Relations
-  profile         Profile?
-  memberships     Member[]
-  createdItems    Item[]
-  orders          Order[]
-  reviewerReviews Review[] @relation("ReviewerReviews")
-  revieweeReviews Review[] @relation("RevieweeReviews")
-  bids            Bid[]
+  profile          Profile?
+  memberships      Member[]
+  createdItems     Item[]
+  orders           Order[]
+  reviewerReviews  Review[]       @relation("ReviewerReviews")
+  revieweeReviews  Review[]       @relation("RevieweeReviews")
+  bids             Bid[]
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  notifications    Notification[]
 
   @@map("users")
 }
@@ -341,6 +344,38 @@ model Bid {
 
   @@index([itemId, status])
   @@map("bids")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  senderId    String
+  recipientId String
+  sender      User   @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  recipient   User   @relation("ReceivedMessages", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([senderId, recipientId, createdAt])
+  @@map("messages")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  title     String
+  body      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt])
+  @@map("notifications")
 }
 
 model Review {
