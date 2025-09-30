@@ -71,3 +71,14 @@
 - Ajustes de tipagem em `tests/in-memory/prisma-mock.ts` (substituindo `any` por `Record/unknown`).
 - Testes básicos de validação (400) para as rotas de API.
 - QA: testes e type-check verdes; alguns avisos de lint não bloqueantes permanecem em áreas não relacionadas.
+
+# Colocalização de Testes E2E
+
+- Movidos testes de `tests/e2e/` para junto dos módulos:
+  - `src/app/(protected)/admin/users/page.e2e.ts`
+  - `src/app/(protected)/dashboard/items/[id]/page.e2e.ts`
+- Ajustada configuração do Playwright:
+  - `testDir: "src"`
+  - `testMatch: "**/*.e2e.ts"`
+- Removida pasta `tests/e2e/` antiga.
+- Benefícios: testes próximos ao código, melhor organização, padrão consistente (.spec para unitários, .e2e para e2e).
