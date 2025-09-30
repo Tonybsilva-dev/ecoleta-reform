@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import { PinContainer } from "@/components/ui/3d-pin";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/constants";
 
@@ -146,34 +144,109 @@ export default function Home() {
 
               {/* Right Column - Visual */}
               <div className="flex items-center justify-center">
-                <aside aria-label="Mapa interativo sustentável">
-                  <PinContainer title="Ecoleta Reform" href="/map">
-                    <div className="flex h-[24rem] w-[24rem] basis-full flex-col p-6 text-slate-100/90 tracking-tight sm:basis-1/2">
-                      <h3 className="!pb-3 !m-0 max-w-xs font-bold text-lg text-white">
-                        Mapa Sustentável
-                      </h3>
-                      <div className="!m-0 !p-0 font-normal text-base">
-                        <span className="text-slate-200">
-                          Descubra pontos de coleta e materiais próximos a você.
-                          Conecte-se com nossa comunidade sustentável.
-                        </span>
+                <aside aria-label="Demonstração interativa de sustentabilidade">
+                  <div className="relative">
+                    {/* Card principal */}
+                    <div className="relative h-[28rem] w-[28rem] overflow-hidden rounded-2xl bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 shadow-2xl">
+                      {/* Conteúdo do card */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                        <div className="mb-6">
+                          <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                            <svg
+                              className="h-10 w-10 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                              role="img"
+                              aria-label="Ícone de reciclagem"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                              />
+                            </svg>
+                          </div>
+                          <h3 className="mb-3 font-bold text-2xl text-white">
+                            Economia Circular
+                          </h3>
+                          <p className="text-lg text-white/90 leading-relaxed">
+                            Conecte-se com nossa comunidade sustentável e
+                            transforme resíduos em recursos valiosos
+                          </p>
+                        </div>
+
+                        {/* Elementos flutuantes representando materiais */}
+                        <div className="absolute top-8 left-8 h-3 w-3 animate-bounce rounded-full bg-yellow-400 shadow-lg"></div>
+                        <div className="absolute top-16 right-12 h-2 w-2 animate-bounce rounded-full bg-blue-400 shadow-lg delay-500"></div>
+                        <div className="absolute bottom-20 left-16 h-2.5 w-2.5 animate-bounce rounded-full bg-red-400 shadow-lg delay-1000"></div>
+                        <div className="absolute right-8 bottom-12 h-2 w-2 animate-bounce rounded-full bg-green-400 shadow-lg delay-1500"></div>
+                        <div className="absolute top-24 left-1/2 h-1.5 w-1.5 animate-bounce rounded-full bg-purple-400 shadow-lg delay-2000"></div>
+                        <div className="absolute right-1/3 bottom-24 h-2 w-2 animate-bounce rounded-full bg-orange-400 shadow-lg delay-2500"></div>
+
+                        {/* Botão de ação */}
+                        <Link
+                          href="/map"
+                          className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/20 px-6 py-3 font-medium text-white backdrop-blur-sm transition-all hover:scale-105 hover:bg-white/30"
+                        >
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            role="img"
+                            aria-label="Ícone de localização"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                          Explorar Mapa
+                        </Link>
                       </div>
-                      <div className="relative mt-6 flex w-full flex-1 overflow-hidden rounded-lg bg-gradient-to-br from-green-600 via-emerald-600 to-teal-600 shadow-2xl">
-                        <Image
-                          src="/MapChart_Map.png"
-                          alt="Mapa Sustentável"
-                          fill
-                          className="object-contain p-4"
-                          priority
-                        />
-                        {/* Floating elements */}
-                        <div className="absolute top-6 left-6 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg"></div>
-                        <div className="absolute top-12 right-8 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-1000"></div>
-                        <div className="absolute bottom-8 left-12 h-2 w-2 animate-bounce rounded-full bg-white/90 shadow-lg delay-2000"></div>
-                        <div className="absolute right-6 bottom-6 h-2 w-2 animate-bounce rounded-full bg-white/80 shadow-lg delay-3000"></div>
+
+                      {/* Efeito de partículas */}
+                      <div className="absolute inset-0 overflow-hidden">
+                        <div className="-top-4 -left-4 absolute h-8 w-8 animate-pulse rounded-full bg-white/10"></div>
+                        <div className="-right-2 absolute top-1/4 h-6 w-6 animate-pulse rounded-full bg-white/10 delay-1000"></div>
+                        <div className="-bottom-2 absolute left-1/4 h-4 w-4 animate-pulse rounded-full bg-white/10 delay-2000"></div>
+                        <div className="-right-4 absolute bottom-1/4 h-5 w-5 animate-pulse rounded-full bg-white/10 delay-3000"></div>
                       </div>
                     </div>
-                  </PinContainer>
+
+                    {/* Cards flutuantes com estatísticas */}
+                    <div className="-top-4 -right-4 absolute h-16 w-16 animate-float rounded-full bg-white shadow-lg">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <span className="font-bold text-green-600 text-sm">
+                          ♻️
+                        </span>
+                      </div>
+                    </div>
+                    <div className="-bottom-4 -left-4 absolute h-12 w-12 animate-float rounded-full bg-white shadow-lg delay-1000">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <span className="font-bold text-emerald-600 text-xs">
+                          🌱
+                        </span>
+                      </div>
+                    </div>
+                    <div className="-left-6 absolute top-1/2 h-10 w-10 animate-float rounded-full bg-white shadow-lg delay-2000">
+                      <div className="flex h-full w-full items-center justify-center">
+                        <span className="font-bold text-teal-600 text-xs">
+                          💚
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </aside>
               </div>
             </div>
