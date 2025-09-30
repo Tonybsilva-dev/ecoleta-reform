@@ -1,9 +1,11 @@
 "use client";
 
+import { Leaf } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+
 import { PageHeader } from "@/components/layout";
 import { Button } from "@/components/ui";
 import {
@@ -18,8 +20,20 @@ interface Item {
   price?: number;
   quantity?: number;
   status: string;
-  material?: { name: string };
+  material?: {
+    id: string;
+    name: string;
+    description?: string;
+    category?: string;
+  };
   images?: { url: string }[];
+  createdBy?: {
+    name?: string;
+    email: string;
+    profile?: {
+      ecoScore?: number;
+    };
+  };
 }
 
 interface ItemDetailsClientProps {
@@ -128,7 +142,10 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
           title="Item não encontrado"
           description="O item solicitado não existe ou foi removido."
           actions={
-            <Button asChild>
+            <Button
+              className="flex cursor-pointer items-center justify-center gap-3 rounded-lg bg-green-600 px-8 py-6 font-medium text-lg text-white shadow-sm transition-colors hover:bg-green-700"
+              asChild
+            >
               <Link href="/dashboard/items">Voltar</Link>
             </Button>
           }
@@ -138,6 +155,7 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
   }
 
   const primaryImage = item.images?.[0];
+  const additionalImages = item.images?.slice(1, 5) || []; // Máximo 4 imagens adicionais
 
   return (
     <div className="space-y-6">
@@ -145,14 +163,19 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
         title={item.title}
         description={item.description || ""}
         actions={
-          <Button asChild>
+          <Button
+            asChild
+            className="flex cursor-pointer items-center justify-center gap-3 rounded-lg bg-green-600 px-8 py-6 font-medium text-lg text-white shadow-sm transition-colors hover:bg-green-700"
+          >
             <Link href="/dashboard/items">Voltar</Link>
           </Button>
         }
       />
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Seção de Imagens */}
         <div className="space-y-4">
+          {/* Imagem Principal */}
           {primaryImage ? (
             <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-muted">
               <Image
@@ -167,29 +190,116 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
               Sem imagem
             </div>
           )}
+
+          {/* Imagens Adicionais */}
+          {additionalImages.length > 0 && (
+            <div className="grid grid-cols-4 gap-2">
+              {additionalImages.map((image, index) => (
+                <div
+                  key={`additional-image-${image.url}-${index}`}
+                  className="relative aspect-square w-full overflow-hidden rounded-lg border bg-muted"
+                >
+                  <Image
+                    src={image.url}
+                    alt={`${item.title} - Imagem ${index + 2}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-        <div className="space-y-3">
-          <div className="rounded-lg border p-3">
-            <div className="text-muted-foreground text-xs">Preço</div>
-            <div className="font-semibold text-lg">
-              {item.price ? `R$ ${Number(item.price).toFixed(2)}` : "—"}
+        {/* Seção de Informações */}
+        <div className="space-y-4">
+          {/* Informações do Produto */}
+          <div className="space-y-3">
+            <div className="rounded-lg border p-3">
+              <div className="text-muted-foreground text-xs">Preço</div>
+              <div className="font-semibold text-lg">
+                {item.price ? `R$ ${Number(item.price).toFixed(2)}` : "—"}
+              </div>
+            </div>
+            <div className="rounded-lg border p-3">
+              <div className="text-muted-foreground text-xs">Quantidade</div>
+              <div className="font-semibold text-lg">
+                {item.quantity ?? "—"}
+              </div>
+            </div>
+            <div className="rounded-lg border p-3">
+              <div className="text-muted-foreground text-xs">Material</div>
+              <div className="font-semibold text-lg">
+                {item.material?.name ? (
+                  <div className="flex items-center space-x-2">
+                    <Leaf className="h-4 w-4 text-green-600" />
+                    <span>{item.material.name}</span>
+                    {item.material.category && (
+                      <span className="text-muted-foreground text-sm">
+                        ({item.material.category})
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  "—"
+                )}
+              </div>
+            </div>
+            <div className="rounded-lg border p-3">
+              <div className="text-muted-foreground text-xs">Status</div>
+              <div className="font-semibold text-lg">{item.status}</div>
             </div>
           </div>
-          <div className="rounded-lg border p-3">
-            <div className="text-muted-foreground text-xs">Quantidade</div>
-            <div className="font-semibold text-lg">{item.quantity ?? "—"}</div>
-          </div>
-          <div className="rounded-lg border p-3">
-            <div className="text-muted-foreground text-xs">Material</div>
-            <div className="font-semibold text-lg">
-              {item.material?.name ?? "—"}
+
+          {/* Informações do Anunciante */}
+          {item.createdBy && (
+            <div className="rounded-lg border p-4">
+              <h3 className="mb-3 font-semibold text-gray-900 text-sm">
+                Anunciado por
+              </h3>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground text-xs">Nome:</span>
+                  <span className="font-medium text-sm">
+                    {item.createdBy.name || "—"}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground text-xs">Email:</span>
+                  <span className="font-medium text-sm">
+                    {item.createdBy.email}
+                  </span>
+                </div>
+                {item.createdBy.profile?.ecoScore && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-xs">
+                      EcoPoints:
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <div className="flex">
+                        {[0, 1, 2, 3, 4].map((i) => (
+                          <Leaf
+                            key={`eco-point-${i}`}
+                            className={`h-4 w-4 ${
+                              i <
+                              Math.floor(
+                                (item.createdBy?.profile?.ecoScore || 0) / 20,
+                              )
+                                ? "text-green-500"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="font-medium text-green-600 text-sm">
+                        {item.createdBy.profile.ecoScore}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="rounded-lg border p-3">
-            <div className="text-muted-foreground text-xs">Status</div>
-            <div className="font-semibold text-lg">{item.status}</div>
-          </div>
+          )}
         </div>
       </div>
     </div>

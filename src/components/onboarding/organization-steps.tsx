@@ -12,22 +12,22 @@ interface StepProps {
 // Step 1: Nome da Organização
 export function OrganizationNameStep({ formData, updateFormData }: StepProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Icon */}
-      <div className="mb-6 flex justify-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-          <Building2 className="h-6 w-6 text-green-600" />
+      <div className="mb-4 flex justify-center sm:mb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
+          <Building2 className="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <Input
           value={formData.name || ""}
           onChange={(e) => updateFormData("name", e.target.value)}
           placeholder="Digite o nome da sua organização"
-          className="h-14 text-center text-lg"
+          className="h-12 text-center text-base sm:h-14 sm:text-lg"
         />
-        <p className="text-center text-gray-500 text-sm">
+        <p className="text-center text-gray-500 text-xs sm:text-sm">
           Ex: Empresa Verde Ltda, ONG Sustentável, Cooperativa Recicla
         </p>
       </div>
@@ -59,15 +59,15 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Icon */}
-      <div className="mb-6 flex justify-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-          <Building2 className="h-6 w-6 text-green-600" />
+      <div className="mb-4 flex justify-center sm:mb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
+          <Building2 className="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {types.map((type, index) => {
           const Icon = type.icon;
           const isSelected = formData.type === type.id;
@@ -78,32 +78,32 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
               key={type.id}
               type="button"
               onClick={() => updateFormData("type", type.id)}
-              className={`w-full cursor-pointer rounded-xl border-2 p-6 text-left transition-all duration-200 ${
+              className={`w-full cursor-pointer rounded-xl border-2 p-4 text-left transition-all duration-200 sm:p-6 ${
                 isSelected
                   ? "border-green-500 bg-green-50"
                   : "border-gray-200 bg-white hover:border-green-300 hover:bg-green-50"
-              } ${isLastItem ? "col-span-2" : ""}`}
+              } ${isLastItem ? "sm:col-span-2" : ""}`}
             >
-              <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="flex flex-col items-center space-y-3 text-center sm:space-y-4">
                 <div
-                  className={`rounded-lg p-3 ${
+                  className={`rounded-lg p-2 sm:p-3 ${
                     isSelected
                       ? "bg-green-500 text-white"
                       : "bg-gray-100 text-gray-600"
                   }`}
                 >
-                  <Icon className="h-6 w-6" />
+                  <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div className="flex-grow">
                   <h3
-                    className={`font-semibold text-lg ${
+                    className={`font-semibold text-base sm:text-lg ${
                       isSelected ? "text-green-900" : "text-gray-900"
                     }`}
                   >
                     {type.name}
                   </h3>
                   <p
-                    className={`text-sm ${
+                    className={`text-xs sm:text-sm ${
                       isSelected ? "text-green-700" : "text-gray-600"
                     }`}
                   >
@@ -111,9 +111,9 @@ export function OrganizationTypeStep({ formData, updateFormData }: StepProps) {
                   </p>
                 </div>
                 {isSelected && (
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500">
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500 sm:h-6 sm:w-6">
                     <svg
-                      className="h-4 w-4 text-white"
+                      className="h-3 w-3 text-white sm:h-4 sm:w-4"
                       fill="currentColor"
                       viewBox="0 0 20 20"
                     >
@@ -141,22 +141,22 @@ export function OrganizationDescriptionStep({
   updateFormData,
 }: StepProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Icon */}
-      <div className="mb-6 flex justify-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-          <FileText className="h-6 w-6 text-green-600" />
+      <div className="mb-4 flex justify-center sm:mb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
+          <FileText className="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <textarea
           value={formData.description || ""}
           onChange={(e) => updateFormData("description", e.target.value)}
           placeholder="Conte-nos sobre sua organização e seus objetivos sustentáveis..."
-          className="min-h-[200px] w-full resize-none rounded-xl border border-gray-300 p-4 text-lg focus:border-transparent focus:ring-2 focus:ring-green-500"
+          className="min-h-[150px] w-full resize-none rounded-xl border border-gray-300 p-3 text-sm focus:border-transparent focus:ring-2 focus:ring-green-500 sm:min-h-[200px] sm:p-4 sm:text-base"
         />
-        <p className="text-center text-gray-500 text-sm">
+        <p className="text-center text-gray-500 text-xs sm:text-sm">
           Esta descrição aparecerá no seu perfil público
         </p>
       </div>
@@ -170,19 +170,19 @@ export function OrganizationContactStep({
   updateFormData,
 }: StepProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Icon */}
-      <div className="mb-6 flex justify-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-          <Globe className="h-6 w-6 text-green-600" />
+      <div className="mb-4 flex justify-center sm:mb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
+          <Globe className="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="space-y-2">
+      <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-1.5 sm:space-y-2">
           <label
             htmlFor="website"
-            className="font-medium text-gray-700 text-sm"
+            className="font-medium text-gray-700 text-xs sm:text-sm"
           >
             Website (opcional)
           </label>
@@ -191,14 +191,14 @@ export function OrganizationContactStep({
             value={formData.website || ""}
             onChange={(e) => updateFormData("website", e.target.value)}
             placeholder="https://www.exemplo.com"
-            className="h-12 text-lg"
+            className="h-10 text-sm sm:h-12 sm:text-base"
           />
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5 sm:space-y-2">
           <label
             htmlFor="contactEmail"
-            className="font-medium text-gray-700 text-sm"
+            className="font-medium text-gray-700 text-xs sm:text-sm"
           >
             Email de contato
           </label>
@@ -208,12 +208,15 @@ export function OrganizationContactStep({
             value={formData.contactEmail || ""}
             onChange={(e) => updateFormData("contactEmail", e.target.value)}
             placeholder="contato@exemplo.com"
-            className="h-12 text-lg"
+            className="h-10 text-sm sm:h-12 sm:text-base"
           />
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="domain" className="font-medium text-gray-700 text-sm">
+        <div className="space-y-1.5 sm:space-y-2">
+          <label
+            htmlFor="domain"
+            className="font-medium text-gray-700 text-xs sm:text-sm"
+          >
             Domínio personalizado (opcional)
           </label>
           <Input
@@ -221,7 +224,7 @@ export function OrganizationContactStep({
             value={formData.domain || ""}
             onChange={(e) => updateFormData("domain", e.target.value)}
             placeholder="empresa.ecoleta.com"
-            className="h-12 text-lg"
+            className="h-10 text-sm sm:h-12 sm:text-base"
           />
           <p className="text-gray-500 text-xs">
             Seu endereço personalizado na plataforma
@@ -235,28 +238,30 @@ export function OrganizationContactStep({
 // Step 5: Confirmação
 export function OrganizationConfirmationStep({ formData }: StepProps) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Icon */}
-      <div className="mb-6 flex justify-center">
-        <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
-          <Building2 className="h-6 w-6 text-green-600" />
+      <div className="mb-4 flex justify-center sm:mb-6">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
+          <Building2 className="h-5 w-5 text-green-600 sm:h-6 sm:w-6" />
         </div>
       </div>
 
-      <div className="space-y-4 rounded-xl bg-gray-50 p-6">
-        <h3 className="mb-4 font-semibold text-gray-900 text-lg">
+      <div className="space-y-3 rounded-xl bg-gray-50 p-4 sm:space-y-4 sm:p-6">
+        <h3 className="mb-3 font-semibold text-base text-gray-900 sm:mb-4 sm:text-lg">
           Confirme os dados da sua organização:
         </h3>
 
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <span className="text-gray-600">Nome:</span>
-            <span className="font-medium">{formData.name}</span>
+        <div className="space-y-2 sm:space-y-3">
+          <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+            <span className="text-gray-600 text-sm">Nome:</span>
+            <span className="font-medium text-sm sm:text-base">
+              {formData.name}
+            </span>
           </div>
 
-          <div className="flex justify-between">
-            <span className="text-gray-600">Tipo:</span>
-            <span className="font-medium">
+          <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+            <span className="text-gray-600 text-sm">Tipo:</span>
+            <span className="font-medium text-sm sm:text-base">
               {formData.type === "COLLECTOR" && "Cooperativa"}
               {formData.type === "NGO" && "ONG"}
               {formData.type === "COMPANY" && "Empresa"}
@@ -264,9 +269,9 @@ export function OrganizationConfirmationStep({ formData }: StepProps) {
           </div>
 
           {formData.description && (
-            <div className="flex justify-between">
-              <span className="text-gray-600">Descrição:</span>
-              <span className="max-w-xs text-right font-medium">
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+              <span className="text-gray-600 text-sm">Descrição:</span>
+              <span className="max-w-xs text-right font-medium text-sm sm:text-base">
                 {formData.description.length > 50
                   ? `${formData.description.substring(0, 50)}...`
                   : formData.description}
@@ -275,23 +280,27 @@ export function OrganizationConfirmationStep({ formData }: StepProps) {
           )}
 
           {formData.website && (
-            <div className="flex justify-between">
-              <span className="text-gray-600">Website:</span>
-              <span className="font-medium">{formData.website}</span>
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+              <span className="text-gray-600 text-sm">Website:</span>
+              <span className="font-medium text-sm sm:text-base">
+                {formData.website}
+              </span>
             </div>
           )}
 
           {formData.contactEmail && (
-            <div className="flex justify-between">
-              <span className="text-gray-600">Email:</span>
-              <span className="font-medium">{formData.contactEmail}</span>
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+              <span className="text-gray-600 text-sm">Email:</span>
+              <span className="font-medium text-sm sm:text-base">
+                {formData.contactEmail}
+              </span>
             </div>
           )}
 
           {formData.domain && (
-            <div className="flex justify-between">
-              <span className="text-gray-600">Domínio:</span>
-              <span className="font-medium text-green-600">
+            <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+              <span className="text-gray-600 text-sm">Domínio:</span>
+              <span className="font-medium text-green-600 text-sm sm:text-base">
                 {formData.domain.includes(".")
                   ? formData.domain
                   : `${formData.domain}.ecoleta.com`}
@@ -301,7 +310,7 @@ export function OrganizationConfirmationStep({ formData }: StepProps) {
         </div>
       </div>
 
-      <p className="text-center text-gray-500 text-sm">
+      <p className="text-center text-gray-500 text-xs sm:text-sm">
         Você poderá editar essas informações posteriormente nas configurações.
       </p>
     </div>

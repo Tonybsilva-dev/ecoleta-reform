@@ -191,40 +191,42 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
       style={{ position: "relative" }}
     >
       {/* Left Column - Promotional Section */}
-      <div className="hidden flex-col justify-between bg-green-600 p-8 lg:flex lg:w-1/3">
+      <div className="hidden flex-col justify-between bg-green-600 p-4 sm:p-6 md:p-8 xl:flex xl:w-1/3">
         {/* Logo */}
-        <div className="flex items-center space-x-3">
-          <div className="h-8 w-8 rounded bg-white"></div>
-          <span className="font-bold text-white text-xl">Ecoleta</span>
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <div className="h-6 w-6 rounded bg-white sm:h-8 sm:w-8"></div>
+          <span className="font-bold text-lg text-white sm:text-xl">
+            Ecoleta
+          </span>
         </div>
 
         {/* Main Content */}
-        <div className="space-y-6">
-          <h1 className="font-bold text-3xl text-white leading-tight">
+        <div className="space-y-4 sm:space-y-6">
+          <h1 className="font-bold text-2xl text-white leading-tight sm:text-3xl">
             Comece a fazer a diferença no meio ambiente agora.
           </h1>
-          <p className="text-green-100 text-lg leading-relaxed">
+          <p className="text-base text-green-100 leading-relaxed sm:text-lg">
             Conecte-se com uma comunidade sustentável e transforme resíduos em
             recursos valiosos através de nossa plataforma integrada.
           </p>
         </div>
 
         {/* Step Indicator */}
-        <div className="flex space-x-2">
-          <div className="h-1 w-8 rounded bg-white"></div>
-          <div className="h-1 w-4 rounded bg-green-300"></div>
-          <div className="h-1 w-4 rounded bg-green-300"></div>
+        <div className="flex space-x-1.5 sm:space-x-2">
+          <div className="h-1 w-6 rounded bg-white sm:h-1 sm:w-8"></div>
+          <div className="h-1 w-3 rounded bg-green-300 sm:h-1 sm:w-4"></div>
+          <div className="h-1 w-3 rounded bg-green-300 sm:h-1 sm:w-4"></div>
         </div>
       </div>
 
       {/* Right Column - Account Type Selection */}
-      <div className="flex w-full flex-col justify-center bg-white px-8 py-12 lg:w-2/3">
-        <div className="mx-auto w-full max-w-md">
+      <div className="flex w-full flex-col justify-center bg-white px-4 py-8 sm:px-6 sm:py-10 md:px-8 md:py-12 xl:w-2/3">
+        <div className="mx-auto w-full max-w-sm sm:max-w-md">
           {/* Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <div className="mb-4 flex justify-center sm:mb-6">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
               <svg
-                className="h-6 w-6 text-green-600"
+                className="h-5 w-5 text-green-600 sm:h-6 sm:w-6"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -235,11 +237,11 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
           </div>
 
           {/* Title */}
-          <div className="mb-6 text-center">
-            <h2 className="mb-3 font-bold text-3xl text-gray-900">
+          <div className="mb-4 text-center sm:mb-6">
+            <h2 className="mb-2 font-bold text-2xl text-gray-900 sm:mb-3 sm:text-3xl">
               Escolha seu tipo de conta
             </h2>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 text-sm sm:text-base md:text-lg">
               Selecione como você pretende usar o Ecoleta para começar sua
               jornada sustentável.
             </p>
@@ -247,11 +249,11 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 sm:mb-6 sm:p-4">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <svg
-                    className="h-5 w-5 text-red-400"
+                    className="h-4 w-4 text-red-400 sm:h-5 sm:w-5"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -263,9 +265,11 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
                     />
                   </svg>
                 </div>
-                <div className="ml-3">
-                  <h3 className="font-medium text-red-800 text-sm">Erro</h3>
-                  <div className="mt-2 text-red-700 text-sm">
+                <div className="ml-2 sm:ml-3">
+                  <h3 className="font-medium text-red-800 text-xs sm:text-sm">
+                    Erro
+                  </h3>
+                  <div className="mt-1 text-red-700 text-xs sm:mt-2 sm:text-sm">
                     <p>{error}</p>
                   </div>
                 </div>
@@ -275,7 +279,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
 
           {/* Account Type Options */}
           <div
-            className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2"
+            className="mb-6 grid grid-cols-1 gap-3 sm:mb-8 sm:grid-cols-2 sm:gap-4"
             style={{ position: "relative", zIndex: 2 }}
           >
             {accountTypes.map((accountType) => (
@@ -285,25 +289,32 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
                 onClick={() => setSelectedType(accountType.type)}
                 disabled={isLoading}
                 style={{ position: "relative", zIndex: 1 }}
-                className={`w-full cursor-pointer rounded-xl border-2 p-6 text-left transition-all duration-200 ${
+                className={`w-full cursor-pointer rounded-xl border-2 p-4 text-left transition-all duration-200 sm:p-6 ${
                   selectedType === accountType.type
                     ? "border-green-500 bg-green-50"
                     : "border-gray-200 bg-white hover:border-green-300 hover:bg-green-50"
                 } disabled:cursor-not-allowed disabled:opacity-50`}
               >
-                <div className="flex flex-col items-center space-y-4 text-center">
+                <div className="flex flex-col items-center space-y-3 text-center sm:space-y-4">
                   <div
-                    className={`rounded-lg p-3 ${
+                    className={`rounded-lg p-2 sm:p-3 ${
                       selectedType === accountType.type
                         ? "bg-green-500 text-white"
                         : "bg-gray-100 text-gray-600"
                     }`}
                   >
-                    {accountType.icon}
+                    <svg
+                      className="h-5 w-5 sm:h-6 sm:w-6"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <title>{accountType.title}</title>
+                      {accountType.icon}
+                    </svg>
                   </div>
                   <div className="flex-grow">
                     <h3
-                      className={`font-semibold text-lg ${
+                      className={`font-semibold text-base sm:text-lg ${
                         selectedType === accountType.type
                           ? "text-green-900"
                           : "text-gray-900"
@@ -312,7 +323,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
                       {accountType.title}
                     </h3>
                     <p
-                      className={`text-sm ${
+                      className={`text-xs sm:text-sm ${
                         selectedType === accountType.type
                           ? "text-green-700"
                           : "text-gray-600"
@@ -322,9 +333,9 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
                     </p>
                   </div>
                   {selectedType === accountType.type && (
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-500">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-green-500 sm:h-6 sm:w-6">
                       <svg
-                        className="h-4 w-4 text-white"
+                        className="h-3 w-3 text-white sm:h-4 sm:w-4"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -347,18 +358,18 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
             <button
               type="button"
               disabled={isLoading || isRedirecting}
-              className="w-full rounded-xl bg-green-600 px-6 py-4 font-semibold text-white transition-colors duration-200 hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-full rounded-xl bg-green-600 px-4 py-3 font-semibold text-sm text-white transition-colors duration-200 hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50 sm:px-6 sm:py-4 sm:text-base"
               onClick={() => handleTypeSelection(selectedType)}
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
-                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Processando...
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-sm">Processando...</span>
                 </div>
               ) : isRedirecting ? (
                 <div className="flex items-center justify-center">
-                  <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  Redirecionando...
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent sm:h-5 sm:w-5" />
+                  <span className="text-xs sm:text-sm">Redirecionando...</span>
                 </div>
               ) : (
                 "Próximo Passo"

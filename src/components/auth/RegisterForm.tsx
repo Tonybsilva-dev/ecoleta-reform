@@ -117,7 +117,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`space-y-6 ${className || ""}`}
+      className={`space-y-4 sm:space-y-6 ${className || ""}`}
     >
       {/* Error Message */}
       {error && (
@@ -133,47 +133,62 @@ export function RegisterForm({ className }: RegisterFormProps) {
       )}
 
       {/* Name Field */}
-      <div className="space-y-2">
-        <Label htmlFor="name">Nome completo</Label>
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label htmlFor="name" className="text-sm sm:text-base">
+          Nome completo
+        </Label>
         <Input
           id="name"
           type="text"
           placeholder="Seu nome completo"
+          className="h-10 sm:h-11"
           {...register("name")}
           disabled={isLoading || isSubmitting}
         />
         {errors.name && (
-          <p className="text-red-600 text-sm">{errors.name.message}</p>
+          <p className="text-red-600 text-xs sm:text-sm">
+            {errors.name.message}
+          </p>
         )}
       </div>
 
       {/* Email Field */}
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label htmlFor="email" className="text-sm sm:text-base">
+          Email
+        </Label>
         <Input
           id="email"
           type="email"
           placeholder="seu@email.com"
+          className="h-10 sm:h-11"
           {...register("email")}
           disabled={isLoading || isSubmitting}
         />
         {errors.email && (
-          <p className="text-red-600 text-sm">{errors.email.message}</p>
+          <p className="text-red-600 text-xs sm:text-sm">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
       {/* Password Field */}
-      <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label htmlFor="password" className="text-sm sm:text-base">
+          Senha
+        </Label>
         <Input
           id="password"
           type="password"
           placeholder="Sua senha"
+          className="h-10 sm:h-11"
           {...register("password")}
           disabled={isLoading || isSubmitting}
         />
         {errors.password ? (
-          <p className="text-red-600 text-sm">{errors.password.message}</p>
+          <p className="text-red-600 text-xs sm:text-sm">
+            {errors.password.message}
+          </p>
         ) : (
           <p className="text-gray-500 text-xs">
             Mínimo 8 caracteres com letras maiúsculas, minúsculas, números e
@@ -183,17 +198,20 @@ export function RegisterForm({ className }: RegisterFormProps) {
       </div>
 
       {/* Confirm Password Field */}
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirmar senha</Label>
+      <div className="space-y-1.5 sm:space-y-2">
+        <Label htmlFor="confirmPassword" className="text-sm sm:text-base">
+          Confirmar senha
+        </Label>
         <Input
           id="confirmPassword"
           type="password"
           placeholder="Confirme sua senha"
+          className="h-10 sm:h-11"
           {...register("confirmPassword")}
           disabled={isLoading || isSubmitting}
         />
         {errors.confirmPassword && (
-          <p className="text-red-600 text-sm">
+          <p className="text-red-600 text-xs sm:text-sm">
             {errors.confirmPassword.message}
           </p>
         )}
@@ -203,7 +221,7 @@ export function RegisterForm({ className }: RegisterFormProps) {
       <button
         type="submit"
         disabled={isLoading || isSubmitting}
-        className="flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2.5 text-sm text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:py-3 sm:text-base"
       >
         {isLoading || isSubmitting ? (
           <div className="flex items-center">
@@ -216,28 +234,28 @@ export function RegisterForm({ className }: RegisterFormProps) {
       </button>
 
       {/* Divisor */}
-      <div className="relative my-8">
+      <div className="relative my-6 sm:my-8">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-gray-300 border-t" />
         </div>
-        <div className="relative flex justify-center text-sm">
+        <div className="relative flex justify-center text-xs sm:text-sm">
           <span className="bg-white px-2 text-gray-500">ou</span>
         </div>
       </div>
 
       {/* Botão do Google */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <button
           type="button"
           onClick={handleGoogleSignUp}
           disabled={isGoogleLoading}
-          className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50 sm:gap-3 sm:py-3"
         >
           {isGoogleLoading ? (
-            <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600 sm:h-5 sm:w-5" />
           ) : (
             <svg
-              className="h-5 w-5"
+              className="h-4 w-4 sm:h-5 sm:w-5"
               viewBox="0 0 24 24"
               role="img"
               aria-label="Google Logo"
@@ -260,7 +278,9 @@ export function RegisterForm({ className }: RegisterFormProps) {
               />
             </svg>
           )}
-          {isGoogleLoading ? "Criando conta..." : "Criar conta com Google"}
+          <span className="text-xs sm:text-sm">
+            {isGoogleLoading ? "Criando conta..." : "Criar conta com Google"}
+          </span>
         </button>
       </div>
     </form>

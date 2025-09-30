@@ -101,35 +101,37 @@ export function SignIn() {
   // Mostrar loading state se estiver carregando
   if (isLoading || isCredentialsLoading) {
     return (
-      <div className="flex min-h-screen flex-col lg:flex-row">
+      <div className="flex min-h-screen flex-col xl:flex-row">
         {/* Left Column - Promotional (mantém o visual) */}
-        <div className="hidden w-full items-center justify-center bg-green-600 p-8 lg:flex lg:w-1/3">
+        <div className="hidden w-full items-center justify-center bg-green-600 p-4 sm:p-6 md:p-8 xl:flex xl:w-1/3">
           <div className="text-white">
-            <div className="mb-8 flex items-center">
-              <div className="mr-3 h-8 w-8 rounded-lg bg-white" />
-              <span className="font-semibold text-2xl">Ecoleta</span>
+            <div className="mb-6 flex items-center sm:mb-8">
+              <div className="mr-2 h-6 w-6 rounded-lg bg-white sm:mr-3 sm:h-8 sm:w-8" />
+              <span className="font-semibold text-lg sm:text-2xl">Ecoleta</span>
             </div>
-            <h1 className="mb-4 font-bold text-4xl">Bem-vindo de volta!</h1>
-            <p className="text-lg opacity-90">
+            <h1 className="mb-3 font-bold text-2xl sm:mb-4 sm:text-3xl xl:text-4xl">
+              Bem-vindo de volta!
+            </h1>
+            <p className="text-base opacity-90 sm:text-lg">
               Faça login para continuar sua jornada sustentável e conectar-se
               com nossa comunidade.
             </p>
-            <div className="mt-12 flex space-x-2">
-              <span className="h-2 w-10 rounded-full bg-white" />
-              <span className="h-2 w-2 rounded-full bg-white opacity-50" />
-              <span className="h-2 w-2 rounded-full bg-white opacity-50" />
+            <div className="mt-8 flex space-x-2 sm:mt-12">
+              <span className="h-1.5 w-8 rounded-full bg-white sm:h-2 sm:w-10" />
+              <span className="h-1.5 w-1.5 rounded-full bg-white opacity-50 sm:h-2 sm:w-2" />
+              <span className="h-1.5 w-1.5 rounded-full bg-white opacity-50 sm:h-2 sm:w-2" />
             </div>
           </div>
         </div>
 
         {/* Right Column - Loading State */}
-        <div className="flex w-full flex-col justify-center bg-white px-8 py-12 lg:w-2/3">
-          <div className="mx-auto w-full max-w-md">
+        <div className="flex w-full flex-col justify-center bg-white px-4 py-8 sm:px-6 sm:py-12 md:px-8 xl:w-2/3">
+          <div className="mx-auto w-full max-w-sm sm:max-w-md">
             {/* Icon */}
-            <div className="mb-6 flex justify-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+            <div className="mb-4 flex justify-center sm:mb-6">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
                 <svg
-                  className="h-6 w-6 text-green-600"
+                  className="h-5 w-5 text-green-600 sm:h-6 sm:w-6"
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
@@ -140,17 +142,17 @@ export function SignIn() {
             </div>
 
             {/* Title */}
-            <div className="mb-6 text-center">
-              <h2 className="mb-3 font-bold text-3xl text-gray-900">
+            <div className="mb-4 text-center sm:mb-6">
+              <h2 className="mb-2 font-bold text-2xl text-gray-900 sm:mb-3 sm:text-3xl">
                 Faça login
               </h2>
-              <p className="text-gray-600">
+              <p className="text-gray-600 text-sm sm:text-base">
                 Entre com suas credenciais para acessar sua conta
               </p>
             </div>
 
             {/* Loading State */}
-            <div className="flex justify-center py-8">
+            <div className="flex justify-center py-6 sm:py-8">
               <LoadingState message="Entrando na sua conta..." />
             </div>
           </div>
@@ -175,9 +177,9 @@ export function SignIn() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
+    <div className="flex min-h-screen flex-col xl:flex-row">
       {/* Left Column - Promotional */}
-      <div className="hidden w-full items-center justify-center bg-green-600 p-8 lg:flex lg:w-1/3">
+      <div className="hidden w-full items-center justify-center bg-green-600 p-4 sm:p-6 md:p-8 xl:flex xl:w-1/3">
         {/* Botão de voltar */}
         <Link
           href="#"
@@ -185,10 +187,10 @@ export function SignIn() {
             e.preventDefault();
             window.history.back();
           }}
-          className="absolute top-6 left-6 flex items-center text-white opacity-80 transition-opacity hover:opacity-100"
+          className="absolute top-4 left-4 flex items-center text-white opacity-80 transition-opacity hover:opacity-100 sm:top-6 sm:left-6"
         >
           <svg
-            className="mr-2 h-5 w-5"
+            className="mr-2 h-4 w-4 sm:h-5 sm:w-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -201,35 +203,37 @@ export function SignIn() {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="font-medium text-sm">Voltar</span>
+          <span className="font-medium text-xs sm:text-sm">Voltar</span>
         </Link>
 
         <div className="text-white">
-          <div className="mb-8 flex items-center">
-            <div className="mr-3 h-8 w-8 rounded-lg bg-white" />
-            <span className="font-semibold text-2xl">Ecoleta</span>
+          <div className="mb-6 flex items-center sm:mb-8">
+            <div className="mr-2 h-6 w-6 rounded-lg bg-white sm:mr-3 sm:h-8 sm:w-8" />
+            <span className="font-semibold text-lg sm:text-2xl">Ecoleta</span>
           </div>
-          <h1 className="mb-4 font-bold text-4xl">Bem-vindo de volta!</h1>
-          <p className="text-lg opacity-90">
+          <h1 className="mb-3 font-bold text-2xl sm:mb-4 sm:text-3xl xl:text-4xl">
+            Bem-vindo de volta!
+          </h1>
+          <p className="text-base opacity-90 sm:text-lg">
             Faça login para continuar sua jornada sustentável e conectar-se com
             nossa comunidade.
           </p>
-          <div className="mt-12 flex space-x-2">
-            <span className="h-2 w-10 rounded-full bg-white" />
-            <span className="h-2 w-2 rounded-full bg-white opacity-50" />
-            <span className="h-2 w-2 rounded-full bg-white opacity-50" />
+          <div className="mt-8 flex space-x-2 sm:mt-12">
+            <span className="h-1.5 w-8 rounded-full bg-white sm:h-2 sm:w-10" />
+            <span className="h-1.5 w-1.5 rounded-full bg-white opacity-50 sm:h-2 sm:w-2" />
+            <span className="h-1.5 w-1.5 rounded-full bg-white opacity-50 sm:h-2 sm:w-2" />
           </div>
         </div>
       </div>
 
       {/* Right Column - Login Form */}
-      <div className="flex w-full flex-col justify-center bg-white px-8 py-12 lg:w-2/3">
-        <div className="mx-auto w-full max-w-md">
+      <div className="flex w-full flex-col justify-center bg-white px-4 py-8 sm:px-6 sm:py-12 md:px-8 xl:w-2/3">
+        <div className="mx-auto w-full max-w-sm sm:max-w-md">
           {/* Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <div className="mb-4 flex justify-center sm:mb-6">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
               <svg
-                className="h-6 w-6 text-green-600"
+                className="h-5 w-5 text-green-600 sm:h-6 sm:w-6"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -240,17 +244,20 @@ export function SignIn() {
           </div>
 
           {/* Title */}
-          <div className="mb-6 text-center">
-            <h2 className="mb-3 font-bold text-3xl text-gray-900">
+          <div className="mb-4 text-center sm:mb-6">
+            <h2 className="mb-2 font-bold text-2xl text-gray-900 sm:mb-3 sm:text-3xl">
               Faça login
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               Entre com suas credenciais para acessar sua conta
             </p>
           </div>
 
           {/* Formulário de Email/Senha */}
-          <form onSubmit={handleCredentialsSignIn} className="space-y-6">
+          <form
+            onSubmit={handleCredentialsSignIn}
+            className="space-y-4 sm:space-y-6"
+          >
             {credentialsError && (
               <ErrorState
                 message={credentialsError}
@@ -263,7 +270,9 @@ export function SignIn() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-sm sm:text-base">
+                Email
+              </Label>
               <Input
                 id="email"
                 name="email"
@@ -273,11 +282,14 @@ export function SignIn() {
                 onChange={handleInputChange}
                 placeholder="Digite seu email"
                 disabled={isCredentialsLoading}
+                className="h-10 sm:h-11"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password" className="text-sm sm:text-base">
+                Senha
+              </Label>
               <Input
                 id="password"
                 name="password"
@@ -287,13 +299,14 @@ export function SignIn() {
                 onChange={handleInputChange}
                 placeholder="Digite sua senha"
                 disabled={isCredentialsLoading}
+                className="h-10 sm:h-11"
               />
             </div>
 
             <button
               type="submit"
               disabled={isCredentialsLoading}
-              className="flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2.5 font-medium text-sm text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:py-3 sm:text-base"
             >
               {isCredentialsLoading ? (
                 <div className="flex items-center">
@@ -307,28 +320,28 @@ export function SignIn() {
           </form>
 
           {/* Divisor */}
-          <div className="relative my-8">
+          <div className="relative my-6 sm:my-8">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-gray-300 border-t" />
             </div>
-            <div className="relative flex justify-center text-sm">
+            <div className="relative flex justify-center text-xs sm:text-sm">
               <span className="bg-white px-2 text-gray-500">ou</span>
             </div>
           </div>
 
           {/* Botão do Google */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <button
               type="button"
               onClick={handleGoogleSignIn}
               disabled={isLoading}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 font-medium text-gray-700 text-sm shadow-sm transition-colors hover:bg-gray-50 disabled:opacity-50 sm:gap-3 sm:py-3"
             >
               {isLoading ? (
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600" />
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-gray-300 border-t-gray-600 sm:h-5 sm:w-5" />
               ) : (
                 <svg
-                  className="h-5 w-5"
+                  className="h-4 w-4 sm:h-5 sm:w-5"
                   viewBox="0 0 24 24"
                   role="img"
                   aria-label="Google Logo"
@@ -356,8 +369,8 @@ export function SignIn() {
           </div>
 
           {/* Link para registro */}
-          <div className="mt-8 text-center">
-            <p className="text-gray-600 text-sm">
+          <div className="mt-6 text-center sm:mt-8">
+            <p className="text-gray-600 text-xs sm:text-sm">
               Não tem uma conta?{" "}
               <Link
                 href="/register"
@@ -368,7 +381,7 @@ export function SignIn() {
             </p>
           </div>
 
-          <div className="mt-6 text-center text-gray-600 text-sm">
+          <div className="mt-4 text-center text-gray-600 text-xs sm:mt-6 sm:text-sm">
             <p>
               Ao continuar, você concorda com nossos{" "}
               <a href="/terms" className="text-green-600 hover:text-green-500">

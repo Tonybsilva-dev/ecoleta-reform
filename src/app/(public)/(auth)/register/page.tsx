@@ -10,41 +10,41 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
+    <div className="flex min-h-screen flex-col xl:flex-row">
       {/* Left Column - Promotional */}
-      <div className="hidden w-full items-center justify-center bg-green-600 p-8 lg:flex lg:w-1/3">
+      <div className="hidden w-full items-center justify-center bg-green-600 p-4 sm:p-6 md:p-8 xl:flex xl:w-1/3">
         {/* Botão de voltar */}
         <BackButton />
 
         <div className="text-white">
-          <div className="mb-8 flex items-center">
-            <div className="mr-3 h-8 w-8 rounded-lg bg-white" />
-            <span className="font-semibold text-2xl">Ecoleta</span>
+          <div className="mb-6 flex items-center sm:mb-8">
+            <div className="mr-2 h-6 w-6 rounded-lg bg-white sm:mr-3 sm:h-8 sm:w-8" />
+            <span className="font-semibold text-xl sm:text-2xl">Ecoleta</span>
           </div>
-          <h1 className="mb-4 font-bold text-4xl">
+          <h1 className="mb-3 font-bold text-2xl sm:mb-4 sm:text-3xl md:text-4xl">
             Junte-se à nossa comunidade sustentável
           </h1>
-          <p className="text-lg opacity-90">
+          <p className="text-base opacity-90 sm:text-lg">
             Crie sua conta e comece a fazer a diferença no meio ambiente.
             Conecte-se com pessoas e empresas que compartilham do mesmo
             propósito.
           </p>
-          <div className="mt-12 flex space-x-2">
-            <span className="h-2 w-10 rounded-full bg-white" />
-            <span className="h-2 w-2 rounded-full bg-white opacity-50" />
-            <span className="h-2 w-2 rounded-full bg-white opacity-50" />
+          <div className="mt-8 flex space-x-1.5 sm:mt-12 sm:space-x-2">
+            <span className="h-1.5 w-8 rounded-full bg-white sm:h-2 sm:w-10" />
+            <span className="h-1.5 w-1.5 rounded-full bg-white opacity-50 sm:h-2 sm:w-2" />
+            <span className="h-1.5 w-1.5 rounded-full bg-white opacity-50 sm:h-2 sm:w-2" />
           </div>
         </div>
       </div>
 
       {/* Right Column - Registration Form */}
-      <div className="flex w-full flex-col justify-center bg-white px-8 py-12 lg:w-2/3">
-        <div className="mx-auto w-full max-w-md">
+      <div className="flex w-full flex-col justify-center bg-white px-4 py-8 sm:px-6 sm:py-10 md:px-8 md:py-12 xl:w-2/3">
+        <div className="mx-auto w-full max-w-sm sm:max-w-md">
           {/* Icon */}
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
+          <div className="mb-4 flex justify-center sm:mb-6">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100 sm:h-12 sm:w-12">
               <svg
-                className="h-6 w-6 text-green-600"
+                className="h-5 w-5 text-green-600 sm:h-6 sm:w-6"
                 fill="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -55,18 +55,18 @@ export default function RegisterPage() {
           </div>
 
           {/* Title */}
-          <div className="mb-6 text-center">
-            <h2 className="mb-3 font-bold text-3xl text-gray-900">
+          <div className="mb-4 text-center sm:mb-6">
+            <h2 className="mb-2 font-bold text-2xl text-gray-900 sm:mb-3 sm:text-3xl">
               Criar conta
             </h2>
-            <p className="text-gray-600">
+            <p className="text-gray-600 text-sm sm:text-base">
               Preencha os dados abaixo para criar sua conta
             </p>
           </div>
 
           <RegisterForm />
 
-          <div className="mt-6 text-center text-gray-600 text-sm">
+          <div className="mt-4 text-center text-gray-600 text-xs sm:mt-6 sm:text-sm">
             <p>
               Ao continuar, você concorda com nossos{" "}
               <a href="/terms" className="text-green-600 hover:text-green-500">
