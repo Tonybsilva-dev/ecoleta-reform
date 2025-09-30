@@ -29,9 +29,15 @@ describe("ExampleButton", () => {
     const user = userEvent.setup();
     const handleClick = vi.fn();
 
-    render(<ExampleButton onClick={handleClick}>Click me</ExampleButton>);
+    render(
+      <>
+        <ExampleButton onClick={handleClick}>Click me</ExampleButton>
+        <ExampleButton onClick={handleClick}>Click me</ExampleButton>
+      </>,
+    );
 
-    await user.click(screen.getByTestId("example-button"));
+    const buttons = screen.getAllByTestId("example-button");
+    await user.click(buttons[0]!);
 
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
