@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:vercel": "vercel dev",
+    "ws:dev": "node -r ts-node/register/transpile-only scripts/ws-local.ts",
     "build": "next build",
     "start": "next start",
     "lint": "biome check",
@@ -57,6 +59,8 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.63.0",
     "react-leaflet": "^5.0.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
@@ -74,15 +78,19 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.0.4",
     "husky": "^9.1.7",
     "jsdom": "^27.0.0",
     "lint-staged": "^16.2.1",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "tw-animate-css": "^1.4.0",
     "typescript": "^5",
-    "vitest": "^3.2.4"
+    "vercel": "^48.1.6",
+    "vitest": "^3.2.4",
+    "ws": "^8.18.3"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

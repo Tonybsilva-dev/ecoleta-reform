@@ -50,6 +50,13 @@ enum PaymentStatus {
   REFUNDED
 }
 
+enum BidStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  WITHDRAWN
+}
+
 // ===== MODELS =====
 
 model User {
@@ -73,6 +80,7 @@ model User {
   orders          Order[]
   reviewerReviews Review[] @relation("ReviewerReviews")
   revieweeReviews Review[] @relation("RevieweeReviews")
+  bids            Bid[]
 
   @@map("users")
 }
@@ -245,6 +253,7 @@ model Item {
   images     ItemImage[]
   pointItems PointItem[]
   orders     Order[]
+  bids       Bid[]
 
   @@map("items")
 }
@@ -292,6 +301,7 @@ model Order {
   item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   payment Payment?
+  bids    Bid[]
 
   @@map("orders")
 }
@@ -310,6 +320,27 @@ model Payment {
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@map("payments")
+}
+
+model Bid {
+  id        String    @id @default(cuid())
+  amount    Decimal   @db.Decimal(10, 2)
+  status    BidStatus @default(PENDING)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id])
+
+  @@index([itemId, status])
+  @@map("bids")
 }
 
 model Review {
