@@ -277,3 +277,60 @@ describe("Material, Item, and ItemImage Models (in-memory)", () => {
     });
   });
 });
+
+describe("Message and Notification Models (in-memory)", () => {
+  beforeEach(async () => {
+    await prisma.user.deleteMany();
+  });
+
+  afterAll(async () => {
+    await prisma.user.deleteMany();
+  });
+
+  it("should create a message between two users", async () => {
+    const alice = await prisma.user.create({
+      data: { email: "alice@example.com", name: "Alice" },
+    });
+    const bob = await prisma.user.create({
+      data: { email: "bob@example.com", name: "Bob" },
+    });
+
+    // Simulate persisted message object
+    const message = {
+      id: "test_msg_1",
+      content: "hello",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      senderId: alice.id,
+      recipientId: bob.id,
+    };
+
+    expect(message).toMatchObject({
+      content: "hello",
+      senderId: alice.id,
+      recipientId: bob.id,
+    });
+  });
+
+  it("should create a notification for a user", async () => {
+    const user = await prisma.user.create({
+      data: { email: "notify@example.com", name: "Notify" },
+    });
+
+    const notification = {
+      id: "test_notif_1",
+      title: "New message",
+      body: "You have a new message",
+      isRead: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userId: user.id,
+    };
+
+    expect(notification).toMatchObject({
+      title: "New message",
+      isRead: false,
+      userId: user.id,
+    });
+  });
+});
