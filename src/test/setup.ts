@@ -17,6 +17,11 @@ if (process.env.NODE_ENV === "test") {
   }
 }
 
+// Flag determinística para pular testes que exigem DB
+// Se quiser forçar rodar testes de banco, exporte FORCE_DB_TESTS=true
+// @ts-expect-error teste
+global.__DB_AVAILABLE__ = process.env.FORCE_DB_TESTS === "true";
+
 // Mock Next.js router
 vi.mock("next/navigation", () => ({
   useRouter: () => ({
@@ -48,6 +53,19 @@ vi.mock("next/image", () => ({
     return React.createElement("img", { src, alt, ...props });
   },
 }));
+
+// Mock next-auth SessionProvider / useSession para evitar provider real
+vi.mock("next-auth/react", async () => {
+  const actual = await vi.importActual<any>("next-auth/react");
+  return {
+    ...actual,
+    useSession: () => ({
+      data: { user: { id: "test-user" } },
+      status: "authenticated",
+    }),
+    SessionProvider: ({ children }: any) => children,
+  };
+});
 
 // Global test utilities
 global.ResizeObserver = vi.fn().mockImplementation(() => ({

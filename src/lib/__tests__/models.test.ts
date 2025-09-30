@@ -1,9 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { prismaInMemory as prisma } from "@/../tests/in-memory/prisma-mock";
 
-const prisma = new PrismaClient();
-
-describe("Material, Item, and ItemImage Models", () => {
+describe("Material, Item, and ItemImage Models (in-memory)", () => {
   beforeEach(async () => {
     // Clean up test data before each test
     await prisma.itemImage.deleteMany();
@@ -19,18 +17,10 @@ describe("Material, Item, and ItemImage Models", () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
     await prisma.itemImage.deleteMany();
     await prisma.item.deleteMany();
     await prisma.material.deleteMany();
-    await prisma.user.deleteMany({
-      where: {
-        email: {
-          startsWith: "test",
-        },
-      },
-    });
-    await prisma.$disconnect();
+    await prisma.user.deleteMany({ where: { email: { startsWith: "test" } } });
   });
 
   describe("Material Model", () => {

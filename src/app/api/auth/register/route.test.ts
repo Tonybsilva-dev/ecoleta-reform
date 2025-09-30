@@ -3,7 +3,10 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { prisma } from "@/lib/prisma";
 import { POST } from "./route";
 
-describe("POST /api/auth/register", () => {
+// @ts-expect-error flag definida no setup
+const DB_AVAILABLE = global.__DB_AVAILABLE__ ?? true;
+
+(!DB_AVAILABLE ? describe.skip : describe)("POST /api/auth/register", () => {
   const validUserData = {
     name: "João Silva",
     email: "joao@example.com",

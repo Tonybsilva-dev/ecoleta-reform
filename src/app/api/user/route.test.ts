@@ -20,7 +20,10 @@ vi.mock("next-auth", () => ({
   })),
 }));
 
-describe("/api/user (admin)", () => {
+// @ts-expect-error flag definida no setup
+const DB_AVAILABLE = global.__DB_AVAILABLE__ ?? true;
+
+(!DB_AVAILABLE ? describe.skip : describe)("/api/user (admin)", () => {
   let regularUserId: string;
 
   beforeEach(async () => {

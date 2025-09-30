@@ -10,6 +10,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     globals: true,
+    include: ["**/*.spec.{ts,tsx}", "**/*.test.{ts,tsx}"],
     env: (() => {
       // Carrega .env.test se existir (sem falhar caso não exista)
       if (fs.existsSync(path.resolve(__dirname, ".env.test"))) {
@@ -29,10 +30,9 @@ export default defineConfig({
       },
     },
     exclude: [
-      "tests/e2e/**",
-      "playwright.config.ts",
       "**/test-results/**",
       "node_modules/**",
+      "tests/e2e/**", // Excluir testes E2E do Playwright
     ],
     deps: {
       // não inlinar dependências para evitar pegar testes internos
