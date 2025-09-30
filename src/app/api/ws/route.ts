@@ -1,4 +1,7 @@
 export const runtime = "edge";
+// Ensure this route is always dynamic (no caching) in production/preview
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
 // In Edge Runtime, WebSocketPair exists but TypeScript lib doesn't declare it.
 // We cast to any to satisfy the type checker while keeping runtime behavior.
