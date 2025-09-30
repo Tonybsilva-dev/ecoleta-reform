@@ -40,6 +40,20 @@ docker run --rm -p 4001:4001 ecoleta-ws
 - Preview/Prod: defina `NEXT_PUBLIC_WS_URL=wss://seu-dominio`
 - Faça redeploy e valide na página `/sandbox`
 
+### Usando Caddy (TLS automático)
+
+Arquivo: `ws-server/Caddyfile`
+
+```bash
+# substitua email e domínio reais
+# execute caddy no host com docker network capaz de resolver o serviço "ws"
+caddy run --config ws-server/Caddyfile --adapter caddyfile
+```
+
+- O bloco global configura e-mail para Let’s Encrypt.
+- O site `seu-dominio.com` faz reverse proxy para o serviço `ws:4001` e suporta WebSockets.
+- Certificados TLS são obtidos e renovados automaticamente.
+
 ## Deploy (Railway/Render/Fly)
 
 - Faça o deploy da imagem `ecoleta-ws` (ou aponte o repositório com este Dockerfile).
