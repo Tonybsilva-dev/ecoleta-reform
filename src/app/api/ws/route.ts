@@ -8,7 +8,14 @@ export const revalidate = 0;
 export async function GET(_req: Request) {
   // Some platforms may not expose the Upgrade header in dev; let the runtime handle it.
 
-  const pair = new (globalThis as any).WebSocketPair();
+  // Use the Edge global WebSocketPair constructor
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const WS: any =
+    (globalThis as any).WebSocketPair || (globalThis as any).WebSocketPair;
+  // Some environments require direct usage without global qualifier
+  // @ts-expect-error
+  const pair =
+    typeof WS === "function" ? new WS() : new (WebSocketPair as any)();
   const client = pair[0];
   const server = pair[1];
 
