@@ -1,6 +1,24 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { prismaInMemory as prisma } from "@/../tests/in-memory/prisma-mock";
 
+// Patch: narrow unknown types returned by mock
+// These helper types align with expected shapes in tests
+interface TestItem {
+  id: string;
+  title?: string;
+  description?: string | null;
+  quantity?: number;
+  price?: unknown;
+  status?: string;
+  materialId?: string | null;
+  createdById?: string;
+  material?: { name?: string; category?: string };
+  createdBy?: { email?: string; name?: string };
+}
+
+// Cast helper
+const asTestItem = (v: unknown) => v as TestItem;
+
 describe("Material, Item, and ItemImage Models (in-memory)", () => {
   beforeEach(async () => {
     // Clean up test data before each test
@@ -81,20 +99,22 @@ describe("Material, Item, and ItemImage Models (in-memory)", () => {
         },
       });
 
-      const item = await prisma.item.create({
-        data: {
-          title: "Papelão para reciclagem",
-          description: "Caixas de papelão limpas",
-          quantity: 5,
-          price: 10.5,
-          createdById: user.id,
-          materialId: material.id,
-        },
-        include: {
-          material: true,
-          createdBy: true,
-        },
-      });
+      const item = asTestItem(
+        await prisma.item.create({
+          data: {
+            title: "Papelão para reciclagem",
+            description: "Caixas de papelão limpas",
+            quantity: 5,
+            price: 10.5,
+            createdById: user.id,
+            materialId: material.id,
+          },
+          include: {
+            material: true,
+            createdBy: true,
+          },
+        }),
+      );
 
       expect(item).toMatchObject({
         title: "Papelão para reciclagem",
@@ -122,14 +142,16 @@ describe("Material, Item, and ItemImage Models (in-memory)", () => {
         },
       });
 
-      const item = await prisma.item.create({
-        data: {
-          title: "Item sem material específico",
-          description: "Item genérico",
-          quantity: 1,
-          createdById: user.id,
-        },
-      });
+      const item = asTestItem(
+        await prisma.item.create({
+          data: {
+            title: "Item sem material específico",
+            description: "Item genérico",
+            quantity: 1,
+            createdById: user.id,
+          },
+        }),
+      );
 
       expect(item).toMatchObject({
         title: "Item sem material específico",

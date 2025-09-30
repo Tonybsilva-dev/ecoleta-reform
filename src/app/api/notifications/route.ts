@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
   const { userId, title, body } = parsed.data;
 
   const created = await prisma.notification.create({
-    data: { userId, title, body },
+    data: { userId, title, body: body ?? null },
   });
   return NextResponse.json({ data: created }, { status: 201 });
 }
