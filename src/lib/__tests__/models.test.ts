@@ -19,6 +19,8 @@ interface TestItem {
 // Cast helper
 const asTestItem = (v: unknown) => v as TestItem;
 
+type WithItems = { items?: Array<{ materialId?: string }> } | null;
+
 describe("Material, Item, and ItemImage Models (in-memory)", () => {
   beforeEach(async () => {
     // Clean up test data before each test
@@ -172,14 +174,16 @@ describe("Material, Item, and ItemImage Models (in-memory)", () => {
         },
       });
 
-      const item = await prisma.item.create({
-        data: {
-          title: "Item com imagens",
-          description: "Item para testar imagens",
-          quantity: 1,
-          createdById: user.id,
-        },
-      });
+      const item = asTestItem(
+        await prisma.item.create({
+          data: {
+            title: "Item com imagens",
+            description: "Item para testar imagens",
+            quantity: 1,
+            createdById: user.id,
+          },
+        }),
+      );
 
       const image1 = await prisma.itemImage.create({
         data: {
@@ -223,14 +227,16 @@ describe("Material, Item, and ItemImage Models (in-memory)", () => {
         },
       });
 
-      const testItem = await prisma.item.create({
-        data: {
-          title: "Item para deletar",
-          description: "Item que será deletado",
-          quantity: 1,
-          createdById: user.id,
-        },
-      });
+      const testItem = asTestItem(
+        await prisma.item.create({
+          data: {
+            title: "Item para deletar",
+            description: "Item que será deletado",
+            quantity: 1,
+            createdById: user.id,
+          },
+        }),
+      );
 
       await prisma.itemImage.create({
         data: {
@@ -288,12 +294,12 @@ describe("Material, Item, and ItemImage Models (in-memory)", () => {
       });
 
       // Fetch material with items
-      const materialWithItems = await prisma.material.findUnique({
+      const materialWithItems = (await prisma.material.findUnique({
         where: { id: material.id },
         include: { items: true },
-      });
+      })) as WithItems;
 
-      expect(materialWithItems?.items).toHaveLength(2);
+      expect(materialWithItems?.items?.length).toBe(2);
       expect(materialWithItems?.items[0]?.materialId).toBe(material.id);
       expect(materialWithItems?.items[1]?.materialId).toBe(material.id);
     });
