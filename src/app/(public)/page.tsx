@@ -149,7 +149,7 @@ export default function Home() {
                     {/* Card principal */}
                     <div className="relative h-[28rem] w-[28rem] overflow-hidden rounded-2xl bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500 shadow-2xl">
                       {/* Conteúdo do card */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
+                      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center p-8 text-center text-white">
                         <div className="mb-6">
                           <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
                             <svg
@@ -187,8 +187,8 @@ export default function Home() {
 
                         {/* Botão de ação */}
                         <Link
-                          href="/dashboard/map"
-                          className="mt-6 inline-flex items-center gap-2 rounded-full bg-white/20 px-6 py-3 font-medium text-white backdrop-blur-sm transition-all hover:scale-105 hover:bg-white/30"
+                          href="/map"
+                          className="pointer-events-auto mt-6 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white/20 px-6 py-3 font-medium text-white backdrop-blur-sm transition-all hover:scale-105 hover:bg-white/30"
                         >
                           <svg
                             className="h-5 w-5"
