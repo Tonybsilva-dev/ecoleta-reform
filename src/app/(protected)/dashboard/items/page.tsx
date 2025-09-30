@@ -13,13 +13,13 @@ export default function ItemsPage() {
   const { items, isLoading, error, loadItems } = useItemsStore();
 
   useEffect(() => {
-    loadItems();
+    loadItems({}, true); // true = apenas itens do usuário logado
   }, [loadItems]);
 
   const handleCreateSuccess = async () => {
     console.log("Item criado com sucesso!");
-    // Recarregar a lista de itens
-    await loadItems();
+    // Recarregar a lista de itens do usuário
+    await loadItems({}, true);
   };
 
   if (isLoading) {
@@ -64,7 +64,7 @@ export default function ItemsPage() {
           />
           <div className="py-8 text-center">
             <p className="mb-4 text-red-600">Erro ao carregar itens: {error}</p>
-            <Button onClick={() => loadItems()} variant="outline">
+            <Button onClick={() => loadItems({}, true)} variant="outline">
               Tentar Novamente
             </Button>
           </div>

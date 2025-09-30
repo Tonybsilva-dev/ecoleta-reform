@@ -76,7 +76,10 @@ interface ItemsState {
   setError: (error: string | null) => void;
   setPagination: (pagination: Partial<ItemsState["pagination"]>) => void;
   setFilters: (filters: Partial<ItemsState["filters"]>) => void;
-  loadItems: (filters?: Partial<ItemsState["filters"]>) => Promise<void>;
+  loadItems: (
+    filters?: Partial<ItemsState["filters"]>,
+    userOnly?: boolean,
+  ) => Promise<void>;
   createItem: (itemData: any) => Promise<Item | null>;
   updateItem: (id: string, itemData: Partial<Item>) => Promise<Item | null>;
   deleteItem: (id: string) => Promise<boolean>;
@@ -119,7 +122,7 @@ export const useItemsStore = create<ItemsState>()(
           filters: { ...state.filters, ...filters },
         })),
 
-      loadItems: async (newFilters) => {
+      loadItems: async (newFilters, userOnly = false) => {
         const { isLoading, filters } = get();
 
         // Evitar múltiplas chamadas simultâneas
@@ -139,7 +142,11 @@ export const useItemsStore = create<ItemsState>()(
             }
           });
 
-          const response = await fetch(`/api/items?${searchParams.toString()}`);
+          // Escolher endpoint baseado no contexto
+          const endpoint = userOnly ? `/api/user/items` : `/api/items`;
+          const response = await fetch(
+            `${endpoint}?${searchParams.toString()}`,
+          );
 
           if (!response.ok) {
             throw new Error("Erro ao carregar itens");
