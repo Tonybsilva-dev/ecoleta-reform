@@ -1,41 +1,55 @@
-// Simple local WebSocket server for development only
-// Usage: npm run ws:dev
+import { type WebSocket, WebSocketServer } from "ws";
 
-import { WebSocketServer } from "ws";
+const port = Number(process.env.WS_PORT || 4001);
+const server = new WebSocketServer({ port });
 
-const PORT = Number(process.env.WS_PORT || 4001);
-const wss = new WebSocketServer({ port: PORT });
+function safeSend(socket: WebSocket, payload: unknown) {
+  try {
+    socket.send(JSON.stringify(payload));
+  } catch (err) {
+    console.error("[ws-local] send error", err);
+  }
+}
 
-// eslint-disable-next-line no-console
-console.log(`[ws-local] listening on ws://localhost:${PORT}`);
+server.on("listening", () => {
+  console.log(`[ws-local] listening on ws://localhost:${port}`);
+});
 
-wss.on("connection", (socket) => {
-  // eslint-disable-next-line no-console
+server.on("connection", (socket) => {
   console.log("[ws-local] client connected");
-  socket.send(JSON.stringify({ type: "connected" }));
+  safeSend(socket, { type: "connected" });
 
   socket.on("message", (raw) => {
+    let msg: { type?: string; payload?: unknown } = {};
     try {
-      const msg = JSON.parse(String(raw || "{}")) as {
-        type?: string;
-        payload?: unknown;
-      };
-      if (msg.type === "ping") {
-        socket.send(JSON.stringify({ type: "pong" }));
-      } else if (msg.type === "message:send") {
-        socket.send(
-          JSON.stringify({ type: "message:new", payload: msg.payload ?? null }),
-        );
-      } else {
-        socket.send(JSON.stringify({ type: "connected" }));
-      }
+      msg = JSON.parse(String(raw));
     } catch {
-      socket.send(JSON.stringify({ type: "error", message: "invalid_json" }));
+      console.warn("[ws-local] invalid json, echoing raw");
+      safeSend(socket, { type: "error", message: "invalid_json" });
+      return;
     }
+
+    if (msg.type === "ping") {
+      console.log("[ws-local] <- ping");
+      safeSend(socket, { type: "pong" });
+      return;
+    }
+
+    if (msg.type === "message:send") {
+      console.log("[ws-local] <- message:send", msg.payload);
+      safeSend(socket, { type: "message:new", payload: msg.payload ?? null });
+      return;
+    }
+
+    console.log("[ws-local] <- other, sending connected");
+    safeSend(socket, { type: "connected" });
   });
 
   socket.on("close", () => {
-    // eslint-disable-next-line no-console
     console.log("[ws-local] client disconnected");
   });
+});
+
+server.on("error", (err) => {
+  console.error("[ws-local] server error", err);
 });
