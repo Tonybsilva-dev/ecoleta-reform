@@ -22,6 +22,9 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:ci": "vitest run --reporter=verbose",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ui": "vitest --ui --coverage",
+    "test:coverage:open": "vitest run --coverage && open coverage/index.html",
     "test:e2e": "playwright test",
     "qa": "npm run lint:ci && npm run type-check && npm run test:ci",
     "prepare": "husky"
