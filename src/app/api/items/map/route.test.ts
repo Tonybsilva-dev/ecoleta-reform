@@ -67,13 +67,18 @@ describe("GET /api/items/map", () => {
 
     // Verify all returned items are within the specified radius
     if (data.data.items.length > 0) {
-      data.data.items.forEach((item: { location: { latitude: number; longitude: number }; distance: number }) => {
-        expect(item).toHaveProperty("location");
-        expect(item.location).toHaveProperty("latitude");
-        expect(item.location).toHaveProperty("longitude");
-        expect(item).toHaveProperty("distance");
-        expect(item.distance).toBeLessThanOrEqual(10); // Within 10km radius
-      });
+      data.data.items.forEach(
+        (item: {
+          location: { latitude: number; longitude: number };
+          distance: number;
+        }) => {
+          expect(item).toHaveProperty("location");
+          expect(item.location).toHaveProperty("latitude");
+          expect(item.location).toHaveProperty("longitude");
+          expect(item).toHaveProperty("distance");
+          expect(item.distance).toBeLessThanOrEqual(10); // Within 10km radius
+        },
+      );
     }
   });
 

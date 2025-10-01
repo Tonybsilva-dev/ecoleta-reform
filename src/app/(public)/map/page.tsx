@@ -189,7 +189,10 @@ export default function PublicMapPage() {
   );
 
   // Handler para mudança de filtros
-  const handleFilterChange = (key: keyof MapFilters, value: string | number | undefined) => {
+  const handleFilterChange = (
+    key: keyof MapFilters,
+    value: string | number | undefined,
+  ) => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
@@ -206,14 +209,14 @@ export default function PublicMapPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b">
+      <div className="border-b bg-white">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="font-bold text-3xl text-gray-900">
                 Mapa de Materiais
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="mt-1 text-gray-600">
                 Encontre materiais para reciclagem próximos a você
               </p>
             </div>
@@ -228,7 +231,7 @@ export default function PublicMapPage() {
                 size="sm"
               >
                 <RefreshCw
-                  className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`}
+                  className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
                 />
                 Atualizar
               </Button>
@@ -238,13 +241,13 @@ export default function PublicMapPage() {
       </div>
 
       <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
           {/* Sidebar com filtros */}
           <div className="lg:col-span-1">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
-                  <Filter className="w-5 h-5 mr-2" />
+                  <Filter className="mr-2 h-5 w-5" />
                   Filtros
                 </CardTitle>
               </CardHeader>
@@ -379,37 +382,37 @@ export default function PublicMapPage() {
                     ))}
                   </div>
                 ) : error ? (
-                  <div className="text-center text-red-600 py-4">{error}</div>
+                  <div className="py-4 text-center text-red-600">{error}</div>
                 ) : items.length === 0 ? (
-                  <div className="text-center text-gray-500 py-4">
+                  <div className="py-4 text-center text-gray-500">
                     Nenhum item encontrado
                   </div>
                 ) : (
-                  <div className="space-y-2 max-h-96 overflow-y-auto">
+                  <div className="max-h-96 space-y-2 overflow-y-auto">
                     {items.map((item) => (
                       <div
                         key={item.id}
-                        className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer"
+                        className="cursor-pointer rounded-lg border p-3 hover:bg-gray-50"
                       >
                         <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
-                            <h4 className="font-medium text-sm truncate">
+                          <div className="min-w-0 flex-1">
+                            <h4 className="truncate font-medium text-sm">
                               {item.title}
                             </h4>
-                            <p className="text-xs text-gray-500 truncate">
+                            <p className="truncate text-gray-500 text-xs">
                               {item.material?.name ||
                                 "Material não especificado"}
                             </p>
-                            <div className="flex items-center mt-1">
-                              <MapPin className="w-3 h-3 text-gray-400 mr-1" />
-                              <span className="text-xs text-gray-500">
+                            <div className="mt-1 flex items-center">
+                              <MapPin className="mr-1 h-3 w-3 text-gray-400" />
+                              <span className="text-gray-500 text-xs">
                                 {item.distance.toFixed(1)} km
                               </span>
                             </div>
                           </div>
                           {item.price && (
                             <div className="text-right">
-                              <span className="text-sm font-medium text-green-600">
+                              <span className="font-medium text-green-600 text-sm">
                                 R${" "}
                                 {typeof item.price === "number"
                                   ? item.price.toFixed(2)
@@ -427,7 +430,7 @@ export default function PublicMapPage() {
           </div>
 
           {/* Mapa e Carousel */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="space-y-6 lg:col-span-3">
             {/* Mapa */}
             <Card>
               <CardContent className="p-0">
@@ -448,7 +451,7 @@ export default function PublicMapPage() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center">
-                    <Package className="w-5 h-5 mr-2" />
+                    <Package className="mr-2 h-5 w-5" />
                     Itens Encontrados
                   </CardTitle>
                 </CardHeader>
@@ -458,7 +461,7 @@ export default function PublicMapPage() {
                       {items.map((item) => (
                         <CarouselItem
                           key={item.id}
-                          className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3"
+                          className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/3"
                         >
                           <Card className="h-full">
                             <CardContent className="p-4">
@@ -466,17 +469,17 @@ export default function PublicMapPage() {
                                 {/* Header do Card */}
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1">
-                                    <h4 className="font-semibold text-sm line-clamp-2">
+                                    <h4 className="line-clamp-2 font-semibold text-sm">
                                       {item.title}
                                     </h4>
-                                    <p className="text-xs text-gray-600 mt-1">
+                                    <p className="mt-1 text-gray-600 text-xs">
                                       {item.material?.name ||
                                         "Material não especificado"}
                                     </p>
                                   </div>
                                   {item.price && (
                                     <div className="text-right">
-                                      <span className="text-sm font-bold text-green-600">
+                                      <span className="font-bold text-green-600 text-sm">
                                         R${" "}
                                         {typeof item.price === "number"
                                           ? item.price.toFixed(2)
@@ -490,22 +493,22 @@ export default function PublicMapPage() {
 
                                 {/* Descrição */}
                                 {item.description && (
-                                  <p className="text-xs text-gray-500 line-clamp-2">
+                                  <p className="line-clamp-2 text-gray-500 text-xs">
                                     {item.description}
                                   </p>
                                 )}
 
                                 {/* Informações adicionais */}
                                 <div className="space-y-2">
-                                  <div className="flex items-center text-xs text-gray-500">
-                                    <LocationIcon className="w-3 h-3 mr-1" />
+                                  <div className="flex items-center text-gray-500 text-xs">
+                                    <LocationIcon className="mr-1 h-3 w-3" />
                                     <span>
                                       {item.distance.toFixed(1)} km de distância
                                     </span>
                                   </div>
 
                                   {item.organization && (
-                                    <div className="text-xs text-gray-500">
+                                    <div className="text-gray-500 text-xs">
                                       <span className="font-medium">
                                         Organização:
                                       </span>{" "}
@@ -514,7 +517,7 @@ export default function PublicMapPage() {
                                   )}
 
                                   {item.creator && (
-                                    <div className="text-xs text-gray-500">
+                                    <div className="text-gray-500 text-xs">
                                       <span className="font-medium">
                                         Criado por:
                                       </span>{" "}
@@ -529,7 +532,7 @@ export default function PublicMapPage() {
                                     >
                                       {item.status}
                                     </Badge>
-                                    <span className="text-xs text-gray-500">
+                                    <span className="text-gray-500 text-xs">
                                       Qtd: {item.quantity}
                                     </span>
                                   </div>
@@ -548,7 +551,7 @@ export default function PublicMapPage() {
                                       setMapZoom(15);
                                     }}
                                   >
-                                    <MapPin className="w-3 h-3 mr-1" />
+                                    <MapPin className="mr-1 h-3 w-3" />
                                     Ver no Mapa
                                   </Button>
                                 </div>
@@ -569,8 +572,8 @@ export default function PublicMapPage() {
             {!isLoading && items.length === 0 && (
               <Card>
                 <CardContent className="p-8 text-center">
-                  <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  <Package className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
                     Nenhum item encontrado
                   </h3>
                   <p className="text-gray-500">
