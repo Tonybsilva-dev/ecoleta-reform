@@ -196,7 +196,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="h-6 w-6 rounded bg-white sm:h-8 sm:w-8"></div>
           <span className="font-bold text-lg text-white sm:text-xl">
-            Ecoleta
+            Sustainable
           </span>
         </div>
 
@@ -242,7 +242,7 @@ export function AccountTypeSelection({ className }: AccountTypeSelectionProps) {
               Escolha seu tipo de conta
             </h2>
             <p className="text-gray-600 text-sm sm:text-base md:text-lg">
-              Selecione como você pretende usar o Ecoleta para começar sua
+              Selecione como você pretende usar o Sustainable para começar sua
               jornada sustentável.
             </p>
           </div>

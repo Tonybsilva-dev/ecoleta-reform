@@ -10,8 +10,8 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "EcoPoints | Ecoleta",
-  description: "Acompanhe seus pontos sustentáveis no Ecoleta",
+  title: "EcoPoints | Sustainable",
+  description: "Acompanhe seus pontos sustentáveis no Sustainable",
 };
 
 export default function EcoPointsPage() {

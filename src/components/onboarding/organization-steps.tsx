@@ -223,7 +223,7 @@ export function OrganizationContactStep({
             id="domain"
             value={formData.domain || ""}
             onChange={(e) => updateFormData("domain", e.target.value)}
-            placeholder="empresa.ecoleta.com"
+            placeholder="empresa.sustainable.com"
             className="h-10 text-sm sm:h-12 sm:text-base"
           />
           <p className="text-gray-500 text-xs">
@@ -303,7 +303,7 @@ export function OrganizationConfirmationStep({ formData }: StepProps) {
               <span className="font-medium text-green-600 text-sm sm:text-base">
                 {formData.domain.includes(".")
                   ? formData.domain
-                  : `${formData.domain}.ecoleta.com`}
+                  : `${formData.domain}.sustainable.com`}
               </span>
             </div>
           )}

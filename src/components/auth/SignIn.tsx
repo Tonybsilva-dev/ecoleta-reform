@@ -107,7 +107,9 @@ export function SignIn() {
           <div className="text-white">
             <div className="mb-6 flex items-center sm:mb-8">
               <div className="mr-2 h-6 w-6 rounded-lg bg-white sm:mr-3 sm:h-8 sm:w-8" />
-              <span className="font-semibold text-lg sm:text-2xl">Ecoleta</span>
+              <span className="font-semibold text-lg sm:text-2xl">
+                Sustainable
+              </span>
             </div>
             <h1 className="mb-3 font-bold text-2xl sm:mb-4 sm:text-3xl xl:text-4xl">
               Bem-vindo de volta!
@@ -209,7 +211,9 @@ export function SignIn() {
         <div className="text-white">
           <div className="mb-6 flex items-center sm:mb-8">
             <div className="mr-2 h-6 w-6 rounded-lg bg-white sm:mr-3 sm:h-8 sm:w-8" />
-            <span className="font-semibold text-lg sm:text-2xl">Ecoleta</span>
+            <span className="font-semibold text-lg sm:text-2xl">
+              Sustainable
+            </span>
           </div>
           <h1 className="mb-3 font-bold text-2xl sm:mb-4 sm:text-3xl xl:text-4xl">
             Bem-vindo de volta!

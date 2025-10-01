@@ -29,7 +29,7 @@ export default withSentryConfig(nextConfig, {
 
   org: "assync-lab",
 
-  project: "ecoleta-reform",
+  project: "sustainable",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,

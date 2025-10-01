@@ -3,9 +3,9 @@ import { OrganizationCreationForm } from "@/components/onboarding/OrganizationCr
 import { OrganizationCreationLayout } from "@/components/onboarding/OrganizationCreationLayout";
 
 export const metadata: Metadata = {
-  title: "Criar Organização - Ecoleta",
+  title: "Criar Organização - Sustainable",
   description:
-    "Configure sua organização no Ecoleta e comece a fazer a diferença",
+    "Configure sua organização no Sustainable e comece a fazer a diferença",
 };
 
 export default function CreateOrganizationPage() {

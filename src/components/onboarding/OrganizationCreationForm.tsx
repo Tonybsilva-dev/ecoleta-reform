@@ -178,8 +178,8 @@ export function OrganizationCreationForm({
           Crie sua organização
         </h2>
         <p className="text-gray-600 text-sm sm:text-base md:text-lg">
-          Configure sua organização no Ecoleta e comece a fazer a diferença no
-          meio ambiente.
+          Configure sua organização no Sustainable e comece a fazer a diferença
+          no meio ambiente.
         </p>
       </div>
 

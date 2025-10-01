@@ -99,13 +99,13 @@ function generateBrazilPoints(
 
 async function ensureOrganization() {
   const org = await prisma.organization.upsert({
-    where: { domain: "ecoleta-br.org" },
+    where: { domain: "sustainable-br.org" },
     update: {},
     create: {
-      name: "Ecoleta Brasil",
+      name: "Sustainable Brasil",
       description: "Rede nacional de pontos de coleta",
-      website: "https://ecoleta-br.org",
-      domain: "ecoleta-br.org",
+      website: "https://sustainable-br.org",
+      domain: "sustainable-br.org",
       verified: true,
     },
   });

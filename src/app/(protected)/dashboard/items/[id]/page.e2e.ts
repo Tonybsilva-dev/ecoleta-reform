@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("Item Details Page", () => {
   test("should display item details for valid item", async ({ page }) => {
     await page.goto("/dashboard/items/test-item-id");
-    await expect(page).toHaveTitle(/Ecoleta/);
+    await expect(page).toHaveTitle(/Sustainable/);
     await expect(page.locator("h1")).toBeVisible();
     await expect(
       page.locator("a[href='/dashboard/items']:has-text('Voltar')"),

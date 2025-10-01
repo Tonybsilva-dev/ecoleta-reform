@@ -3,9 +3,9 @@ import { BackButton } from "@/components";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata: Metadata = {
-  title: "Registro - Ecoleta",
+  title: "Registro - Sustainable",
   description:
-    "Crie sua conta no Ecoleta e comece a fazer a diferença no meio ambiente",
+    "Crie sua conta no Sustainable e comece a fazer a diferença no meio ambiente",
 };
 
 export default function RegisterPage() {
@@ -19,7 +19,9 @@ export default function RegisterPage() {
         <div className="text-white">
           <div className="mb-6 flex items-center sm:mb-8">
             <div className="mr-2 h-6 w-6 rounded-lg bg-white sm:mr-3 sm:h-8 sm:w-8" />
-            <span className="font-semibold text-xl sm:text-2xl">Ecoleta</span>
+            <span className="font-semibold text-xl sm:text-2xl">
+              Sustainable
+            </span>
           </div>
           <h1 className="mb-3 font-bold text-2xl sm:mb-4 sm:text-3xl md:text-4xl">
             Junte-se à nossa comunidade sustentável

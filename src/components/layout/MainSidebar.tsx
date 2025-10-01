@@ -184,7 +184,9 @@ export function MainSidebar({ className }: MainSidebarProps) {
               <div className="flex h-8 w-8 items-center justify-center rounded bg-green-600">
                 <Leaf className="h-5 w-5 text-white" />
               </div>
-              <span className="font-bold text-gray-900 text-xl">Ecoleta</span>
+              <span className="font-bold text-gray-900 text-xl">
+                Sustainable
+              </span>
             </div>
           </div>
 

@@ -20,7 +20,7 @@ export default defineConfig({
         NODE_ENV: "test",
         DATABASE_URL:
           process.env.DATABASE_URL ||
-          "postgres://postgres:postgres@localhost:5432/ecoleta_test",
+          "postgres://postgres:postgres@localhost:5432/sustainable_test",
       };
     })(),
     pool: "forks", // Run tests in separate processes to avoid conflicts

@@ -55,7 +55,7 @@ export default function MapView({
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const containerIdRef = useRef<string>(
-    `ecoleta-map-${Math.random().toString(36).slice(2)}`,
+    `sustainable-map-${Math.random().toString(36).slice(2)}`,
   );
   const programmaticMoveRef = useRef<boolean>(false);
 
@@ -69,11 +69,11 @@ export default function MapView({
 
       // Reuse map instance if already created for this container (guards against double init)
       const globalAny = window as unknown as {
-        _ecoletaMaps?: Record<string, L.Map>;
+        _sustainableMaps?: Record<string, L.Map>;
       };
-      globalAny._ecoletaMaps = globalAny._ecoletaMaps || {};
+      globalAny._sustainableMaps = globalAny._sustainableMaps || {};
       const existing =
-        globalAny._ecoletaMaps[containerIdRef.current as unknown as string];
+        globalAny._sustainableMaps[containerIdRef.current as unknown as string];
       if (existing) {
         mapInstanceRef.current = existing;
         return;
@@ -122,7 +122,8 @@ export default function MapView({
       }
 
       mapInstanceRef.current = map;
-      globalAny._ecoletaMaps[containerIdRef.current as unknown as string] = map;
+      globalAny._sustainableMaps[containerIdRef.current as unknown as string] =
+        map;
     });
 
     // Cleanup function
@@ -134,16 +135,16 @@ export default function MapView({
           /* ignore */
         }
         const globalAny = window as unknown as {
-          _ecoletaMaps?: Record<string, L.Map>;
+          _sustainableMaps?: Record<string, L.Map>;
         };
-        if (globalAny._ecoletaMaps)
-          delete globalAny._ecoletaMaps[
+        if (globalAny._sustainableMaps)
+          delete globalAny._sustainableMaps[
             containerIdRef.current as unknown as string
           ];
         mapInstanceRef.current = null;
       }
     };
-  }, [onMapMove]);
+  }, [onMapMove, center, zoom]);
 
   // Keep view in sync when center/zoom props change
   useEffect(() => {
@@ -182,7 +183,7 @@ export default function MapView({
 
         const icon = L.divIcon({
           html,
-          className: "ecoleta-badge-icon",
+          className: "sustainable-badge-icon",
           iconSize: [80, 28],
           iconAnchor: [40, 14],
         });

@@ -72,7 +72,7 @@ export function AdminSidebar() {
             </div>
             <div>
               <h1 className="font-bold text-gray-900 text-lg">Admin</h1>
-              <p className="text-gray-500 text-xs">Ecoleta Reform</p>
+              <p className="text-gray-500 text-xs">Sustainable</p>
             </div>
           </div>
         </div>

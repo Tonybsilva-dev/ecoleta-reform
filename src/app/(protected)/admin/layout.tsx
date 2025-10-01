@@ -45,9 +45,7 @@ export default function AdminLayout({
               <span className="font-bold text-white text-xl">E</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-white">
-                Ecoleta Reform
-              </span>
+              <span className="font-bold text-lg text-white">Sustainable</span>
               <span className="font-medium text-gray-300 text-xs">
                 Marketplace Platform
               </span>
@@ -55,7 +53,7 @@ export default function AdminLayout({
           </div>
           <div className="mt-4">
             <span className="font-medium text-gray-200 text-sm">
-              Ecoleta Platform Admin Portal
+              Sustainable Platform Admin Portal
             </span>
           </div>
         </div>

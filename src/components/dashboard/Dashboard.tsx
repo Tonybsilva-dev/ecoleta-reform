@@ -49,7 +49,7 @@ export function Dashboard() {
             <div className="flex h-16 justify-between">
               <div className="flex items-center">
                 <h1 className="font-semibold text-gray-900 text-xl">
-                  Ecoleta Dashboard
+                  Sustainable Dashboard
                 </h1>
               </div>
               <div className="flex items-center space-x-4">
@@ -90,7 +90,7 @@ export function Dashboard() {
             <div className="flex h-16 justify-between">
               <div className="flex items-center">
                 <h1 className="font-semibold text-gray-900 text-xl">
-                  Ecoleta Dashboard
+                  Sustainable Dashboard
                 </h1>
               </div>
               <div className="flex items-center space-x-4">
@@ -157,7 +157,7 @@ export function Dashboard() {
           <div className="flex h-16 justify-between">
             <div className="flex items-center">
               <h1 className="font-semibold text-gray-900 text-xl">
-                Ecoleta Dashboard
+                Sustainable Dashboard
               </h1>
             </div>
             <div className="flex items-center space-x-4">

@@ -10,8 +10,8 @@ import {
 } from "@/components/ui";
 
 export const metadata: Metadata = {
-  title: "Métricas | Ecoleta",
-  description: "Acompanhe seu impacto ambiental no Ecoleta",
+  title: "Métricas | Sustainable",
+  description: "Acompanhe seu impacto ambiental no Sustainable",
 };
 
 export default function MetricsPage() {

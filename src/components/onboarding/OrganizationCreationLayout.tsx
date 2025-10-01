@@ -22,7 +22,7 @@ export function OrganizationCreationLayout({
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="h-6 w-6 rounded bg-white sm:h-8 sm:w-8"></div>
           <span className="font-bold text-lg text-white sm:text-xl">
-            Ecoleta
+            Sustainable
           </span>
         </div>
 
@@ -32,8 +32,9 @@ export function OrganizationCreationLayout({
             Crie sua organização sustentável.
           </h1>
           <p className="text-base text-green-100 leading-relaxed sm:text-lg">
-            Configure sua organização no Ecoleta e comece a fazer a diferença no
-            meio ambiente através de práticas sustentáveis e gestão de resíduos.
+            Configure sua organização no Sustainable e comece a fazer a
+            diferença no meio ambiente através de práticas sustentáveis e gestão
+            de resíduos.
           </p>
         </div>
 

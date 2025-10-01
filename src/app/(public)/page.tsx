@@ -25,7 +25,7 @@ export default function Home() {
                   fill="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <title>Logo Ecoleta</title>
+                  <title>Logo Sustainable</title>
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
               </div>
@@ -80,7 +80,7 @@ export default function Home() {
       <main
         id="main-content"
         className="relative overflow-hidden bg-gradient-to-br from-green-50 to-blue-50"
-        aria-label="Seção principal - Apresentação do Ecoleta"
+        aria-label="Seção principal - Apresentação do Sustainable"
       >
         <div className="container mx-auto px-4 py-12 sm:py-16 md:py-20">
           <div className="mx-auto max-w-6xl">
@@ -506,7 +506,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="mx-auto mb-8 max-w-4xl text-center sm:mb-12 md:mb-16">
             <h2 className="mb-3 font-bold text-2xl text-gray-900 sm:mb-4 sm:text-3xl md:text-4xl">
-              Por que escolher o Ecoleta?
+              Por que escolher o Sustainable?
             </h2>
             <p className="text-base text-gray-600 sm:text-lg md:text-xl">
               Funcionalidades que tornam a sustentabilidade acessível e
@@ -749,7 +749,7 @@ export default function Home() {
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <title>Logo Ecoleta</title>
+                    <title>Logo Sustainable</title>
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                   </svg>
                 </div>

@@ -144,7 +144,7 @@ export function AccountSettings() {
             <CardHeader>
               <CardTitle className="text-lg">Informações da Conta</CardTitle>
               <CardDescription>
-                Dados básicos da sua conta no Ecoleta
+                Dados básicos da sua conta no Sustainable
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
