@@ -115,6 +115,9 @@ export default function PublicMapPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null,
+  );
   const [mapZoom, setMapZoom] = useState(13);
   const [filters, setFilters] = useState<MapFilters>({
     radius: 10,
@@ -232,25 +235,40 @@ export default function PublicMapPage() {
   // Geolocalização inicial do usuário
   useEffect(() => {
     let mounted = true;
-    if (!mapCenter && navigator.geolocation) {
+    if (!userLocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           if (!mounted) return;
-          setMapCenter([pos.coords.latitude, pos.coords.longitude]);
+          const userPos: [number, number] = [
+            pos.coords.latitude,
+            pos.coords.longitude,
+          ];
+          setUserLocation(userPos);
+          if (!mapCenter) {
+            setMapCenter(userPos);
+          }
         },
         () => {
           if (!mounted) return;
-          setMapCenter([-23.5505, -46.6333]); // fallback SP
+          const defaultPos: [number, number] = [-23.5505, -46.6333];
+          setUserLocation(defaultPos);
+          if (!mapCenter) {
+            setMapCenter(defaultPos);
+          }
         },
         { enableHighAccuracy: true, timeout: 8000, maximumAge: 60_000 },
       );
-    } else if (!mapCenter) {
-      setMapCenter([-23.5505, -46.6333]);
+    } else if (!userLocation) {
+      const defaultPos: [number, number] = [-23.5505, -46.6333];
+      setUserLocation(defaultPos);
+      if (!mapCenter) {
+        setMapCenter(defaultPos);
+      }
     }
     return () => {
       mounted = false;
     };
-  }, [mapCenter]);
+  }, [userLocation, mapCenter]);
 
   // Carregar itens do mapa
   const loadMapItems = useCallback(async () => {
@@ -263,7 +281,9 @@ export default function PublicMapPage() {
         setIsLoading(false);
         return;
       }
-      const center = mapCenter ?? ([-23.5505, -46.6333] as [number, number]);
+      // Usar a localização do usuário para calcular distâncias
+      const center =
+        userLocation ?? mapCenter ?? ([-23.5505, -46.6333] as [number, number]);
       const params = new URLSearchParams({
         latitude: center[0].toString(),
         longitude: center[1].toString(),
@@ -297,7 +317,7 @@ export default function PublicMapPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [mapCenter, filters, skipNextLoad]);
+  }, [userLocation, mapCenter, filters, skipNextLoad]);
 
   // Carregar itens quando os filtros ou centro do mapa mudarem
   useEffect(() => {
