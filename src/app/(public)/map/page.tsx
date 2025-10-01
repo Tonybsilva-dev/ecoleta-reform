@@ -480,7 +480,7 @@ export default function PublicMapPage() {
                           }
                         />
                       </SelectTrigger>
-                      <SelectContent className="max-h-72 overflow-y-auto">
+                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
                         {ufs.map((uf) => (
                           <SelectItem key={uf.id} value={uf.sigla}>
                             {uf.nome} ({uf.sigla})
@@ -517,7 +517,7 @@ export default function PublicMapPage() {
                           }
                         />
                       </SelectTrigger>
-                      <SelectContent className="max-h-72 overflow-y-auto">
+                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
                         {cities.map((city) => (
                           <SelectItem key={city.id} value={city.nome}>
                             {city.nome}
