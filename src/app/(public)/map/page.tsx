@@ -1,10 +1,26 @@
 "use client";
 
-import { MapPin, Package, RefreshCw } from "lucide-react";
+import {
+  ArrowLeft,
+  DollarSign,
+  Filter,
+  Gift,
+  MapPin,
+  Package,
+  RefreshCw,
+  Truck,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -14,6 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { APP_NAME } from "@/lib";
 
 // Dynamic import do mapa para evitar SSR
 const MapComponent = dynamic(() => import("@/components/map/Map"), {
@@ -78,19 +95,39 @@ interface Organization {
   verified: boolean;
 }
 
+// Tipos mínimos IBGE
+interface IBGEUF {
+  id: number;
+  sigla: string;
+  nome: string;
+}
+
+interface IBGECity {
+  id: number;
+  nome: string;
+}
+
 export default function PublicMapPage() {
   const [items, setItems] = useState<MapItem[]>([]);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mapCenter, setMapCenter] = useState<[number, number]>([
-    -23.5505, -46.6333,
-  ]);
+  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
   const [mapZoom, setMapZoom] = useState(13);
   const [filters, setFilters] = useState<MapFilters>({
     radius: 10,
   });
+
+  // UF / Cidade (IBGE)
+  const [ufs, setUfs] = useState<IBGEUF[]>([]);
+  const [cities, setCities] = useState<IBGECity[]>([]);
+  const [selectedUf, setSelectedUf] = useState<string>("");
+  const [selectedCity, setSelectedCity] = useState<string>("");
+  const [isLoadingUfs, setIsLoadingUfs] = useState(false);
+  const [isLoadingCities, setIsLoadingCities] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [skipNextLoad, setSkipNextLoad] = useState(false);
 
   // Carregar materiais e organizações
   useEffect(() => {
@@ -118,15 +155,117 @@ export default function PublicMapPage() {
     loadInitialData();
   }, []);
 
+  // Carregar UFs do IBGE
+  useEffect(() => {
+    let mounted = true;
+    setIsLoadingUfs(true);
+    fetch("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
+      .then((r) => r.json())
+      .then((data: IBGEUF[]) => {
+        if (!mounted) return;
+        // Ordenar por nome para melhor UX
+        const sorted = data.sort((a, b) => a.nome.localeCompare(b.nome));
+        setUfs(sorted);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar UFs (IBGE):", err);
+      })
+      .finally(() => setIsLoadingUfs(false));
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Carregar cidades quando UF muda
+  useEffect(() => {
+    let mounted = true;
+    if (!selectedUf) {
+      setCities([]);
+      setSelectedCity("");
+      return;
+    }
+    setIsLoadingCities(true);
+    fetch(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`,
+    )
+      .then((r) => r.json())
+      .then((data: IBGECity[]) => {
+        if (!mounted) return;
+        const sorted = data.sort((a, b) => a.nome.localeCompare(b.nome));
+        setCities(sorted);
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar cidades (IBGE):", err);
+        setCities([]);
+      })
+      .finally(() => setIsLoadingCities(false));
+    return () => {
+      mounted = false;
+    };
+  }, [selectedUf]);
+
+  // Ao selecionar cidade, centralizar mapa via Nominatim
+  useEffect(() => {
+    const centerByCity = async () => {
+      if (!selectedUf || !selectedCity) return;
+      try {
+        const q = encodeURIComponent(`${selectedCity}, ${selectedUf}, Brasil`);
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${q}&limit=1`,
+          { headers: { "Accept-Language": "pt-BR" } },
+        );
+        const json: Array<{ lat: string; lon: string }> = await res.json();
+        if (json[0]) {
+          const lat = parseFloat(json[0].lat);
+          const lon = parseFloat(json[0].lon);
+          setMapCenter([lat, lon]);
+          setMapZoom(12);
+        }
+      } catch (e) {
+        console.error("Falha ao geocodificar cidade:", e);
+      }
+    };
+    void centerByCity();
+  }, [selectedUf, selectedCity]);
+
+  // Geolocalização inicial do usuário
+  useEffect(() => {
+    let mounted = true;
+    if (!mapCenter && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          if (!mounted) return;
+          setMapCenter([pos.coords.latitude, pos.coords.longitude]);
+        },
+        () => {
+          if (!mounted) return;
+          setMapCenter([-23.5505, -46.6333]); // fallback SP
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 60_000 },
+      );
+    } else if (!mapCenter) {
+      setMapCenter([-23.5505, -46.6333]);
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [mapCenter]);
+
   // Carregar itens do mapa
   const loadMapItems = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
     try {
+      if (skipNextLoad) {
+        setSkipNextLoad(false);
+        setIsLoading(false);
+        return;
+      }
+      const center = mapCenter ?? ([-23.5505, -46.6333] as [number, number]);
       const params = new URLSearchParams({
-        latitude: mapCenter[0].toString(),
-        longitude: mapCenter[1].toString(),
+        latitude: center[0].toString(),
+        longitude: center[1].toString(),
         radius: filters.radius.toString(),
       });
 
@@ -192,155 +331,265 @@ export default function PublicMapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header compacto */}
       <div className="border-b bg-white px-6 py-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="font-bold text-2xl text-gray-900">
-              Materiais para Reciclagem
-            </h1>
-            <p className="text-gray-600 text-sm">
-              Encontre materiais próximos a você
-            </p>
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => window.history.back()}
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="font-bold text-2xl text-gray-900">{APP_NAME}</h1>
+              <p className="text-gray-600 text-sm">
+                Veja como funciona nossa plataforma de economia circular
+              </p>
+            </div>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2">
             <Badge variant="secondary" className="text-sm">
               {items.length} itens
             </Badge>
+            <Select
+              value={filters.radius.toString()}
+              onValueChange={(value) =>
+                handleFilterChange("radius", parseInt(value, 10))
+              }
+            >
+              <SelectTrigger className="h-8 w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="z-[10000]">
+                <SelectItem value="5">5km</SelectItem>
+                <SelectItem value="10">10km</SelectItem>
+                <SelectItem value="25">25km</SelectItem>
+                <SelectItem value="50">50km</SelectItem>
+              </SelectContent>
+            </Select>
             <Button
               onClick={loadMapItems}
               disabled={isLoading}
               variant="outline"
-              size="sm"
+              size="icon"
             >
               <RefreshCw
-                className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+                className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
               />
-              Atualizar
             </Button>
+            <Dialog open={isFiltersOpen} onOpenChange={setIsFiltersOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <Filter className="h-4 w-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Filtros</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  {/* Material */}
+                  <div>
+                    <label
+                      htmlFor="material-filter"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Material
+                    </label>
+                    <Select
+                      value={filters.materialId || "all"}
+                      onValueChange={(value) =>
+                        handleFilterChange(
+                          "materialId",
+                          value === "all" ? undefined : value,
+                        )
+                      }
+                    >
+                      <SelectTrigger id="material-filter" className="mt-1">
+                        <SelectValue placeholder="Selecione o material" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
+                        <SelectItem value="all">Todos</SelectItem>
+                        {materials.map((material) => (
+                          <SelectItem key={material.id} value={material.id}>
+                            {material.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Organização */}
+                  <div>
+                    <label
+                      htmlFor="organization-filter"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Organização
+                    </label>
+                    <Select
+                      value={filters.organizationId || "all"}
+                      onValueChange={(value) =>
+                        handleFilterChange(
+                          "organizationId",
+                          value === "all" ? undefined : value,
+                        )
+                      }
+                    >
+                      <SelectTrigger id="organization-filter" className="mt-1">
+                        <SelectValue placeholder="Selecione a organização" />
+                      </SelectTrigger>
+                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
+                        <SelectItem value="all">Todas</SelectItem>
+                        {organizations.map((org) => (
+                          <SelectItem key={org.id} value={org.id}>
+                            {org.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* UF (Estado) */}
+                  <div>
+                    <label
+                      htmlFor="uf-filter"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Estado
+                    </label>
+                    <Select
+                      value={selectedUf || ""}
+                      onValueChange={(value) => {
+                        setSelectedUf(value);
+                        setSelectedCity("");
+                      }}
+                    >
+                      <SelectTrigger
+                        id="uf-filter"
+                        className="mt-1"
+                        disabled={isLoadingUfs}
+                      >
+                        <SelectValue
+                          placeholder={
+                            isLoadingUfs
+                              ? "Carregando UFs..."
+                              : "Selecione o estado"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72 overflow-y-auto">
+                        {ufs.map((uf) => (
+                          <SelectItem key={uf.id} value={uf.sigla}>
+                            {uf.nome} ({uf.sigla})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Cidade */}
+                  <div>
+                    <label
+                      htmlFor="city-filter"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Cidade
+                    </label>
+                    <Select
+                      value={selectedCity || ""}
+                      onValueChange={(value) => setSelectedCity(value)}
+                    >
+                      <SelectTrigger
+                        id="city-filter"
+                        className="mt-1"
+                        disabled={!selectedUf || isLoadingCities}
+                      >
+                        <SelectValue
+                          placeholder={
+                            !selectedUf
+                              ? "Selecione um estado"
+                              : isLoadingCities
+                                ? "Carregando cidades..."
+                                : "Selecione a cidade"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-72 overflow-y-auto">
+                        {cities.map((city) => (
+                          <SelectItem key={city.id} value={city.nome}>
+                            {city.nome}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Preço */}
+                  <div>
+                    <label
+                      htmlFor="min-price-filter"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Faixa de Preço
+                    </label>
+                    <div className="mt-1 flex items-center space-x-2">
+                      <Input
+                        id="min-price-filter"
+                        placeholder="Min R$"
+                        className="flex-1"
+                        value={filters.minPrice || ""}
+                        onChange={(e) =>
+                          handleFilterChange(
+                            "minPrice",
+                            e.target.value
+                              ? parseFloat(e.target.value)
+                              : undefined,
+                          )
+                        }
+                      />
+                      <span className="text-gray-400">-</span>
+                      <Input
+                        id="max-price-filter"
+                        placeholder="Max R$"
+                        className="flex-1"
+                        value={filters.maxPrice || ""}
+                        onChange={(e) =>
+                          handleFilterChange(
+                            "maxPrice",
+                            e.target.value
+                              ? parseFloat(e.target.value)
+                              : undefined,
+                          )
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end space-x-2 pt-4">
+                    <Button variant="outline" onClick={clearFilters}>
+                      Limpar Filtros
+                    </Button>
+                    <Button onClick={() => setIsFiltersOpen(false)}>
+                      Aplicar Filtros
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
 
       {/* Layout principal - Lista à esquerda, Mapa à direita */}
-      <div className="flex h-[calc(100vh-80px)]">
-        {/* Lista de itens - 2/3 da tela */}
-        <div className="w-2/3 border-r bg-gray-50">
-          {/* Filtros compactos */}
-          <div className="border-b bg-white px-4 py-3">
-            <div className="flex items-center space-x-4">
-              {/* Filtros horizontais */}
-              <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-600 text-sm">
-                  Filtros:
-                </span>
-
-                {/* Raio */}
-                <Select
-                  value={filters.radius.toString()}
-                  onValueChange={(value) =>
-                    handleFilterChange("radius", parseInt(value, 10))
-                  }
-                >
-                  <SelectTrigger className="h-8 w-24">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5km</SelectItem>
-                    <SelectItem value="10">10km</SelectItem>
-                    <SelectItem value="25">25km</SelectItem>
-                    <SelectItem value="50">50km</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Material */}
-                <Select
-                  value={filters.materialId || "all"}
-                  onValueChange={(value) =>
-                    handleFilterChange(
-                      "materialId",
-                      value === "all" ? undefined : value,
-                    )
-                  }
-                >
-                  <SelectTrigger className="h-8 w-40">
-                    <SelectValue placeholder="Material" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos</SelectItem>
-                    {materials.map((material) => (
-                      <SelectItem key={material.id} value={material.id}>
-                        {material.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {/* Organização */}
-                <Select
-                  value={filters.organizationId || "all"}
-                  onValueChange={(value) =>
-                    handleFilterChange(
-                      "organizationId",
-                      value === "all" ? undefined : value,
-                    )
-                  }
-                >
-                  <SelectTrigger className="h-8 w-40">
-                    <SelectValue placeholder="Organização" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas</SelectItem>
-                    {organizations.map((org) => (
-                      <SelectItem key={org.id} value={org.id}>
-                        {org.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {/* Preço */}
-                <div className="flex items-center space-x-2">
-                  <Input
-                    placeholder="Min R$"
-                    className="h-8 w-20"
-                    value={filters.minPrice || ""}
-                    onChange={(e) =>
-                      handleFilterChange(
-                        "minPrice",
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                  <span className="text-gray-400">-</span>
-                  <Input
-                    placeholder="Max R$"
-                    className="h-8 w-20"
-                    value={filters.maxPrice || ""}
-                    onChange={(e) =>
-                      handleFilterChange(
-                        "maxPrice",
-                        e.target.value ? parseFloat(e.target.value) : undefined,
-                      )
-                    }
-                  />
-                </div>
-
-                <Button
-                  onClick={clearFilters}
-                  variant="ghost"
-                  size="sm"
-                  className="h-8"
-                >
-                  Limpar
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Lista de itens */}
-          <div className="h-[calc(100%-60px)] overflow-y-auto">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Lista de itens - 3/5 da tela (estilo LinkedIn) */}
+        <div className="w-3/5 border-r bg-gray-50">
+          {/* Lista de itens - estilo LinkedIn */}
+          <div className="h-full overflow-y-auto">
             {isLoading ? (
               <div className="space-y-3 p-4">
                 {Array.from({ length: 5 }, (_, i) => (
@@ -359,85 +608,109 @@ export default function PublicMapPage() {
                 <p className="text-sm">Tente ajustar os filtros</p>
               </div>
             ) : (
-              <div className="p-2">
-                {items.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className="mb-2 w-full rounded-lg border bg-white p-4 text-left transition-shadow hover:shadow-sm"
-                    onClick={() => {
-                      setMapCenter([
-                        item.location.latitude,
-                        item.location.longitude,
-                      ]);
-                      setMapZoom(15);
-                    }}
-                  >
-                    <div className="flex items-start justify-between">
-                      {/* Informações do item */}
+              <div className="divide-y p-2">
+                {items.map((item) => {
+                  const initials = (
+                    item.organization?.name ||
+                    item.creator?.name ||
+                    "?"
+                  )
+                    .split(" ")
+                    .map((p) => p[0])
+                    .slice(0, 2)
+                    .join("")
+                    .toUpperCase();
+                  const price =
+                    item.price !== null && item.price !== undefined
+                      ? new Intl.NumberFormat("pt-BR", {
+                        style: "currency",
+                        currency: "BRL",
+                      }).format(Number(item.price))
+                      : null;
+                  // Tag de tipo e ícone (aproximação até existir campo dedicado)
+                  const isSale =
+                    item.price !== null &&
+                    item.price !== undefined &&
+                    Number(item.price) > 0;
+                  const TypeIcon = isSale ? DollarSign : Gift; // fallback Doação
+                  const typeLabel = isSale ? "Venda" : "Doação";
+                  const typeColor = isSale ? "text-green-600" : "text-pink-600";
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="relative flex w-full items-start gap-3 rounded-lg p-3 text-left hover:bg-white"
+                      onClick={() => {
+                        setSkipNextLoad(true);
+                        setMapCenter([
+                          item.location.latitude,
+                          item.location.longitude,
+                        ]);
+                        setMapZoom(15);
+                      }}
+                    >
+                      {/* Avatar */}
+                      <div className="mt-0.5 flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 font-semibold text-gray-600">
+                        {initials}
+                      </div>
+                      {/* Conteúdo */}
                       <div className="min-w-0 flex-1">
-                        <div className="mb-1 flex items-center space-x-2">
-                          <h4 className="truncate font-semibold text-gray-900 text-sm">
-                            {item.title}
+                        {/* Nome Pessoa/Organização */}
+                        <div className="flex items-center justify-between">
+                          <h4 className="truncate font-medium text-gray-900">
+                            {item.organization?.name ||
+                              item.creator?.name ||
+                              "Anunciante"}
                           </h4>
-                          <Badge variant="outline" className="text-xs">
-                            {item.status}
-                          </Badge>
+                          {price && (
+                            <span className="ml-2 shrink-0 font-semibold text-green-600 text-sm">
+                              {price}
+                            </span>
+                          )}
                         </div>
-
-                        <div className="flex items-center space-x-4 text-gray-500 text-xs">
+                        {/* Distância, Material e Quantidade */}
+                        <div className="mt-0.5 flex flex-wrap items-center gap-x-4 text-gray-500 text-xs">
                           <span className="flex items-center">
                             <MapPin className="mr-1 h-3 w-3" />
                             {item.distance.toFixed(1)} km
                           </span>
-                          <span>
-                            {item.material?.name || "Material não especificado"}
-                          </span>
+                          {item.material?.name && (
+                            <span>{item.material.name}</span>
+                          )}
                           <span>Qtd: {item.quantity}</span>
                         </div>
-
+                        {/* Descrição */}
                         {item.description && (
                           <p className="mt-1 line-clamp-2 text-gray-600 text-xs">
                             {item.description}
                           </p>
                         )}
-
-                        {item.organization && (
-                          <p className="mt-1 text-gray-500 text-xs">
-                            {item.organization.name}
-                          </p>
-                        )}
                       </div>
-
-                      {/* Preço */}
-                      {item.price && (
-                        <div className="ml-4 text-right">
-                          <span className="font-bold text-green-600 text-sm">
-                            R${" "}
-                            {typeof item.price === "number"
-                              ? item.price.toFixed(2)
-                              : parseFloat(item.price || "0").toFixed(2)}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </button>
-                ))}
+                      {/* Tag de tipo (com ícone e cor) */}
+                      <span className="pointer-events-none absolute bottom-2 right-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs shadow">
+                        <TypeIcon className={`h-3.5 w-3.5 ${typeColor}`} />
+                        <span className="text-gray-700">{typeLabel}</span>
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
         </div>
 
-        {/* Mapa - 1/3 da tela */}
-        <div className="w-1/3">
+        {/* Mapa - 2/5 da tela (maior) */}
+        <div className="w-2/5 relative z-0">
           <div className="h-full">
-            <MapComponent
-              center={mapCenter}
-              zoom={mapZoom}
-              height="100%"
-              onMapMove={handleMapMove}
-              items={items}
-            />
+            {mapCenter && (
+              <MapComponent
+                center={mapCenter}
+                zoom={mapZoom}
+                height="100%"
+                onMapMove={handleMapMove}
+                items={items}
+              />
+            )}
           </div>
         </div>
       </div>

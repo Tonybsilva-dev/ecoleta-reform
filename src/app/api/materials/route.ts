@@ -15,14 +15,21 @@ export async function GET(request: NextRequest) {
     const active = searchParams.get("active") !== "false"; // true por padrão
 
     // Construir filtros
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (active) {
       where.isActive = true;
     }
 
     if (category) {
-      where.category = category;
+      // Compatibilidade: se existir relação, filtra por categoria.name; se não, usa campo antigo
+      where.OR = [
+        { category: { equals: category } },
+        {
+          categoryId: { not: null },
+          category: { is: { name: { equals: category } } },
+        },
+      ];
     }
 
     if (search) {
@@ -36,7 +43,8 @@ export async function GET(request: NextRequest) {
     // Buscar materiais
     const materials = await prisma.material.findMany({
       where,
-      orderBy: [{ category: "asc" }, { name: "asc" }],
+      include: { category: true },
+      orderBy: [{ name: "asc" }],
     });
 
     // Agrupar por categoria para facilitar o uso no frontend
@@ -57,7 +65,10 @@ export async function GET(request: NextRequest) {
         >,
         material,
       ) => {
-        const category = material.category || "Outros";
+        const category =
+          (material as { category?: { name?: string } }).category?.name ||
+          (material as { category?: string }).category ||
+          "Outros";
         if (!acc[category]) {
           acc[category] = [];
         }

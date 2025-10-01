@@ -13,7 +13,7 @@ export async function GET(
       include: {
         createdBy: { include: { profile: true } },
         organization: true,
-        material: true,
+        material: { include: { category: true } },
         images: true,
         orders: true,
       },

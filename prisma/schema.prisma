@@ -221,7 +221,6 @@ model Material {
   id          String   @id @default(cuid())
   name        String   @unique
   description String?
-  category    String? // e.g., "Plastic", "Glass", "Metal", "Paper"
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -229,7 +228,26 @@ model Material {
   // Relations
   items Item[]
 
+  // Category relation
+  categoryId String?
+  category   MaterialCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
   @@map("materials")
+}
+
+model MaterialCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  icon        String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  materials Material[]
+
+  @@map("material_categories")
 }
 
 model Item {

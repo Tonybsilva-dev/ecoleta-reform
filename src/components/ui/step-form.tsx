@@ -8,10 +8,10 @@ interface Step {
   id: string;
   title: string;
   description?: string;
-  component: (props: {
+  component: React.ComponentType<{
     formData: Record<string, string>;
     updateFormData: (field: string, value: string) => void;
-  }) => ReactNode;
+  }>;
   validation?: (formData: Record<string, string>) => boolean;
 }
 
@@ -152,7 +152,10 @@ export function StepForm({
 
         {/* Step Component */}
         <div className="mb-6">
-          {currentStepData.component({ formData, updateFormData })}
+          {(() => {
+            const Comp = currentStepData.component;
+            return <Comp formData={formData} updateFormData={updateFormData} />;
+          })()}
         </div>
 
         {/* Validation Error */}

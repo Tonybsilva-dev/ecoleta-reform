@@ -2,24 +2,32 @@
 
 import {
   CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  CircleDot,
+  Container,
+  Cpu,
   DollarSign,
   FileText,
+  Flame,
   Gift,
   Image,
   MapPin,
+  Nut,
   Package,
   Recycle,
   Shirt,
   Smartphone,
   Sprout,
+  Trees,
   Truck,
   Wine,
   Wrench,
   X,
 } from "lucide-react";
 import NextImage from "next/image";
-import { useCallback, useEffect, useState } from "react";
-
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import {
   Button,
   Input,
@@ -29,7 +37,9 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Skeleton,
 } from "@/components/ui";
+import { useMaterialsStore } from "@/lib/stores/materials.store";
 import { cn } from "@/lib/utils";
 import { LocationMap } from "./LocationMap";
 
@@ -88,48 +98,123 @@ export function ItemMaterialStep({
   formData: Record<string, string>;
   updateFormData: (field: string, value: string) => void;
 }) {
-  const materials = [
-    { id: "plastic", name: "Plástico", icon: Recycle, color: "text-green-600" },
-    { id: "paper", name: "Papel", icon: FileText, color: "text-blue-600" },
-    { id: "glass", name: "Vidro", icon: Wine, color: "text-cyan-600" },
-    { id: "metal", name: "Metal", icon: Wrench, color: "text-gray-600" },
-    {
-      id: "electronic",
-      name: "Eletrônico",
-      icon: Smartphone,
-      color: "text-purple-600",
-    },
-    { id: "organic", name: "Orgânico", icon: Sprout, color: "text-green-500" },
-    { id: "textile", name: "Têxtil", icon: Shirt, color: "text-pink-600" },
-    { id: "other", name: "Outro", icon: Package, color: "text-orange-600" },
-  ];
+  // Evita criar objetos no selector (que causam re-render/loop); selecione campos individualmente
+  const materials = useMaterialsStore((s) => s.materials);
+  const loadMaterials = useMaterialsStore((s) => s.loadMaterials);
+  const loadedOnce = useMaterialsStore((s) => s.loadedOnce);
+  const isLoading = useMaterialsStore((s) => s.isLoading);
+
+  const hasShownToastRef = useRef(false);
+  useEffect(() => {
+    if (!loadedOnce && !hasShownToastRef.current) {
+      hasShownToastRef.current = true;
+      const id = toast.loading("Carregando materiais...");
+      void loadMaterials().finally(() => {
+        toast.dismiss(id);
+        toast.success("Materiais carregados");
+        hasShownToastRef.current = false;
+      });
+    }
+  }, [loadedOnce, loadMaterials]);
+
+  // Mostrar em grupos de 10 (2 colunas x 5 linhas)
+  // Paginação por “páginas” de 2 colunas x 5 linhas (10 itens)
+  const VISIBLE_PER_PAGE = 10;
+  const [pageIndex, setPageIndex] = useState(0); // 0-based
+  const totalPages = Math.max(
+    1,
+    Math.ceil(materials.length / VISIBLE_PER_PAGE),
+  );
+  const pageStart = pageIndex * VISIBLE_PER_PAGE;
+  const visibleMaterials = useMemo(
+    () => materials.slice(pageStart, pageStart + VISIBLE_PER_PAGE),
+    [materials, pageStart],
+  );
+
+  const IconByName: Record<
+    string,
+    React.ComponentType<{ className?: string }>
+  > = {
+    recycle: Recycle,
+    nut: Container,
+    wine: Wine,
+    "file-text": FileText,
+    cpu: Cpu,
+    trees: Trees,
+    "circle-dot": CircleDot,
+    shirt: Shirt,
+    flame: Flame,
+  };
 
   return (
     <div className="space-y-6">
       <div>
-        <Label className="mb-4 block font-medium text-gray-700">
-          Tipo de Material *
-        </Label>
-        <div className="grid grid-cols-2 gap-3">
-          {materials.map((material) => {
-            const IconComponent = material.icon;
-            return (
-              <button
-                key={material.id}
-                type="button"
-                onClick={() => updateFormData("materialType", material.id)}
-                className={cn(
-                  "flex items-center space-x-3 rounded-lg border-2 p-4 text-left transition-all duration-200",
-                  formData.materialType === material.id
-                    ? "border-green-500 bg-green-50 text-green-700"
-                    : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50",
-                )}
-              >
-                <IconComponent className={cn("h-6 w-6", material.color)} />
-                <span className="font-medium">{material.name}</span>
-              </button>
-            );
-          })}
+        <div className="mb-2 flex items-center justify-between">
+          <Label className="block font-medium text-gray-700">
+            Tipo de Material *
+          </Label>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Itens anteriores"
+              onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+              disabled={pageIndex === 0}
+              className="rounded-md border bg-white p-2 text-gray-600 disabled:opacity-40"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              aria-label="Próximos itens"
+              onClick={() =>
+                setPageIndex((p) => Math.min(totalPages - 1, p + 1))
+              }
+              disabled={pageIndex >= totalPages - 1}
+              className="rounded-md border bg-white p-2 text-gray-600 disabled:opacity-40"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="relative">
+          {/* Grid de materiais (2 colunas x 5 linhas) */}
+          {isLoading && !loadedOnce ? (
+            <div className="grid grid-cols-2 gap-3">
+              {Array.from({ length: 10 }, (_, i) => (
+                <div key={`skeleton-${i}`} className="rounded-lg border-2 p-4">
+                  <Skeleton className="h-5 w-5 mb-2" />
+                  <Skeleton className="h-4 w-3/4" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {visibleMaterials.map((m) => {
+                const active = formData.materialId === m.id;
+                const iconKey = (m as any).category?.icon as string | undefined;
+                const IconComp = iconKey
+                  ? IconByName[iconKey] || Package
+                  : Package;
+                return (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => updateFormData("materialId", m.id)}
+                    className={cn(
+                      "flex items-center space-x-3 rounded-lg border-2 p-4 text-left transition-all duration-200",
+                      active
+                        ? "border-green-500 bg-green-50 text-green-700"
+                        : "border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50",
+                    )}
+                  >
+                    <IconComp className="h-5 w-5 text-gray-500" />
+                    <span className="font-medium">{m.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -280,21 +365,19 @@ export function ItemPricingStep({
 export function ItemLocationStep({
   formData,
   updateFormData,
-  isGettingLocation,
-  setIsGettingLocation,
 }: {
   formData: Record<string, string>;
   updateFormData: (field: string, value: string) => void;
-  isGettingLocation: boolean;
-  setIsGettingLocation: (value: boolean) => void;
 }) {
   const [hasRequestedLocation, setHasRequestedLocation] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
 
   const getCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
       // Definir localização padrão (São Paulo) se geolocalização não estiver disponível
       updateFormData("latitude", "-23.5505");
       updateFormData("longitude", "-46.6333");
+      setIsGettingLocation(false);
       return;
     }
 
@@ -313,6 +396,7 @@ export function ItemLocationStep({
         updateFormData("longitude", "-46.6333");
         setIsGettingLocation(false);
       },
+      { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 },
     );
   }, [updateFormData, setIsGettingLocation]);
 
@@ -505,6 +589,10 @@ export function ItemConfirmationStep({
 }: {
   formData: Record<string, string>;
 }) {
+  // Buscar material selecionado pelo ID para exibir nome correto
+  const materials = useMaterialsStore((s) => s.materials);
+  const selectedMaterial = materials.find((m) => m.id === formData.materialId);
+
   const getTransactionTypeText = (type: string) => {
     switch (type) {
       case "sale":
@@ -531,18 +619,25 @@ export function ItemConfirmationStep({
     }
   };
 
-  const getMaterialTypeText = (type: string) => {
-    const materials: Record<string, string> = {
-      plastic: "Plástico",
-      paper: "Papel",
-      glass: "Vidro",
-      metal: "Metal",
-      electronic: "Eletrônico",
-      organic: "Orgânico",
-      textile: "Têxtil",
-      other: "Outro",
-    };
-    return materials[type] || "Não especificado";
+  const IconMapConfirm: Record<
+    string,
+    React.ComponentType<{ className?: string }>
+  > = {
+    recycle: Recycle,
+    nut: Nut,
+    wine: Wine,
+    "file-text": FileText,
+    cpu: Cpu,
+    trees: Trees,
+    "circle-dot": CircleDot,
+    shirt: Shirt,
+    flame: Flame,
+  };
+
+  const getMaterialIconForConfirm = () => {
+    const key = (selectedMaterial as any)?.category?.icon as string | undefined;
+    if (key && IconMapConfirm[key]) return IconMapConfirm[key];
+    return Package;
   };
 
   const getMaterialTypeIcon = (type: string) => {
@@ -606,13 +701,11 @@ export function ItemConfirmationStep({
               <span className="text-gray-600">Tipo:</span>
               <div className="flex items-center space-x-2">
                 {(() => {
-                  const MaterialIcon = getMaterialTypeIcon(
-                    formData.materialType || "",
-                  );
+                  const MaterialIcon = getMaterialIconForConfirm();
                   return <MaterialIcon className="h-4 w-4 text-gray-600" />;
                 })()}
                 <span className="font-medium">
-                  {getMaterialTypeText(formData.materialType || "")}
+                  {selectedMaterial?.name || "Não especificado"}
                 </span>
               </div>
             </div>

@@ -62,10 +62,11 @@ export function ItemCreationForm({
       component: ItemMaterialStep,
       validation: (formData: Record<string, string>) => {
         try {
-          createItemSchema.pick({ quantity: true }).parse({
+          createItemSchema.pick({ quantity: true, materialId: true }).parse({
             quantity: parseInt(formData.quantity || "1", 10),
+            materialId: formData.materialId || "",
           });
-          return !!(formData.materialType && formData.quantity);
+          return !!(formData.materialId && formData.quantity);
         } catch {
           return false;
         }
@@ -152,7 +153,7 @@ export function ItemCreationForm({
         title: formData.title,
         description: formData.description,
         quantity: parseInt(formData.quantity || "1", 10),
-        materialType: formData.materialType,
+        materialId: formData.materialId,
         unit: formData.unit || "unidade",
         transactionType: formData.transactionType,
         price: formData.price ? parseFloat(formData.price) : undefined,

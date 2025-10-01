@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
       const updatedItem = await prisma.item.findUnique({
         where: { id: item.id },
         include: {
-          material: true,
+          material: { include: { category: true } },
           organization: {
             select: {
               id: true,
@@ -183,26 +183,21 @@ export async function GET(request: NextRequest) {
     const materialId = searchParams.get("materialId") || undefined;
     const organizationId = searchParams.get("organizationId") || undefined;
     const status = searchParams.get("status") || undefined;
-    const minPrice = searchParams.get("minPrice")
-      ? parseFloat(searchParams.get("minPrice")!)
-      : undefined;
-    const maxPrice = searchParams.get("maxPrice")
-      ? parseFloat(searchParams.get("maxPrice")!)
-      : undefined;
-    const latitude = searchParams.get("latitude")
-      ? parseFloat(searchParams.get("latitude")!)
-      : undefined;
-    const longitude = searchParams.get("longitude")
-      ? parseFloat(searchParams.get("longitude")!)
-      : undefined;
-    const radius = searchParams.get("radius")
-      ? parseFloat(searchParams.get("radius")!)
-      : 10;
+    const minPriceParam = searchParams.get("minPrice");
+    const minPrice = minPriceParam ? parseFloat(minPriceParam) : undefined;
+    const maxPriceParam = searchParams.get("maxPrice");
+    const maxPrice = maxPriceParam ? parseFloat(maxPriceParam) : undefined;
+    const latitudeParam = searchParams.get("latitude");
+    const latitude = latitudeParam ? parseFloat(latitudeParam) : undefined;
+    const longitudeParam = searchParams.get("longitude");
+    const longitude = longitudeParam ? parseFloat(longitudeParam) : undefined;
+    const radiusParam = searchParams.get("radius");
+    const radius = radiusParam ? parseFloat(radiusParam) : 10;
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "20", 10);
 
     // Construir filtros
-    const where: any = {
+    const where: Record<string, unknown> = {
       status: "ACTIVE", // Apenas itens ativos por padrão
     };
 

@@ -54,13 +54,30 @@ export default function MapView({
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
+  const containerIdRef = useRef<string>(
+    `ecoleta-map-${Math.random().toString(36).slice(2)}`,
+  );
+  const programmaticMoveRef = useRef<boolean>(false);
 
+  // Initialize map once
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
 
     // Dynamic import of Leaflet to avoid SSR issues
     import("leaflet").then((L) => {
       if (!mapRef.current) return;
+
+      // Reuse map instance if already created for this container (guards against double init)
+      const globalAny = window as unknown as {
+        _ecoletaMaps?: Record<string, L.Map>;
+      };
+      globalAny._ecoletaMaps = globalAny._ecoletaMaps || {};
+      const existing =
+        globalAny._ecoletaMaps[containerIdRef.current as unknown as string];
+      if (existing) {
+        mapInstanceRef.current = existing;
+        return;
+      }
 
       // Fix for default markers in Leaflet with Next.js
       delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)
@@ -93,23 +110,48 @@ export default function MapView({
       // Add event listeners for map movement
       if (onMapMove) {
         map.on("moveend", () => {
-          const center = map.getCenter();
-          const zoom = map.getZoom();
-          onMapMove([center.lat, center.lng], zoom);
+          if (programmaticMoveRef.current) {
+            // Ignore moveend triggered by setView we performed programmatically
+            programmaticMoveRef.current = false;
+            return;
+          }
+          const c = map.getCenter();
+          const z = map.getZoom();
+          onMapMove([c.lat, c.lng], z);
         });
       }
 
       mapInstanceRef.current = map;
+      globalAny._ecoletaMaps[containerIdRef.current as unknown as string] = map;
     });
 
     // Cleanup function
     return () => {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
+        try {
+          mapInstanceRef.current.remove();
+        } catch {
+          /* ignore */
+        }
+        const globalAny = window as unknown as {
+          _ecoletaMaps?: Record<string, L.Map>;
+        };
+        if (globalAny._ecoletaMaps)
+          delete globalAny._ecoletaMaps[
+            containerIdRef.current as unknown as string
+          ];
         mapInstanceRef.current = null;
       }
     };
-  }, [center, zoom, onMapMove]);
+  }, [onMapMove]);
+
+  // Keep view in sync when center/zoom props change
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+    // Mark programmatic change so we skip emitting onMapMove for this cycle
+    programmaticMoveRef.current = true;
+    mapInstanceRef.current.setView(center, zoom, { animate: true });
+  }, [center, zoom]);
 
   // Update markers when items change
   useEffect(() => {
@@ -124,24 +166,60 @@ export default function MapView({
     // Add new markers
     import("leaflet").then((L) => {
       items.forEach((item) => {
-        const marker = L.marker([
-          item.location.latitude,
-          item.location.longitude,
-        ]).addTo(mapInstanceRef.current!);
+        const isSale =
+          item.price != null &&
+          !Number.isNaN(Number(item.price)) &&
+          Number(item.price) > 0;
+        const label = isSale ? `R$ ${Number(item.price).toFixed(2)}` : "Doação";
+        const bg = isSale ? "#10b981" : "#ec4899"; // green / pink
+        const html = `
+          <div style="
+            display:inline-flex;align-items:center;justify-content:center;
+            padding:4px 8px;border-radius:9999px;color:white;font-weight:600;
+            background:${bg};box-shadow:0 1px 2px rgba(0,0,0,.25);font-size:12px;
+            border:2px solid white
+          ">${label}</div>`;
 
-        // Create popup content
+        const icon = L.divIcon({
+          html,
+          className: "ecoleta-badge-icon",
+          iconSize: [80, 28],
+          iconAnchor: [40, 14],
+        });
+
+        const marker = L.marker(
+          [item.location.latitude, item.location.longitude],
+          { icon },
+        ).addTo(mapInstanceRef.current!);
+
+        // Create popup content (custom layout)
+        const primaryImage =
+          (item.images || []).find((im) => im.isPrimary)?.url ||
+          (item.images || [])[0]?.url ||
+          "";
+        const orgName =
+          item.organization?.name || item.creator?.name || "Particular";
+        const priceHtml =
+          item.price != null && !Number.isNaN(Number(item.price))
+            ? `<span style="color:#059669;font-weight:600">R$ ${Number(item.price).toFixed(2)}</span>`
+            : "";
+
         const popupContent = `
-          <div class="p-2 min-w-[200px]">
-            <h3 class="font-semibold text-sm mb-1">${item.title}</h3>
-            <p class="text-xs text-gray-600 mb-2">${item.material?.name || "Material não especificado"}</p>
-            ${item.price ? `<p class="text-sm font-medium text-green-600 mb-2">R$ ${item.price.toFixed(2)}</p>` : ""}
-            <p class="text-xs text-gray-500 mb-2">${item.distance.toFixed(1)} km de distância</p>
-            <div class="flex justify-between items-center">
-              <span class="text-xs text-gray-500">${item.organization?.name || "Particular"}</span>
-              <a href="/items/${item.id}" class="text-xs text-blue-600 hover:text-blue-800">Ver detalhes</a>
+          <div style="min-width:240px;max-width:280px"> 
+            <div style="display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:center">
+              <div style="width:64px;height:64px;border-radius:8px;background:#f3f4f6;overflow:hidden">
+                ${primaryImage ? `<img src="${primaryImage}" alt="${item.title}" style="width:100%;height:100%;object-fit:cover"/>` : ""}
+              </div>
+              <div>
+                <div style="font-weight:600;color:#111827;font-size:14px;line-height:1.2">${orgName}</div>
+                <div style="margin-top:4px;color:#6b7280;font-size:12px">${item.material?.name || "Material não especificado"} • ${item.distance.toFixed(1)} km</div>
+                ${priceHtml ? `<div style="margin-top:4px;font-size:12px">${priceHtml}</div>` : ""}
+              </div>
             </div>
-          </div>
-        `;
+            <div style="margin-top:10px">
+              <a href="/signin?redirect=/items/${item.id}" style="display:block;text-align:center;padding:8px 10px;border:1px solid #e5e7eb;border-radius:8px;color:#1d4ed8;font-size:12px;text-decoration:none">Ver detalhes</a>
+            </div>
+          </div>`;
 
         marker.bindPopup(popupContent);
         markersRef.current.push(marker);
@@ -150,7 +228,12 @@ export default function MapView({
   }, [items]);
 
   return (
-    <div ref={mapRef} className={`w-full ${className}`} style={{ height }}>
+    <div
+      ref={mapRef}
+      id={containerIdRef.current as unknown as string}
+      className={`w-full ${className}`}
+      style={{ height }}
+    >
       {children}
     </div>
   );

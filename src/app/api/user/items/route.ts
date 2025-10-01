@@ -20,17 +20,15 @@ export async function GET(request: NextRequest) {
     const query = searchParams.get("query") || undefined;
     const materialId = searchParams.get("materialId") || undefined;
     const status = searchParams.get("status") || undefined;
-    const minPrice = searchParams.get("minPrice")
-      ? parseFloat(searchParams.get("minPrice")!)
-      : undefined;
-    const maxPrice = searchParams.get("maxPrice")
-      ? parseFloat(searchParams.get("maxPrice")!)
-      : undefined;
+    const minPriceParam = searchParams.get("minPrice");
+    const minPrice = minPriceParam ? parseFloat(minPriceParam) : undefined;
+    const maxPriceParam = searchParams.get("maxPrice");
+    const maxPrice = maxPriceParam ? parseFloat(maxPriceParam) : undefined;
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "20", 10);
 
     // Construir filtros - SEMPRE filtrar por usuário logado
-    const where: any = {
+    const where: Record<string, unknown> = {
       createdById: session.user.id, // FILTRO CRÍTICO: apenas itens do usuário
     };
 

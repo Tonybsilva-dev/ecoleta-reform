@@ -218,7 +218,13 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
             <div className="rounded-lg border p-3">
               <div className="text-muted-foreground text-xs">Preço</div>
               <div className="font-semibold text-lg">
-                {item.price ? `R$ ${Number(item.price).toFixed(2)}` : "—"}
+                {item.price !== undefined && item.price !== null
+                  ? new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                      minimumFractionDigits: 2,
+                    }).format(Number(item.price))
+                  : "—"}
               </div>
             </div>
             <div className="rounded-lg border p-3">
@@ -234,9 +240,13 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
                   <div className="flex items-center space-x-2">
                     <Leaf className="h-4 w-4 text-green-600" />
                     <span>{item.material.name}</span>
-                    {item.material.category && (
+                    {((item as any).material?.category?.name ||
+                      item.material?.category) && (
                       <span className="text-muted-foreground text-sm">
-                        ({item.material.category})
+                        (
+                        {(item as any).material?.category?.name ||
+                          item.material?.category}
+                        )
                       </span>
                     )}
                   </div>
@@ -270,7 +280,7 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
                     {item.createdBy.email}
                   </span>
                 </div>
-                {item.createdBy.profile?.ecoScore && (
+                {item.createdBy.profile && (
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground text-xs">
                       EcoPoints:
@@ -283,7 +293,8 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
                             className={`h-4 w-4 ${
                               i <
                               Math.floor(
-                                (item.createdBy?.profile?.ecoScore || 0) / 20,
+                                ((item.createdBy?.profile?.ecoScore ??
+                                  0) as number) / 20,
                               )
                                 ? "text-green-500"
                                 : "text-gray-300"
@@ -292,7 +303,7 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
                         ))}
                       </div>
                       <span className="font-medium text-green-600 text-sm">
-                        {item.createdBy.profile.ecoScore}
+                        {item.createdBy.profile.ecoScore ?? 0}
                       </span>
                     </div>
                   </div>

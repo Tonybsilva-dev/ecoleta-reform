@@ -24,7 +24,7 @@ export function ItemCreationModal({
         title: formData.title,
         description: formData.description,
         quantity: parseInt(formData.quantity || "1", 10),
-        materialType: formData.materialType,
+        materialId: formData.materialId,
         unit: formData.unit || "unidade",
         transactionType: formData.transactionType,
         price: formData.price ? parseFloat(formData.price) : undefined,
