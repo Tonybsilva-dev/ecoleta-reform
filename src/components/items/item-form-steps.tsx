@@ -526,9 +526,14 @@ export function ItemImagesStep({
           Imagens do Item
         </Label>
         <p className="mb-4 text-gray-600 text-sm">
-          Adicione até 5 fotos do item. Boas fotos aumentam as chances de
-          interesse.
+          Adicione pelo menos 1 foto do item (até 5 fotos). Boas fotos aumentam
+          as chances de interesse.
         </p>
+        {images.length === 0 && (
+          <p className="mb-4 font-medium text-red-600 text-sm">
+            ⚠️ Pelo menos uma imagem é obrigatória para publicar o item.
+          </p>
+        )}
 
         <div className="space-y-4">
           {/* Upload Area */}

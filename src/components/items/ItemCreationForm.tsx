@@ -124,7 +124,7 @@ export function ItemCreationForm({
       component: (props: any) => (
         <ItemImagesStep {...props} images={images} setImages={setImages} />
       ),
-      validation: () => true, // Imagens são opcionais
+      validation: () => images.length > 0, // Pelo menos uma imagem é obrigatória
     },
     {
       id: "confirmation",

@@ -65,8 +65,8 @@ export const createItemSchema = z.object({
   // URLs das imagens
   imageUrls: z
     .array(z.string().url("URL da imagem inválida"))
-    .max(5, "Máximo de 5 imagens permitidas")
-    .optional(),
+    .min(1, "Pelo menos uma imagem é obrigatória")
+    .max(5, "Máximo de 5 imagens permitidas"),
 
   // Texto alternativo para as imagens
   imageAltTexts: z
