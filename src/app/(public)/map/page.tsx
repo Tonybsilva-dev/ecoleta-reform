@@ -385,7 +385,7 @@ export default function PublicMapPage() {
                   <Filter className="h-4 w-4" />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
+              <DialogContent className="z-[9999] max-w-md">
                 <DialogHeader>
                   <DialogTitle>Filtros</DialogTitle>
                 </DialogHeader>
@@ -410,7 +410,7 @@ export default function PublicMapPage() {
                       <SelectTrigger id="material-filter" className="mt-1">
                         <SelectValue placeholder="Selecione o material" />
                       </SelectTrigger>
-                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
+                      <SelectContent className="z-[99999] max-h-72 overflow-y-auto">
                         <SelectItem value="all">Todos</SelectItem>
                         {materials.map((material) => (
                           <SelectItem key={material.id} value={material.id}>
@@ -441,7 +441,7 @@ export default function PublicMapPage() {
                       <SelectTrigger id="organization-filter" className="mt-1">
                         <SelectValue placeholder="Selecione a organização" />
                       </SelectTrigger>
-                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
+                      <SelectContent className="z-[99999] max-h-72 overflow-y-auto">
                         <SelectItem value="all">Todas</SelectItem>
                         {organizations.map((org) => (
                           <SelectItem key={org.id} value={org.id}>
@@ -480,7 +480,11 @@ export default function PublicMapPage() {
                           }
                         />
                       </SelectTrigger>
-                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
+                      <SelectContent
+                        className="z-[99999] max-h-72 overflow-y-auto"
+                        position="popper"
+                        sideOffset={4}
+                      >
                         {ufs.map((uf) => (
                           <SelectItem key={uf.id} value={uf.sigla}>
                             {uf.nome} ({uf.sigla})
@@ -517,7 +521,11 @@ export default function PublicMapPage() {
                           }
                         />
                       </SelectTrigger>
-                      <SelectContent className="z-[10001] max-h-72 overflow-y-auto">
+                      <SelectContent
+                        className="z-[99999] max-h-72 overflow-y-auto"
+                        position="popper"
+                        sideOffset={4}
+                      >
                         {cities.map((city) => (
                           <SelectItem key={city.id} value={city.nome}>
                             {city.nome}
