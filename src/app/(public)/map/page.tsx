@@ -1,26 +1,11 @@
 "use client";
 
-import {
-  Filter,
-  MapPin as LocationIcon,
-  MapPin,
-  Package,
-  RefreshCw,
-} from "lucide-react";
+import { MapPin, Package, RefreshCw } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -207,127 +192,119 @@ export default function PublicMapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="border-b bg-white">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="font-bold text-3xl text-gray-900">
-                Mapa de Materiais
-              </h1>
-              <p className="mt-1 text-gray-600">
-                Encontre materiais para reciclagem próximos a você
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Badge variant="secondary" className="text-sm">
-                {items.length} itens encontrados
-              </Badge>
-              <Button
-                onClick={loadMapItems}
-                disabled={isLoading}
-                variant="outline"
-                size="sm"
-              >
-                <RefreshCw
-                  className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
-                />
-                Atualizar
-              </Button>
-            </div>
+    <div className="min-h-screen bg-white">
+      {/* Header compacto */}
+      <div className="border-b bg-white px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="font-bold text-2xl text-gray-900">
+              Materiais para Reciclagem
+            </h1>
+            <p className="text-gray-600 text-sm">
+              Encontre materiais próximos a você
+            </p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <Badge variant="secondary" className="text-sm">
+              {items.length} itens
+            </Badge>
+            <Button
+              onClick={loadMapItems}
+              disabled={isLoading}
+              variant="outline"
+              size="sm"
+            >
+              <RefreshCw
+                className={`mr-2 h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+              />
+              Atualizar
+            </Button>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-4">
-          {/* Sidebar com filtros */}
-          <div className="lg:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Filter className="mr-2 h-5 w-5" />
-                  Filtros
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Raio de busca */}
-                <div>
-                  <Label htmlFor="radius">Raio de busca (km)</Label>
-                  <Select
-                    value={filters.radius.toString()}
-                    onValueChange={(value) =>
-                      handleFilterChange("radius", parseInt(value, 10))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5 km</SelectItem>
-                      <SelectItem value="10">10 km</SelectItem>
-                      <SelectItem value="25">25 km</SelectItem>
-                      <SelectItem value="50">50 km</SelectItem>
-                      <SelectItem value="100">100 km</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+      {/* Layout principal - Lista à esquerda, Mapa à direita */}
+      <div className="flex h-[calc(100vh-80px)]">
+        {/* Lista de itens - 2/3 da tela */}
+        <div className="w-2/3 border-r bg-gray-50">
+          {/* Filtros compactos */}
+          <div className="border-b bg-white px-4 py-3">
+            <div className="flex items-center space-x-4">
+              {/* Filtros horizontais */}
+              <div className="flex items-center space-x-2">
+                <span className="font-medium text-gray-600 text-sm">
+                  Filtros:
+                </span>
+
+                {/* Raio */}
+                <Select
+                  value={filters.radius.toString()}
+                  onValueChange={(value) =>
+                    handleFilterChange("radius", parseInt(value, 10))
+                  }
+                >
+                  <SelectTrigger className="h-8 w-24">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="5">5km</SelectItem>
+                    <SelectItem value="10">10km</SelectItem>
+                    <SelectItem value="25">25km</SelectItem>
+                    <SelectItem value="50">50km</SelectItem>
+                  </SelectContent>
+                </Select>
 
                 {/* Material */}
-                <div>
-                  <Label htmlFor="material">Material</Label>
-                  <Select
-                    value={filters.materialId || ""}
-                    onValueChange={(value) =>
-                      handleFilterChange("materialId", value || undefined)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Todos os materiais" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todos os materiais</SelectItem>
-                      {materials.map((material) => (
-                        <SelectItem key={material.id} value={material.id}>
-                          {material.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select
+                  value={filters.materialId || "all"}
+                  onValueChange={(value) =>
+                    handleFilterChange(
+                      "materialId",
+                      value === "all" ? undefined : value,
+                    )
+                  }
+                >
+                  <SelectTrigger className="h-8 w-40">
+                    <SelectValue placeholder="Material" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos</SelectItem>
+                    {materials.map((material) => (
+                      <SelectItem key={material.id} value={material.id}>
+                        {material.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
                 {/* Organização */}
-                <div>
-                  <Label htmlFor="organization">Organização</Label>
-                  <Select
-                    value={filters.organizationId || ""}
-                    onValueChange={(value) =>
-                      handleFilterChange("organizationId", value || undefined)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Todas as organizações" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Todas as organizações</SelectItem>
-                      {organizations.map((org) => (
-                        <SelectItem key={org.id} value={org.id}>
-                          {org.name}
-                          {org.verified && " ✓"}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <Select
+                  value={filters.organizationId || "all"}
+                  onValueChange={(value) =>
+                    handleFilterChange(
+                      "organizationId",
+                      value === "all" ? undefined : value,
+                    )
+                  }
+                >
+                  <SelectTrigger className="h-8 w-40">
+                    <SelectValue placeholder="Organização" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todas</SelectItem>
+                    {organizations.map((org) => (
+                      <SelectItem key={org.id} value={org.id}>
+                        {org.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                {/* Preço mínimo */}
-                <div>
-                  <Label htmlFor="minPrice">Preço mínimo (R$)</Label>
+                {/* Preço */}
+                <div className="flex items-center space-x-2">
                   <Input
-                    id="minPrice"
-                    type="number"
-                    placeholder="0"
+                    placeholder="Min R$"
+                    className="h-8 w-20"
                     value={filters.minPrice || ""}
                     onChange={(e) =>
                       handleFilterChange(
@@ -336,15 +313,10 @@ export default function PublicMapPage() {
                       )
                     }
                   />
-                </div>
-
-                {/* Preço máximo */}
-                <div>
-                  <Label htmlFor="maxPrice">Preço máximo (R$)</Label>
+                  <span className="text-gray-400">-</span>
                   <Input
-                    id="maxPrice"
-                    type="number"
-                    placeholder="999999"
+                    placeholder="Max R$"
+                    className="h-8 w-20"
                     value={filters.maxPrice || ""}
                     onChange={(e) =>
                       handleFilterChange(
@@ -355,233 +327,117 @@ export default function PublicMapPage() {
                   />
                 </div>
 
-                {/* Botão limpar filtros */}
                 <Button
                   onClick={clearFilters}
-                  variant="outline"
-                  className="w-full"
+                  variant="ghost"
+                  size="sm"
+                  className="h-8"
                 >
-                  Limpar Filtros
+                  Limpar
                 </Button>
-              </CardContent>
-            </Card>
-
-            {/* Lista de itens */}
-            <Card className="mt-4">
-              <CardHeader>
-                <CardTitle>Itens Encontrados</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {isLoading ? (
-                  <div className="space-y-2">
-                    {Array.from({ length: 3 }, (_, i) => (
-                      <Skeleton
-                        key={`skeleton-${Date.now()}-${i}`}
-                        className="h-16 w-full"
-                      />
-                    ))}
-                  </div>
-                ) : error ? (
-                  <div className="py-4 text-center text-red-600">{error}</div>
-                ) : items.length === 0 ? (
-                  <div className="py-4 text-center text-gray-500">
-                    Nenhum item encontrado
-                  </div>
-                ) : (
-                  <div className="max-h-96 space-y-2 overflow-y-auto">
-                    {items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="cursor-pointer rounded-lg border p-3 hover:bg-gray-50"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="min-w-0 flex-1">
-                            <h4 className="truncate font-medium text-sm">
-                              {item.title}
-                            </h4>
-                            <p className="truncate text-gray-500 text-xs">
-                              {item.material?.name ||
-                                "Material não especificado"}
-                            </p>
-                            <div className="mt-1 flex items-center">
-                              <MapPin className="mr-1 h-3 w-3 text-gray-400" />
-                              <span className="text-gray-500 text-xs">
-                                {item.distance.toFixed(1)} km
-                              </span>
-                            </div>
-                          </div>
-                          {item.price && (
-                            <div className="text-right">
-                              <span className="font-medium text-green-600 text-sm">
-                                R${" "}
-                                {typeof item.price === "number"
-                                  ? item.price.toFixed(2)
-                                  : parseFloat(item.price || "0").toFixed(2)}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
-          {/* Mapa e Carousel */}
-          <div className="space-y-6 lg:col-span-3">
-            {/* Mapa */}
-            <Card>
-              <CardContent className="p-0">
-                <div className="h-[400px] w-full">
-                  <MapComponent
-                    center={mapCenter}
-                    zoom={mapZoom}
-                    height="400px"
-                    onMapMove={handleMapMove}
-                    items={items}
+          {/* Lista de itens */}
+          <div className="h-[calc(100%-60px)] overflow-y-auto">
+            {isLoading ? (
+              <div className="space-y-3 p-4">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <Skeleton
+                    key={`skeleton-${Date.now()}-${i}`}
+                    className="h-20 w-full"
                   />
-                </div>
-              </CardContent>
-            </Card>
+                ))}
+              </div>
+            ) : error ? (
+              <div className="p-8 text-center text-red-600">{error}</div>
+            ) : items.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                <Package className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+                <p>Nenhum item encontrado</p>
+                <p className="text-sm">Tente ajustar os filtros</p>
+              </div>
+            ) : (
+              <div className="p-2">
+                {items.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="mb-2 w-full rounded-lg border bg-white p-4 text-left transition-shadow hover:shadow-sm"
+                    onClick={() => {
+                      setMapCenter([
+                        item.location.latitude,
+                        item.location.longitude,
+                      ]);
+                      setMapZoom(15);
+                    }}
+                  >
+                    <div className="flex items-start justify-between">
+                      {/* Informações do item */}
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-1 flex items-center space-x-2">
+                          <h4 className="truncate font-semibold text-gray-900 text-sm">
+                            {item.title}
+                          </h4>
+                          <Badge variant="outline" className="text-xs">
+                            {item.status}
+                          </Badge>
+                        </div>
 
-            {/* Carousel de Itens */}
-            {items.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <Package className="mr-2 h-5 w-5" />
-                    Itens Encontrados
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Carousel className="w-full">
-                    <CarouselContent className="-ml-2 md:-ml-4">
-                      {items.map((item) => (
-                        <CarouselItem
-                          key={item.id}
-                          className="pl-2 md:basis-1/2 md:pl-4 lg:basis-1/3"
-                        >
-                          <Card className="h-full">
-                            <CardContent className="p-4">
-                              <div className="space-y-3">
-                                {/* Header do Card */}
-                                <div className="flex items-start justify-between">
-                                  <div className="flex-1">
-                                    <h4 className="line-clamp-2 font-semibold text-sm">
-                                      {item.title}
-                                    </h4>
-                                    <p className="mt-1 text-gray-600 text-xs">
-                                      {item.material?.name ||
-                                        "Material não especificado"}
-                                    </p>
-                                  </div>
-                                  {item.price && (
-                                    <div className="text-right">
-                                      <span className="font-bold text-green-600 text-sm">
-                                        R${" "}
-                                        {typeof item.price === "number"
-                                          ? item.price.toFixed(2)
-                                          : parseFloat(
-                                              item.price || "0",
-                                            ).toFixed(2)}
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
+                        <div className="flex items-center space-x-4 text-gray-500 text-xs">
+                          <span className="flex items-center">
+                            <MapPin className="mr-1 h-3 w-3" />
+                            {item.distance.toFixed(1)} km
+                          </span>
+                          <span>
+                            {item.material?.name || "Material não especificado"}
+                          </span>
+                          <span>Qtd: {item.quantity}</span>
+                        </div>
 
-                                {/* Descrição */}
-                                {item.description && (
-                                  <p className="line-clamp-2 text-gray-500 text-xs">
-                                    {item.description}
-                                  </p>
-                                )}
+                        {item.description && (
+                          <p className="mt-1 line-clamp-2 text-gray-600 text-xs">
+                            {item.description}
+                          </p>
+                        )}
 
-                                {/* Informações adicionais */}
-                                <div className="space-y-2">
-                                  <div className="flex items-center text-gray-500 text-xs">
-                                    <LocationIcon className="mr-1 h-3 w-3" />
-                                    <span>
-                                      {item.distance.toFixed(1)} km de distância
-                                    </span>
-                                  </div>
+                        {item.organization && (
+                          <p className="mt-1 text-gray-500 text-xs">
+                            {item.organization.name}
+                          </p>
+                        )}
+                      </div>
 
-                                  {item.organization && (
-                                    <div className="text-gray-500 text-xs">
-                                      <span className="font-medium">
-                                        Organização:
-                                      </span>{" "}
-                                      {item.organization.name}
-                                    </div>
-                                  )}
-
-                                  {item.creator && (
-                                    <div className="text-gray-500 text-xs">
-                                      <span className="font-medium">
-                                        Criado por:
-                                      </span>{" "}
-                                      {item.creator.name}
-                                    </div>
-                                  )}
-
-                                  <div className="flex items-center justify-between">
-                                    <Badge
-                                      variant="outline"
-                                      className="text-xs"
-                                    >
-                                      {item.status}
-                                    </Badge>
-                                    <span className="text-gray-500 text-xs">
-                                      Qtd: {item.quantity}
-                                    </span>
-                                  </div>
-                                </div>
-
-                                {/* Botão de ação */}
-                                <div className="pt-2">
-                                  <Button
-                                    size="sm"
-                                    className="w-full"
-                                    onClick={() => {
-                                      setMapCenter([
-                                        item.location.latitude,
-                                        item.location.longitude,
-                                      ]);
-                                      setMapZoom(15);
-                                    }}
-                                  >
-                                    <MapPin className="mr-1 h-3 w-3" />
-                                    Ver no Mapa
-                                  </Button>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                  </Carousel>
-                </CardContent>
-              </Card>
+                      {/* Preço */}
+                      {item.price && (
+                        <div className="ml-4 text-right">
+                          <span className="font-bold text-green-600 text-sm">
+                            R${" "}
+                            {typeof item.price === "number"
+                              ? item.price.toFixed(2)
+                              : parseFloat(item.price || "0").toFixed(2)}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                ))}
+              </div>
             )}
+          </div>
+        </div>
 
-            {/* Estado vazio */}
-            {!isLoading && items.length === 0 && (
-              <Card>
-                <CardContent className="p-8 text-center">
-                  <Package className="mx-auto mb-4 h-12 w-12 text-gray-400" />
-                  <h3 className="mb-2 font-medium text-gray-900 text-lg">
-                    Nenhum item encontrado
-                  </h3>
-                  <p className="text-gray-500">
-                    Tente ajustar os filtros ou expandir o raio de busca.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+        {/* Mapa - 1/3 da tela */}
+        <div className="w-1/3">
+          <div className="h-full">
+            <MapComponent
+              center={mapCenter}
+              zoom={mapZoom}
+              height="100%"
+              onMapMove={handleMapMove}
+              items={items}
+            />
           </div>
         </div>
       </div>
