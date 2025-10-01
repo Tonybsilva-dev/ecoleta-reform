@@ -17,12 +17,43 @@ const MapView = dynamic(() => import("./MapView"), {
   ),
 });
 
+export interface MapItem {
+  id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  price: number | null;
+  quantity: number;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+  distance: number;
+  material: {
+    name: string;
+  } | null;
+  organization: {
+    name: string;
+  } | null;
+  creator: {
+    name: string;
+  } | null;
+  images: Array<{
+    id: string;
+    url: string;
+    altText: string | null;
+    isPrimary: boolean;
+  }>;
+}
+
 export interface MapProps {
   center?: [number, number];
   zoom?: number;
   className?: string;
   height?: string;
   children?: React.ReactNode;
+  items?: MapItem[];
+  onMapMove?: (center: [number, number], zoom: number) => void;
 }
 
 export default function MapComponent(props: MapProps) {

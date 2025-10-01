@@ -5,7 +5,8 @@ import { GET } from "./route";
 // Mock Prisma
 vi.mock("@/lib/prisma", () => ({
   prisma: {
-    $queryRaw: vi.fn().mockResolvedValue([
+    $queryRaw: vi.fn().mockResolvedValue([]),
+    $queryRawUnsafe: vi.fn().mockResolvedValue([
       {
         id: "item-1",
         title: "Test Item",
@@ -66,7 +67,7 @@ describe("GET /api/items/map", () => {
 
     // Verify all returned items are within the specified radius
     if (data.data.items.length > 0) {
-      data.data.items.forEach((item: any) => {
+      data.data.items.forEach((item: { location: { latitude: number; longitude: number }; distance: number }) => {
         expect(item).toHaveProperty("location");
         expect(item.location).toHaveProperty("latitude");
         expect(item.location).toHaveProperty("longitude");

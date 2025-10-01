@@ -15,10 +15,10 @@ export async function GET(request: NextRequest) {
     const organizationId = searchParams.get("organizationId") || undefined;
     const status = searchParams.get("status") || "ACTIVE";
     const minPrice = searchParams.get("minPrice")
-      ? parseFloat(searchParams.get("minPrice")!)
+      ? parseFloat(searchParams.get("minPrice") || "0")
       : undefined;
     const maxPrice = searchParams.get("maxPrice")
-      ? parseFloat(searchParams.get("maxPrice")!)
+      ? parseFloat(searchParams.get("maxPrice") || "0")
       : undefined;
     const latitude = parseFloat(searchParams.get("latitude") ?? "0");
     const longitude = parseFloat(searchParams.get("longitude") ?? "0");
@@ -36,49 +36,8 @@ export async function GET(request: NextRequest) {
       radius,
     });
 
-    // Construir filtros SQL para PostGIS
-    let whereClause = "WHERE i.status = $1 AND i.location IS NOT NULL";
-    const queryParams: string[] = [validatedData.status || "ACTIVE"];
-    let paramIndex = 2;
-
-    if (validatedData.materialId) {
-      whereClause += ` AND i.material_id = $${paramIndex}`;
-      queryParams.push(validatedData.materialId);
-      paramIndex++;
-    }
-
-    if (validatedData.organizationId) {
-      whereClause += ` AND i.organization_id = $${paramIndex}`;
-      queryParams.push(validatedData.organizationId);
-      paramIndex++;
-    }
-
-    if (validatedData.minPrice !== undefined) {
-      whereClause += ` AND i.price >= $${paramIndex}`;
-      queryParams.push(validatedData.minPrice.toString());
-      paramIndex++;
-    }
-
-    if (validatedData.maxPrice !== undefined) {
-      whereClause += ` AND i.price <= $${paramIndex}`;
-      queryParams.push(validatedData.maxPrice.toString());
-      paramIndex++;
-    }
-
-    // Adicionar filtro de distância
-    whereClause += ` AND ST_DWithin(
-      i.location, 
-      ST_Point($${paramIndex}, $${paramIndex + 1})::geography, 
-      $${paramIndex + 2}
-    )`;
-    queryParams.push(
-      validatedData.longitude.toString(),
-      validatedData.latitude.toString(),
-      (validatedData.radius * 1000).toString(),
-    );
-
-    // Query SQL para buscar itens com distância calculada
-    const items = await prisma.$queryRaw`
+    // Construir query base
+    let baseQuery = `
       SELECT 
         i.id,
         i.title,
@@ -86,11 +45,6 @@ export async function GET(request: NextRequest) {
         i.status,
         i.price,
         i.quantity,
-        i.created_at,
-        i.updated_at,
-        i.created_by_id,
-        i.organization_id,
-        i.material_id,
         ST_X(i.location::geometry) as longitude,
         ST_Y(i.location::geometry) as latitude,
         ST_Distance(
@@ -98,32 +52,41 @@ export async function GET(request: NextRequest) {
           ST_Point(${validatedData.longitude}, ${validatedData.latitude})::geography
         ) / 1000 as distance_km,
         m.name as material_name,
-        m.category as material_category,
         o.name as organization_name,
-        o.verified as organization_verified,
-        u.name as creator_name,
-        u.email as creator_email,
-        (
-          SELECT json_agg(
-            json_build_object(
-              'id', ii.id,
-              'url', ii.url,
-              'altText', ii.alt_text,
-              'isPrimary', ii.is_primary
-            )
-          )
-          FROM item_images ii
-          WHERE ii.item_id = i.id
-          ORDER BY ii.is_primary DESC, ii.created_at ASC
-        ) as images
+        u.name as creator_name
       FROM items i
-      LEFT JOIN materials m ON i.material_id = m.id
-      LEFT JOIN organizations o ON i.organization_id = o.id
-      LEFT JOIN users u ON i.created_by_id = u.id
-      ${whereClause}
-      ORDER BY distance_km ASC
-      LIMIT 100
+      LEFT JOIN materials m ON i."materialId" = m.id
+      LEFT JOIN organizations o ON i."organizationId" = o.id
+      LEFT JOIN users u ON i."createdById" = u.id
+      WHERE i.status = 'ACTIVE' 
+        AND i.location IS NOT NULL
+        AND ST_DWithin(
+          i.location, 
+          ST_Point(${validatedData.longitude}, ${validatedData.latitude})::geography, 
+          ${validatedData.radius * 1000}
+        )
     `;
+
+    // Adicionar filtros condicionais
+    if (validatedData.materialId) {
+      baseQuery += ` AND i."materialId" = '${validatedData.materialId}'`;
+    }
+
+    if (validatedData.organizationId) {
+      baseQuery += ` AND i."organizationId" = '${validatedData.organizationId}'`;
+    }
+
+    if (validatedData.minPrice !== undefined) {
+      baseQuery += ` AND i.price >= ${validatedData.minPrice}`;
+    }
+
+    if (validatedData.maxPrice !== undefined) {
+      baseQuery += ` AND i.price <= ${validatedData.maxPrice}`;
+    }
+
+    baseQuery += ` ORDER BY distance_km ASC LIMIT 100`;
+
+    const items = await prisma.$queryRawUnsafe(baseQuery);
 
     // Converter resultado para formato mais limpo
     const formattedItems = (
@@ -132,38 +95,22 @@ export async function GET(request: NextRequest) {
         title: string;
         description: string | null;
         status: string;
-        price: string | null;
+        price: number | null;
         quantity: number;
-        created_at: Date;
-        updated_at: Date;
-        created_by_id: string;
-        organization_id: string | null;
-        material_id: string | null;
         longitude: number;
         latitude: number;
         distance_km: number;
         material_name: string | null;
-        material_category: string | null;
         organization_name: string | null;
-        organization_verified: boolean | null;
         creator_name: string | null;
-        creator_email: string | null;
-        images: Array<{
-          id: string;
-          url: string;
-          altText: string | null;
-          isPrimary: boolean;
-        }> | null;
       }>
     ).map((item) => ({
       id: item.id,
       title: item.title,
       description: item.description,
       status: item.status,
-      price: item.price ? parseFloat(item.price) : null,
+      price: item.price,
       quantity: item.quantity,
-      createdAt: item.created_at,
-      updatedAt: item.updated_at,
       location: {
         latitude: item.latitude,
         longitude: item.longitude,
@@ -171,24 +118,20 @@ export async function GET(request: NextRequest) {
       distance: item.distance_km,
       material: item.material_name
         ? {
-            id: item.material_id,
             name: item.material_name,
-            category: item.material_category,
           }
         : null,
       organization: item.organization_name
         ? {
-            id: item.organization_id,
             name: item.organization_name,
-            verified: item.organization_verified,
           }
         : null,
-      creator: {
-        id: item.created_by_id,
-        name: item.creator_name,
-        email: item.creator_email,
-      },
-      images: item.images || [],
+      creator: item.creator_name
+        ? {
+            name: item.creator_name,
+          }
+        : null,
+      images: [],
     }));
 
     return NextResponse.json({
