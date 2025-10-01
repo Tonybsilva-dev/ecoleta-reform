@@ -63,7 +63,8 @@ export default function MapView({
       if (!mapRef.current) return;
 
       // Fix for default markers in Leaflet with Next.js
-      delete (L.Icon.Default.prototype as Record<string, unknown>)._getIconUrl;
+      delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)
+        ._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl:
           "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
@@ -116,7 +117,7 @@ export default function MapView({
 
     // Clear existing markers
     markersRef.current.forEach((marker) => {
-      mapInstanceRef.current.removeLayer(marker);
+      mapInstanceRef.current?.removeLayer(marker);
     });
     markersRef.current = [];
 
@@ -126,7 +127,7 @@ export default function MapView({
         const marker = L.marker([
           item.location.latitude,
           item.location.longitude,
-        ]).addTo(mapInstanceRef.current);
+        ]).addTo(mapInstanceRef.current!);
 
         // Create popup content
         const popupContent = `

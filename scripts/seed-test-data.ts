@@ -70,7 +70,7 @@ async function main() {
     where: { id: "test-item-1" },
   });
 
-  console.log("✅ Item criado:", item.title);
+  console.log("✅ Item criado:", item?.title || "Item não encontrado");
 
   // Criar mais alguns itens em locais diferentes
   await prisma.$executeRaw`
