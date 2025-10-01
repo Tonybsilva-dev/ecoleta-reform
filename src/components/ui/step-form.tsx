@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useState } from "react";
+import { useState } from "react";
 
 import { cn } from "@/lib/utils";
 

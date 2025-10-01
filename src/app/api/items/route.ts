@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -197,7 +198,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20", 10);
 
     // Construir filtros
-    const where: Record<string, unknown> = {
+    const where: Prisma.ItemWhereInput = {
       status: "ACTIVE", // Apenas itens ativos por padrão
     };
 
@@ -217,7 +218,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (status) {
-      where.status = status;
+      where.status = status as
+        | "ACTIVE"
+        | "INACTIVE"
+        | "SOLD"
+        | "DONATED"
+        | "COLLECTED";
     }
 
     if (minPrice !== undefined || maxPrice !== undefined) {
@@ -226,12 +232,8 @@ export async function GET(request: NextRequest) {
       if (maxPrice !== undefined) where.price.lte = maxPrice;
     }
 
-    // Filtro geográfico usando PostGIS
-    if (latitude && longitude) {
-      where.location = {
-        not: null,
-      };
-    }
+    // Filtro geográfico usando PostGIS - será aplicado na query raw
+    // where.location = { not: null }; // Não funciona com PrismaWhereInput
 
     // Calcular offset para paginação
     const skip = (page - 1) * limit;

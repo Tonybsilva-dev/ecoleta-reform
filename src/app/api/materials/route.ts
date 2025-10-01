@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -15,28 +16,26 @@ export async function GET(request: NextRequest) {
     const active = searchParams.get("active") !== "false"; // true por padrão
 
     // Construir filtros
-    const where: Record<string, unknown> = {};
+    const where: Prisma.MaterialWhereInput = {};
 
     if (active) {
       where.isActive = true;
     }
 
     if (category) {
-      // Compatibilidade: se existir relação, filtra por categoria.name; se não, usa campo antigo
-      where.OR = [
-        { category: { equals: category } },
-        {
-          categoryId: { not: null },
-          category: { is: { name: { equals: category } } },
+      // Filtrar por nome da categoria
+      where.category = {
+        name: {
+          equals: category,
         },
-      ];
+      };
     }
 
     if (search) {
       where.OR = [
         { name: { contains: search, mode: "insensitive" } },
         { description: { contains: search, mode: "insensitive" } },
-        { category: { contains: search, mode: "insensitive" } },
+        { category: { name: { contains: search, mode: "insensitive" } } },
       ];
     }
 
@@ -65,18 +64,22 @@ export async function GET(request: NextRequest) {
         >,
         material,
       ) => {
-        const category =
-          (material as { category?: { name?: string } }).category?.name ||
-          (material as { category?: string }).category ||
-          "Outros";
-        if (!acc[category]) {
-          acc[category] = [];
+        const categoryName =
+          material.category &&
+          typeof material.category === "object" &&
+          "name" in material.category
+            ? (material.category as { name: string }).name
+            : typeof material.category === "string"
+              ? material.category
+              : "Outros";
+        if (!acc[categoryName]) {
+          acc[categoryName] = [];
         }
-        acc[category].push({
+        acc[categoryName].push({
           id: material.id,
           name: material.name,
           description: material.description,
-          category: material.category,
+          category: categoryName,
           isActive: material.isActive,
           itemCount: 0, // TODO: Implementar contagem de itens quando necessário
           createdAt: material.createdAt,
@@ -160,7 +163,9 @@ export async function POST(request: NextRequest) {
       data: {
         name: validatedData.name,
         description: validatedData.description || null,
-        category: validatedData.category || null,
+        ...(validatedData.category && {
+          category: { connect: { id: validatedData.category } },
+        }),
         isActive: true,
       },
     });

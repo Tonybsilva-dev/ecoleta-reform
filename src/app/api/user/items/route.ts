@@ -1,3 +1,4 @@
+import type { Prisma } from "@prisma/client";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20", 10);
 
     // Construir filtros - SEMPRE filtrar por usuário logado
-    const where: Record<string, unknown> = {
+    const where: Prisma.ItemWhereInput = {
       createdById: session.user.id, // FILTRO CRÍTICO: apenas itens do usuário
     };
 
@@ -44,7 +45,12 @@ export async function GET(request: NextRequest) {
     }
 
     if (status) {
-      where.status = status;
+      where.status = status as
+        | "ACTIVE"
+        | "INACTIVE"
+        | "SOLD"
+        | "DONATED"
+        | "COLLECTED";
     }
 
     if (minPrice !== undefined || maxPrice !== undefined) {

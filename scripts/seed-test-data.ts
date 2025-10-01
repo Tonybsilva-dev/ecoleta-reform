@@ -12,7 +12,7 @@ async function main() {
     create: {
       name: "Plástico PET",
       description: "Garrafas de plástico PET para reciclagem",
-      category: "RECYCLABLE",
+      category: { connect: { id: "recyclable-category-id" } },
       isActive: true,
     },
   });

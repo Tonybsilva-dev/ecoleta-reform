@@ -8,7 +8,6 @@ import {
   MapPin,
   Package,
   RefreshCw,
-  Truck,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
@@ -296,7 +295,7 @@ export default function PublicMapPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [mapCenter, filters]);
+  }, [mapCenter, filters, skipNextLoad]);
 
   // Carregar itens quando os filtros ou centro do mapa mudarem
   useEffect(() => {
@@ -331,7 +330,7 @@ export default function PublicMapPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="flex min-h-screen flex-col bg-white">
       {/* Header compacto */}
       <div className="border-b bg-white px-6 py-4">
         <div className="flex items-center justify-between">
@@ -395,7 +394,7 @@ export default function PublicMapPage() {
                   <div>
                     <label
                       htmlFor="material-filter"
-                      className="text-sm font-medium text-gray-700"
+                      className="font-medium text-gray-700 text-sm"
                     >
                       Material
                     </label>
@@ -426,7 +425,7 @@ export default function PublicMapPage() {
                   <div>
                     <label
                       htmlFor="organization-filter"
-                      className="text-sm font-medium text-gray-700"
+                      className="font-medium text-gray-700 text-sm"
                     >
                       Organização
                     </label>
@@ -457,7 +456,7 @@ export default function PublicMapPage() {
                   <div>
                     <label
                       htmlFor="uf-filter"
-                      className="text-sm font-medium text-gray-700"
+                      className="font-medium text-gray-700 text-sm"
                     >
                       Estado
                     </label>
@@ -495,7 +494,7 @@ export default function PublicMapPage() {
                   <div>
                     <label
                       htmlFor="city-filter"
-                      className="text-sm font-medium text-gray-700"
+                      className="font-medium text-gray-700 text-sm"
                     >
                       Cidade
                     </label>
@@ -532,7 +531,7 @@ export default function PublicMapPage() {
                   <div>
                     <label
                       htmlFor="min-price-filter"
-                      className="text-sm font-medium text-gray-700"
+                      className="font-medium text-gray-700 text-sm"
                     >
                       Faixa de Preço
                     </label>
@@ -623,9 +622,9 @@ export default function PublicMapPage() {
                   const price =
                     item.price !== null && item.price !== undefined
                       ? new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
-                      }).format(Number(item.price))
+                          style: "currency",
+                          currency: "BRL",
+                        }).format(Number(item.price))
                       : null;
                   // Tag de tipo e ícone (aproximação até existir campo dedicado)
                   const isSale =
@@ -687,7 +686,7 @@ export default function PublicMapPage() {
                         )}
                       </div>
                       {/* Tag de tipo (com ícone e cor) */}
-                      <span className="pointer-events-none absolute bottom-2 right-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs shadow">
+                      <span className="pointer-events-none absolute right-3 bottom-2 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-xs shadow">
                         <TypeIcon className={`h-3.5 w-3.5 ${typeColor}`} />
                         <span className="text-gray-700">{typeLabel}</span>
                       </span>
@@ -700,7 +699,7 @@ export default function PublicMapPage() {
         </div>
 
         {/* Mapa - 2/5 da tela (maior) */}
-        <div className="w-2/5 relative z-0">
+        <div className="relative z-0 w-2/5">
           <div className="h-full">
             {mapCenter && (
               <MapComponent

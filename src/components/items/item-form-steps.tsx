@@ -17,12 +17,9 @@ import {
   Package,
   Recycle,
   Shirt,
-  Smartphone,
-  Sprout,
   Trees,
   Truck,
   Wine,
-  Wrench,
   X,
 } from "lucide-react";
 import NextImage from "next/image";
@@ -125,6 +122,10 @@ export function ItemMaterialStep({
     1,
     Math.ceil(materials.length / VISIBLE_PER_PAGE),
   );
+  const skeletonKeys = useMemo(
+    () => Array.from({ length: VISIBLE_PER_PAGE }, (_, i) => `sk-${i}`),
+    [],
+  );
   const pageStart = pageIndex * VISIBLE_PER_PAGE;
   const visibleMaterials = useMemo(
     () => materials.slice(pageStart, pageStart + VISIBLE_PER_PAGE),
@@ -181,9 +182,9 @@ export function ItemMaterialStep({
           {/* Grid de materiais (2 colunas x 5 linhas) */}
           {isLoading && !loadedOnce ? (
             <div className="grid grid-cols-2 gap-3">
-              {Array.from({ length: 10 }, (_, i) => (
-                <div key={`skeleton-${i}`} className="rounded-lg border-2 p-4">
-                  <Skeleton className="h-5 w-5 mb-2" />
+              {skeletonKeys.map((k) => (
+                <div key={k} className="rounded-lg border-2 p-4">
+                  <Skeleton className="mb-2 h-5 w-5" />
                   <Skeleton className="h-4 w-3/4" />
                 </div>
               ))}
@@ -398,7 +399,7 @@ export function ItemLocationStep({
       },
       { enableHighAccuracy: false, timeout: 8000, maximumAge: 60_000 },
     );
-  }, [updateFormData, setIsGettingLocation]);
+  }, [updateFormData]);
 
   // Solicitar localização automaticamente ao montar o componente
   useEffect(() => {
@@ -638,23 +639,6 @@ export function ItemConfirmationStep({
     const key = (selectedMaterial as any)?.category?.icon as string | undefined;
     if (key && IconMapConfirm[key]) return IconMapConfirm[key];
     return Package;
-  };
-
-  const getMaterialTypeIcon = (type: string) => {
-    const materials: Record<
-      string,
-      React.ComponentType<{ className?: string }>
-    > = {
-      plastic: Recycle,
-      paper: FileText,
-      glass: Wine,
-      metal: Wrench,
-      electronic: Smartphone,
-      organic: Sprout,
-      textile: Shirt,
-      other: Package,
-    };
-    return materials[type] || Package;
   };
 
   return (
