@@ -248,7 +248,7 @@ export function ItemMaterialStep({
             <SelectTrigger className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200">
               <SelectValue placeholder="Unidade" />
             </SelectTrigger>
-            <SelectContent className="z-50">
+            <SelectContent className="z-[9999]">
               <SelectItem value="unidade">Unidade</SelectItem>
               <SelectItem value="kg">Quilograma (kg)</SelectItem>
               <SelectItem value="g">Grama (g)</SelectItem>
