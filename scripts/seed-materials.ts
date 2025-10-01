@@ -151,7 +151,6 @@ async function seedMaterials() {
         update: {
           description: m.description ?? null,
           isActive: true,
-          category: { disconnect: true },
         },
         create: {
           name: m.name,
@@ -195,9 +194,7 @@ async function seedMaterials() {
     const updateData: Parameters<typeof prisma.material.upsert>[0]["update"] = {
       description: m.description ?? null,
       isActive: true,
-      ...(categoryId
-        ? { category: { connect: { id: categoryId } } }
-        : { category: { disconnect: true } }),
+      ...(categoryId ? { category: { connect: { id: categoryId } } } : {}),
     };
 
     const createBase = {
