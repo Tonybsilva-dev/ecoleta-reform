@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
         i.status,
         i.price,
         i.quantity,
+        i."transactionType",
         ST_X(i.location::geometry) as longitude,
         ST_Y(i.location::geometry) as latitude,
         ST_Distance(

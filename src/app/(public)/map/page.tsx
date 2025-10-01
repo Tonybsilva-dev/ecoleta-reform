@@ -676,7 +676,7 @@ export default function PublicMapPage() {
                   };
 
                   const transactionInfo = getTransactionTypeInfo(
-                    item.transactionType || "DONATION",
+                    item.transactionType ?? "DONATION",
                     item.price,
                   );
                   const TypeIcon = transactionInfo.icon;

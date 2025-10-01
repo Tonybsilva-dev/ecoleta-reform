@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
     const itemData = {
       title: validatedData.title,
       description: validatedData.description || null,
-      transactionType: validatedData.transactionType || "DONATION",
+      transactionType: validatedData.transactionType ?? "DONATION",
       price: validatedData.price
         ? parseFloat(validatedData.price.toString())
         : null,
@@ -243,7 +243,16 @@ export async function GET(request: NextRequest) {
     const [items, total] = await Promise.all([
       prisma.item.findMany({
         where,
-        include: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          price: true,
+          quantity: true,
+          status: true,
+          transactionType: true,
+          createdAt: true,
+          updatedAt: true,
           material: true,
           organization: {
             select: {

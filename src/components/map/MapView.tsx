@@ -197,7 +197,7 @@ export default function MapView({
         };
 
         const markerInfo = getMarkerInfo(
-          item.transactionType || "DONATION",
+          item.transactionType ?? "DONATION",
           item.price,
         );
         const label = markerInfo.label;
@@ -248,7 +248,7 @@ export default function MapView({
         };
 
         const transactionHtml = getTransactionDisplay(
-          item.transactionType || "DONATION",
+          item.transactionType ?? "DONATION",
           item.price,
         );
 
