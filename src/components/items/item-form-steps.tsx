@@ -248,7 +248,7 @@ export function ItemMaterialStep({
             <SelectTrigger className="mt-2 w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-200">
               <SelectValue placeholder="Unidade" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="z-50">
               <SelectItem value="unidade">Unidade</SelectItem>
               <SelectItem value="kg">Quilograma (kg)</SelectItem>
               <SelectItem value="g">Grama (g)</SelectItem>
@@ -274,21 +274,21 @@ export function ItemPricingStep({
 }) {
   const transactionTypes = [
     {
-      id: "sale",
+      id: "SALE",
       name: "Venda",
       description: "Vender por um preço específico",
       icon: DollarSign,
       color: "text-green-600",
     },
     {
-      id: "donation",
+      id: "DONATION",
       name: "Doação",
       description: "Doar gratuitamente",
       icon: Gift,
       color: "text-pink-600",
     },
     {
-      id: "collection",
+      id: "COLLECTION",
       name: "Coleta",
       description: "Solicitar coleta gratuita",
       icon: Truck,
@@ -596,11 +596,11 @@ export function ItemConfirmationStep({
 
   const getTransactionTypeText = (type: string) => {
     switch (type) {
-      case "sale":
+      case "SALE":
         return "Venda";
-      case "donation":
+      case "DONATION":
         return "Doação";
-      case "collection":
+      case "COLLECTION":
         return "Coleta";
       default:
         return "Não especificado";
@@ -609,11 +609,11 @@ export function ItemConfirmationStep({
 
   const getTransactionTypeIcon = (type: string) => {
     switch (type) {
-      case "sale":
+      case "SALE":
         return DollarSign;
-      case "donation":
+      case "DONATION":
         return Gift;
-      case "collection":
+      case "COLLECTION":
         return Truck;
       default:
         return Package;
@@ -719,7 +719,7 @@ export function ItemConfirmationStep({
                 </span>
               </div>
             </div>
-            {formData.transactionType === "sale" && formData.price && (
+            {formData.transactionType === "SALE" && formData.price && (
               <div>
                 <span className="text-gray-600">Preço:</span>{" "}
                 <span className="font-medium">R$ {formData.price}</span>

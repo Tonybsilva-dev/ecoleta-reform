@@ -80,7 +80,7 @@ export function ItemCreationForm({
       validation: (formData: Record<string, string>) => {
         if (!formData.transactionType) return false;
 
-        if (formData.transactionType === "sale") {
+        if (formData.transactionType === "SALE") {
           try {
             createItemSchema.pick({ price: true }).parse({
               price: parseFloat(formData.price || "0"),

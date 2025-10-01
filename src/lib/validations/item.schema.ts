@@ -43,7 +43,7 @@ export const createItemSchema = z.object({
 
   unit: z.string().optional(),
 
-  transactionType: z.string().optional(),
+  transactionType: z.enum(["SALE", "DONATION", "COLLECTION"]).optional(),
 
   address: z.string().optional(),
 

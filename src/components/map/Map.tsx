@@ -22,6 +22,7 @@ export interface MapItem {
   title: string;
   description: string | null;
   status: string;
+  transactionType: string;
   price: number | null;
   quantity: number;
   location: {

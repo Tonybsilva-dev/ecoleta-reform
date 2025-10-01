@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
     const itemData = {
       title: validatedData.title,
       description: validatedData.description || null,
+      transactionType: validatedData.transactionType || "DONATION",
       price: validatedData.price
         ? parseFloat(validatedData.price.toString())
         : null,

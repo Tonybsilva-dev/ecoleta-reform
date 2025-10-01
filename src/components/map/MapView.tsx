@@ -8,6 +8,7 @@ export interface MapItem {
   title: string;
   description: string | null;
   status: string;
+  transactionType: string;
   price: number | null;
   quantity: number;
   location: {
@@ -167,12 +168,40 @@ export default function MapView({
     // Add new markers
     import("leaflet").then((L) => {
       items.forEach((item) => {
-        const isSale =
-          item.price != null &&
-          !Number.isNaN(Number(item.price)) &&
-          Number(item.price) > 0;
-        const label = isSale ? `R$ ${Number(item.price).toFixed(2)}` : "Doação";
-        const bg = isSale ? "#10b981" : "#ec4899"; // green / pink
+        const getMarkerInfo = (
+          transactionType: string,
+          price: number | null,
+        ) => {
+          switch (transactionType) {
+            case "SALE":
+              return {
+                label: price ? `R$ ${Number(price).toFixed(2)}` : "Venda",
+                bg: "#10b981", // green
+              };
+            case "DONATION":
+              return {
+                label: "Doação",
+                bg: "#ec4899", // pink
+              };
+            case "COLLECTION":
+              return {
+                label: "Coleta",
+                bg: "#3b82f6", // blue
+              };
+            default:
+              return {
+                label: "Doação",
+                bg: "#ec4899", // pink
+              };
+          }
+        };
+
+        const markerInfo = getMarkerInfo(
+          item.transactionType || "DONATION",
+          item.price,
+        );
+        const label = markerInfo.label;
+        const bg = markerInfo.bg;
         const html = `
           <div style="
             display:inline-flex;align-items:center;justify-content:center;
@@ -200,10 +229,28 @@ export default function MapView({
           "";
         const orgName =
           item.organization?.name || item.creator?.name || "Particular";
-        const priceHtml =
-          item.price != null && !Number.isNaN(Number(item.price))
-            ? `<span style="color:#059669;font-weight:600">R$ ${Number(item.price).toFixed(2)}</span>`
-            : "";
+        const getTransactionDisplay = (
+          transactionType: string,
+          price: number | null,
+        ) => {
+          switch (transactionType) {
+            case "SALE":
+              return price
+                ? `<span style="color:#059669;font-weight:600">R$ ${Number(price).toFixed(2)}</span>`
+                : `<span style="color:#059669;font-weight:600">Preço a negociar</span>`;
+            case "DONATION":
+              return `<span style="color:#ec4899;font-weight:600">Gratuito</span>`;
+            case "COLLECTION":
+              return `<span style="color:#3b82f6;font-weight:600">Solicitar coleta</span>`;
+            default:
+              return `<span style="color:#ec4899;font-weight:600">Gratuito</span>`;
+          }
+        };
+
+        const transactionHtml = getTransactionDisplay(
+          item.transactionType || "DONATION",
+          item.price,
+        );
 
         const popupContent = `
           <div style="min-width:240px;max-width:280px"> 
@@ -214,7 +261,7 @@ export default function MapView({
               <div>
                 <div style="font-weight:600;color:#111827;font-size:14px;line-height:1.2">${orgName}</div>
                 <div style="margin-top:4px;color:#6b7280;font-size:12px">${item.material?.name || "Material não especificado"} • ${item.distance.toFixed(1)} km</div>
-                ${priceHtml ? `<div style="margin-top:4px;font-size:12px">${priceHtml}</div>` : ""}
+                <div style="margin-top:4px;font-size:12px">${transactionHtml}</div>
               </div>
             </div>
             <div style="margin-top:10px">

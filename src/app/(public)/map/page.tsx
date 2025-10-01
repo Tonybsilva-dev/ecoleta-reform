@@ -8,6 +8,7 @@ import {
   MapPin,
   Package,
   RefreshCw,
+  Truck,
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
@@ -50,6 +51,7 @@ interface MapItem {
   title: string;
   description: string | null;
   status: string;
+  transactionType: string;
   price: number | null;
   quantity: number;
   location: {
@@ -635,13 +637,51 @@ export default function PublicMapPage() {
                         }).format(Number(item.price))
                       : null;
                   // Tag de tipo e ícone (aproximação até existir campo dedicado)
-                  const isSale =
-                    item.price !== null &&
-                    item.price !== undefined &&
-                    Number(item.price) > 0;
-                  const TypeIcon = isSale ? DollarSign : Gift; // fallback Doação
-                  const typeLabel = isSale ? "Venda" : "Doação";
-                  const typeColor = isSale ? "text-green-600" : "text-pink-600";
+                  const getTransactionTypeInfo = (
+                    transactionType: string,
+                    price: number | null,
+                  ) => {
+                    switch (transactionType) {
+                      case "SALE":
+                        return {
+                          icon: DollarSign,
+                          label: "Venda",
+                          color: "text-green-600",
+                          price: price
+                            ? `R$ ${Number(price).toFixed(2)}`
+                            : "Preço a negociar",
+                        };
+                      case "DONATION":
+                        return {
+                          icon: Gift,
+                          label: "Doação",
+                          color: "text-pink-600",
+                          price: "Gratuito",
+                        };
+                      case "COLLECTION":
+                        return {
+                          icon: Truck,
+                          label: "Coleta",
+                          color: "text-blue-600",
+                          price: "Solicitar coleta",
+                        };
+                      default:
+                        return {
+                          icon: Gift,
+                          label: "Doação",
+                          color: "text-pink-600",
+                          price: "Gratuito",
+                        };
+                    }
+                  };
+
+                  const transactionInfo = getTransactionTypeInfo(
+                    item.transactionType || "DONATION",
+                    item.price,
+                  );
+                  const TypeIcon = transactionInfo.icon;
+                  const typeLabel = transactionInfo.label;
+                  const typeColor = transactionInfo.color;
                   return (
                     <button
                       key={item.id}

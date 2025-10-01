@@ -35,6 +35,12 @@ enum ItemStatus {
   COLLECTED
 }
 
+enum TransactionType {
+  SALE
+  DONATION
+  COLLECTION
+}
+
 enum OrderStatus {
   PENDING
   CONFIRMED
@@ -251,15 +257,16 @@ model MaterialCategory {
 }
 
 model Item {
-  id          String                                 @id @default(cuid())
-  title       String
-  description String?
-  status      ItemStatus                             @default(ACTIVE)
-  price       Decimal?                               @db.Decimal(10, 2)
-  quantity    Int                                    @default(1)
-  location    Unsupported("geography(Point, 4326)")?
-  createdAt   DateTime                               @default(now())
-  updatedAt   DateTime                               @updatedAt
+  id              String                                 @id @default(cuid())
+  title           String
+  description     String?
+  status          ItemStatus                             @default(ACTIVE)
+  transactionType TransactionType                        @default(DONATION)
+  price           Decimal?                               @db.Decimal(10, 2)
+  quantity        Int                                    @default(1)
+  location        Unsupported("geography(Point, 4326)")?
+  createdAt       DateTime                               @default(now())
+  updatedAt       DateTime                               @updatedAt
 
   // Relations
   createdById String
