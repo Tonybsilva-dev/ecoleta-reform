@@ -504,15 +504,36 @@ export function ItemImagesStep({
   images: string[];
   setImages: (images: string[]) => void;
 }) {
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const files = event.target.files;
     if (!files) return;
 
-    // Simular upload de imagens (em produção, enviar para servidor)
-    const newImages = Array.from(files).map((file) =>
-      URL.createObjectURL(file),
-    );
+    // Converter imagens para base64 (solução temporária)
+    const newImages: string[] = [];
+    for (const file of Array.from(files)) {
+      try {
+        const base64 = await convertToBase64(file);
+        newImages.push(base64);
+      } catch (error) {
+        console.error("Erro ao converter imagem:", error);
+      }
+    }
+
     setImages([...images, ...newImages].slice(0, 5)); // Máximo 5 imagens
+  };
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   const removeImage = (index: number) => {

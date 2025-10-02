@@ -162,9 +162,9 @@ export function ItemCreationForm({
           ? parseFloat(formData.longitude)
           : undefined,
         address: formData.address,
-        // TODO: Implementar upload de imagens
-        imageUrls: [],
-        imageAltTexts: [],
+        // URLs das imagens selecionadas
+        imageUrls: images,
+        imageAltTexts: images.map(() => ""), // Textos alternativos vazios por enquanto
       };
 
       // Validar dados finais
