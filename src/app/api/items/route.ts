@@ -19,6 +19,17 @@ export async function POST(request: NextRequest) {
 
     // Validar dados de entrada
     const body = await request.json();
+
+    // Debug: verificar dados recebidos
+    console.log("API recebeu:", {
+      ...body,
+      imageUrls: body.imageUrls,
+      imageUrlsLength: body.imageUrls?.length || 0,
+      imageUrlsPreview:
+        body.imageUrls?.map((img: string) => `${img.substring(0, 50)}...`) ||
+        [],
+    });
+
     const validatedData = createItemSchema.parse(body);
 
     // Verificar se o material existe (se fornecido)

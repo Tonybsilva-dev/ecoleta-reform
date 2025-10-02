@@ -167,6 +167,14 @@ export function ItemCreationForm({
         imageAltTexts: images.map(() => ""), // Textos alternativos vazios por enquanto
       };
 
+      // Debug: verificar dados antes do envio
+      console.log("Dados sendo enviados:", {
+        ...itemData,
+        imageUrls: images,
+        imageUrlsLength: images.length,
+        imageUrlsPreview: images.map((img) => `${img.substring(0, 50)}...`),
+      });
+
       // Validar dados finais
       const validatedData = createItemSchema.parse(itemData);
 
