@@ -173,6 +173,7 @@ export function ItemCreationForm({
         imageUrls: images,
         imageUrlsLength: images.length,
         imageUrlsPreview: images.map((img) => `${img.substring(0, 50)}...`),
+        imagesState: images, // Estado completo das imagens
       });
 
       // Validar dados finais

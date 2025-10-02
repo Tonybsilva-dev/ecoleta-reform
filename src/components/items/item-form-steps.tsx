@@ -540,6 +540,12 @@ export function ItemImagesStep({
       const result = await response.json();
       const uploadedUrls = result.data.map((file: { url: string }) => file.url);
 
+      console.log("Upload realizado com sucesso:", {
+        uploadedUrls,
+        currentImages: images,
+        newImages: [...images, ...uploadedUrls].slice(0, 5),
+      });
+
       setImages([...images, ...uploadedUrls].slice(0, 5)); // Máximo 5 imagens
     } catch (error) {
       console.error("Erro ao fazer upload:", error);
