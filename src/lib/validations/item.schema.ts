@@ -10,94 +10,79 @@ export const ItemStatusSchema = z.enum([
 ]);
 
 // Schema para criação de item
-export const createItemSchema = z
-  .object({
-    title: z
-      .string()
-      .min(1, "Título é obrigatório")
-      .min(3, "Título deve ter pelo menos 3 caracteres")
-      .max(100, "Título deve ter no máximo 100 caracteres"),
+export const createItemSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Título é obrigatório")
+    .min(3, "Título deve ter pelo menos 3 caracteres")
+    .max(100, "Título deve ter no máximo 100 caracteres"),
 
-    description: z
-      .string()
-      .min(1, "Descrição é obrigatória")
-      .min(10, "Descrição deve ter pelo menos 10 caracteres")
-      .max(1000, "Descrição deve ter no máximo 1000 caracteres")
-      .optional(),
+  description: z
+    .string()
+    .min(1, "Descrição é obrigatória")
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .max(1000, "Descrição deve ter no máximo 1000 caracteres")
+    .optional(),
 
-    price: z
-      .number()
-      .min(0, "Preço deve ser maior ou igual a zero")
-      .max(999999.99, "Preço deve ser menor que R$ 999.999,99")
-      .optional(),
+  price: z
+    .number()
+    .min(0, "Preço deve ser maior ou igual a zero")
+    .max(999999.99, "Preço deve ser menor que R$ 999.999,99")
+    .optional(),
 
-    quantity: z
-      .number()
-      .int("Quantidade deve ser um número inteiro")
-      .min(1, "Quantidade deve ser pelo menos 1")
-      .max(9999, "Quantidade deve ser menor que 10.000")
-      .default(1),
+  quantity: z
+    .number()
+    .int("Quantidade deve ser um número inteiro")
+    .min(1, "Quantidade deve ser pelo menos 1")
+    .max(9999, "Quantidade deve ser menor que 10.000")
+    .default(1),
 
-    materialId: z.string().cuid("ID do material inválido").optional(),
+  materialId: z.string().cuid("ID do material inválido").optional(),
 
-    materialType: z.string().optional(),
+  materialType: z.string().optional(),
 
-    unit: z.string().optional(),
+  unit: z.string().optional(),
 
-    transactionType: z.enum(["SALE", "DONATION", "COLLECTION"]).optional(),
+  transactionType: z.enum(["SALE", "DONATION", "COLLECTION"]).optional(),
 
-    address: z.string().optional(),
+  address: z.string().optional(),
 
-    organizationId: z.string().cuid("ID da organização inválido").optional(),
+  organizationId: z.string().cuid("ID da organização inválido").optional(),
 
-    // Coordenadas geográficas (latitude e longitude)
-    latitude: z
-      .number()
-      .min(-90, "Latitude deve estar entre -90 e 90")
-      .max(90, "Latitude deve estar entre -90 e 90")
-      .optional(),
+  // Coordenadas geográficas (latitude e longitude)
+  latitude: z
+    .number()
+    .min(-90, "Latitude deve estar entre -90 e 90")
+    .max(90, "Latitude deve estar entre -90 e 90")
+    .optional(),
 
-    longitude: z
-      .number()
-      .min(-180, "Longitude deve estar entre -180 e 180")
-      .max(180, "Longitude deve estar entre -180 e 180")
-      .optional(),
+  longitude: z
+    .number()
+    .min(-180, "Longitude deve estar entre -180 e 180")
+    .max(180, "Longitude deve estar entre -180 e 180")
+    .optional(),
 
-    // URLs das imagens ou dados base64
-    imageUrls: z
-      .array(z.string().url("URL da imagem inválida"))
-      .min(1, "Pelo menos uma imagem é obrigatória")
-      .max(5, "Máximo de 5 imagens permitidas")
-      .optional(),
+  // URLs das imagens ou dados base64
+  imageUrls: z
+    .array(z.string().url("URL da imagem inválida"))
+    .max(5, "Máximo de 5 imagens permitidas")
+    .optional(),
 
-    // Dados base64 das imagens
-    imageBase64: z
-      .array(z.string().min(1, "Dados base64 da imagem são obrigatórios"))
-      .min(1, "Pelo menos uma imagem é obrigatória")
-      .max(5, "Máximo de 5 imagens permitidas")
-      .optional(),
+  // Dados base64 das imagens
+  imageBase64: z
+    .array(z.string().min(1, "Dados base64 da imagem são obrigatórios"))
+    .max(5, "Máximo de 5 imagens permitidas")
+    .optional(),
 
-    // Texto alternativo para as imagens
-    imageAltTexts: z
-      .array(
-        z
-          .string()
-          .max(200, "Texto alternativo deve ter no máximo 200 caracteres"),
-      )
-      .optional(),
-  })
-  .refine(
-    (data) => {
-      // Pelo menos uma das opções de imagem deve ser fornecida
-      const hasUrls = data.imageUrls && data.imageUrls.length > 0;
-      const hasBase64 = data.imageBase64 && data.imageBase64.length > 0;
-      return hasUrls || hasBase64;
-    },
-    {
-      message: "Pelo menos uma imagem é obrigatória (URLs ou dados base64)",
-      path: ["imageUrls"], // Mostrar erro no campo imageUrls
-    },
-  );
+  // Texto alternativo para as imagens
+  imageAltTexts: z
+    .array(
+      z
+        .string()
+        .max(200, "Texto alternativo deve ter no máximo 200 caracteres"),
+    )
+    .optional(),
+});
 
 // Schema para atualização de item
 export const updateItemSchema = createItemSchema.partial().extend({

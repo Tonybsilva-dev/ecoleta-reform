@@ -17,7 +17,10 @@ export function ItemCreationModal({
 }: ItemCreationModalProps) {
   const { createItem, isLoading } = useItemsStore();
 
-  const handleComplete = async (formData: Record<string, string>) => {
+  const handleComplete = async (
+    formData: Record<string, string>,
+    images?: string[],
+  ) => {
     try {
       // Preparar dados para envio
       const itemData = {
@@ -33,9 +36,10 @@ export function ItemCreationModal({
           ? parseFloat(formData.longitude)
           : undefined,
         address: formData.address,
-        // TODO: Implementar upload de imagens
-        imageUrls: [],
-        imageAltTexts: [],
+        // Usar imagens base64 se disponíveis, senão URLs vazias
+        imageBase64: images && images.length > 0 ? images : undefined,
+        imageUrls: images && images.length > 0 ? undefined : [],
+        imageAltTexts: images && images.length > 0 ? images.map(() => "") : [],
       };
 
       // Usar o store para criar o item

@@ -17,7 +17,7 @@ import {
 
 interface ItemCreationFormProps {
   className?: string;
-  onComplete?: (formData: Record<string, string>) => void;
+  onComplete?: (formData: Record<string, string>, images?: string[]) => void;
   onBack?: () => void;
   isLoading?: boolean;
 }
@@ -138,7 +138,7 @@ export function ItemCreationForm({
   const handleComplete = async (formData: Record<string, string>) => {
     // Se onComplete foi fornecido, usar ele (modal)
     if (onComplete) {
-      onComplete(formData);
+      onComplete(formData, images);
       return;
     }
 
