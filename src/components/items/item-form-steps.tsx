@@ -520,39 +520,36 @@ export function ItemImagesStep({
 
     setIsUploading(true);
     try {
-      // Criar FormData para upload multipart
-      const formData = new FormData();
-      Array.from(files).forEach((file) => {
-        formData.append("files", file);
-      });
+      // Converter arquivos para base64
+      const base64Images: string[] = [];
 
-      // Fazer upload para a API
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Erro ao fazer upload");
+      for (const file of Array.from(files)) {
+        const base64 = await convertFileToBase64(file);
+        base64Images.push(base64);
       }
 
-      const result = await response.json();
-      const uploadedUrls = result.data.map((file: { url: string }) => file.url);
-
-      console.log("Upload realizado com sucesso:", {
-        uploadedUrls,
-        currentImages: images,
-        newImages: [...images, ...uploadedUrls].slice(0, 5),
+      console.log("Imagens convertidas para base64:", {
+        count: base64Images.length,
+        currentImages: images.length,
+        newImages: [...images, ...base64Images].slice(0, 5),
       });
 
-      setImages([...images, ...uploadedUrls].slice(0, 5)); // Máximo 5 imagens
+      setImages([...images, ...base64Images].slice(0, 5)); // Máximo 5 imagens
     } catch (error) {
-      console.error("Erro ao fazer upload:", error);
-      // Aqui você pode adicionar um toast de erro
+      console.error("Erro ao converter imagens:", error);
+      toast.error("Erro ao processar imagens");
     } finally {
       setIsUploading(false);
     }
+  };
+
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   const removeImage = (index: number) => {
@@ -627,7 +624,10 @@ export function ItemImagesStep({
           {images.length > 0 && (
             <div className="grid grid-cols-2 gap-4">
               {images.map((image, index) => (
-                <div key={image} className="relative">
+                <div
+                  key={`${image.substring(0, 50)}-${index}`}
+                  className="relative"
+                >
                   <NextImage
                     src={image}
                     alt={`Preview ${index + 1}`}

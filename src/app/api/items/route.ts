@@ -25,8 +25,12 @@ export async function POST(request: NextRequest) {
       ...body,
       imageUrls: body.imageUrls,
       imageUrlsLength: body.imageUrls?.length || 0,
+      imageBase64Length: body.imageBase64?.length || 0,
       imageUrlsPreview:
         body.imageUrls?.map((img: string) => `${img.substring(0, 50)}...`) ||
+        [],
+      imageBase64Preview:
+        body.imageBase64?.map((img: string) => `${img.substring(0, 50)}...`) ||
         [],
     });
 
@@ -111,27 +115,52 @@ export async function POST(request: NextRequest) {
     console.log("Verificando imagens:", {
       hasImageUrls: !!validatedData.imageUrls,
       imageUrlsLength: validatedData.imageUrls?.length || 0,
-      imageUrls: validatedData.imageUrls,
+      hasImageBase64: !!validatedData.imageBase64,
+      imageBase64Length: validatedData.imageBase64?.length || 0,
     });
 
-    if (validatedData.imageUrls && validatedData.imageUrls.length > 0) {
-      const imageData = validatedData.imageUrls.map((url, index) => ({
-        url,
-        altText: validatedData.imageAltTexts?.[index] || "",
-        isPrimary: index === 0, // Primeira imagem é a principal
-        itemId: item.id,
-      }));
+    // Processar imagens (URLs ou base64)
+    const imagesToCreate = [];
 
+    if (validatedData.imageUrls && validatedData.imageUrls.length > 0) {
+      // Criar imagens a partir de URLs
+      validatedData.imageUrls.forEach((url, index) => {
+        imagesToCreate.push({
+          url,
+          base64: null,
+          altText: validatedData.imageAltTexts?.[index] || "",
+          isPrimary: index === 0, // Primeira imagem é a principal
+          itemId: item.id,
+        });
+      });
+    } else if (
+      validatedData.imageBase64 &&
+      validatedData.imageBase64.length > 0
+    ) {
+      // Criar imagens a partir de base64
+      validatedData.imageBase64.forEach((base64Data, index) => {
+        imagesToCreate.push({
+          url: null,
+          base64: base64Data,
+          altText: validatedData.imageAltTexts?.[index] || "",
+          isPrimary: index === 0, // Primeira imagem é a principal
+          itemId: item.id,
+        });
+      });
+    }
+
+    if (imagesToCreate.length > 0) {
       console.log("Criando imagens:", {
-        imageDataCount: imageData.length,
-        imageData: imageData.map((img) => ({
+        imageDataCount: imagesToCreate.length,
+        imageData: imagesToCreate.map((img) => ({
           ...img,
-          url: `${img.url.substring(0, 50)}...`,
+          url: img.url ? `${img.url.substring(0, 50)}...` : null,
+          base64: img.base64 ? `${img.base64.substring(0, 50)}...` : null,
         })),
       });
 
       await prisma.itemImage.createMany({
-        data: imageData,
+        data: imagesToCreate,
       });
 
       console.log("Imagens criadas com sucesso!");

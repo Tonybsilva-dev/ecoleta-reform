@@ -288,7 +288,8 @@ model Item {
 
 model ItemImage {
   id        String   @id @default(cuid())
-  url       String
+  url       String? // URL da imagem (opcional)
+  base64    String?  @db.Text // Dados base64 da imagem (opcional)
   altText   String?
   isPrimary Boolean  @default(false)
   createdAt DateTime @default(now())
