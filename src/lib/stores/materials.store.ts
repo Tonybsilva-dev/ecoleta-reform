@@ -31,12 +31,30 @@ export const useMaterialsStore = create<MaterialsState>()(
     loadMaterials: async () => {
       set({ isLoading: true, error: null });
       try {
+        console.log("🔍 Carregando materiais...");
         const res = await fetch("/api/materials");
+        console.log("📡 Resposta da API:", res.status, res.ok);
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
         const json = await res.json();
+        console.log("📦 Dados recebidos:", {
+          success: json.success,
+          materialsCount: json?.data?.materials?.length || 0,
+          total: json?.data?.total || 0,
+        });
+
         const materials: Material[] = json?.data?.materials ?? [];
+        console.log("✅ Materiais processados:", materials.length);
+
         set({ materials, loadedOnce: true });
-      } catch (e: any) {
-        set({ error: e?.message || "Falha ao carregar materiais" });
+      } catch (e: unknown) {
+        console.error("❌ Erro ao carregar materiais:", e);
+        set({
+          error: e instanceof Error ? e.message : "Falha ao carregar materiais",
+        });
       } finally {
         set({ isLoading: false });
       }
