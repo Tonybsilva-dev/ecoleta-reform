@@ -108,6 +108,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar imagens se fornecidas
+    console.log("Verificando imagens:", {
+      hasImageUrls: !!validatedData.imageUrls,
+      imageUrlsLength: validatedData.imageUrls?.length || 0,
+      imageUrls: validatedData.imageUrls,
+    });
+
     if (validatedData.imageUrls && validatedData.imageUrls.length > 0) {
       const imageData = validatedData.imageUrls.map((url, index) => ({
         url,
@@ -116,9 +122,19 @@ export async function POST(request: NextRequest) {
         itemId: item.id,
       }));
 
+      console.log("Criando imagens:", {
+        imageDataCount: imageData.length,
+        imageData: imageData.map((img) => ({
+          ...img,
+          url: `${img.url.substring(0, 50)}...`,
+        })),
+      });
+
       await prisma.itemImage.createMany({
         data: imageData,
       });
+
+      console.log("Imagens criadas com sucesso!");
 
       // Buscar o item atualizado com as imagens
       const updatedItem = await prisma.item.findUnique({
@@ -141,6 +157,12 @@ export async function POST(request: NextRequest) {
           },
           images: true,
         },
+      });
+
+      console.log("Item atualizado com imagens:", {
+        itemId: updatedItem?.id,
+        imagesCount: updatedItem?.images?.length || 0,
+        images: updatedItem?.images,
       });
 
       return NextResponse.json(
