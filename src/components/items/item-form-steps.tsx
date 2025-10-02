@@ -332,7 +332,7 @@ export function ItemPricingStep({
         </div>
       </div>
 
-      {formData.transactionType === "sale" && (
+      {formData.transactionType === "SALE" && (
         <div>
           <Label htmlFor="price" className="font-medium text-gray-700">
             Preço (R$) *
