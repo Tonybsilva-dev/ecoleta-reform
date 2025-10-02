@@ -11,7 +11,6 @@ import {
   FileText,
   Flame,
   Gift,
-  Image,
   MapPin,
   Nut,
   Package,
@@ -23,13 +22,8 @@ import {
   X,
 } from "lucide-react";
 import NextImage from "next/image";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   Button,
@@ -45,6 +39,7 @@ import {
 import { useMaterialsStore } from "@/lib/stores/materials.store";
 import { cn } from "@/lib/utils";
 import { LocationMap } from "./LocationMap";
+import { UploadThingImageUploader } from "./UploadThingImageUploader";
 
 // Step 1: Informações Básicas
 export function ItemBasicInfoStep({
@@ -510,47 +505,9 @@ export function ItemImagesStep({
   images: string[];
   setImages: (images: string[]) => void;
 }) {
-  const [isUploading, setIsUploading] = React.useState(false);
+  // UploadThing gerencia estado interno; mantemos apenas a lista de URLs
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const files = event.target.files;
-    if (!files) return;
-
-    setIsUploading(true);
-    try {
-      // Converter arquivos para base64
-      const base64Images: string[] = [];
-
-      for (const file of Array.from(files)) {
-        const base64 = await convertFileToBase64(file);
-        base64Images.push(base64);
-      }
-
-      console.log("Imagens convertidas para base64:", {
-        count: base64Images.length,
-        currentImages: images.length,
-        newImages: [...images, ...base64Images].slice(0, 5),
-      });
-
-      setImages([...images, ...base64Images].slice(0, 5)); // Máximo 5 imagens
-    } catch (error) {
-      console.error("Erro ao converter imagens:", error);
-      toast.error("Erro ao processar imagens");
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  // Conversão base64 removida no fluxo com UploadThing
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
@@ -573,52 +530,12 @@ export function ItemImagesStep({
         )}
 
         <div className="space-y-4">
-          {/* Upload Area */}
-          <div
-            className={`rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
-              isUploading
-                ? "border-blue-300 bg-blue-50"
-                : "border-gray-300 hover:border-gray-400"
-            }`}
-          >
-            <input
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-              id="image-upload"
-              disabled={isUploading}
-            />
-            <label
-              htmlFor="image-upload"
-              className={`flex flex-col items-center space-y-2 ${
-                isUploading ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-              }`}
-            >
-              {isUploading ? (
-                <>
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
-                  <span className="font-medium text-blue-600">
-                    Enviando imagens...
-                  </span>
-                  <span className="text-blue-500 text-sm">
-                    Aguarde enquanto processamos seus arquivos
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Image className="h-8 w-8 text-gray-400" />
-                  <span className="font-medium text-gray-600">
-                    Clique para adicionar imagens
-                  </span>
-                  <span className="text-gray-500 text-sm">
-                    PNG, JPG até 5MB cada
-                  </span>
-                </>
-              )}
-            </label>
-          </div>
+          {/* Upload via UploadThing */}
+          <UploadThingImageUploader
+            value={images}
+            onChange={setImages}
+            max={5}
+          />
 
           {/* Image Preview */}
           {images.length > 0 && (

@@ -68,11 +68,8 @@ export const createItemSchema = z.object({
     .max(5, "Máximo de 5 imagens permitidas")
     .optional(),
 
-  // Dados base64 das imagens
-  imageBase64: z
-    .array(z.string().min(1, "Dados base64 da imagem são obrigatórios"))
-    .max(5, "Máximo de 5 imagens permitidas")
-    .optional(),
+  // Dados base64 das imagens (descontinuado no fluxo principal; manter opcional)
+  imageBase64: z.array(z.string()).max(5).optional(),
 
   // Texto alternativo para as imagens
   imageAltTexts: z

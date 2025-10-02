@@ -43,9 +43,8 @@ export function ItemCreationModal({
           ? parseFloat(formData.longitude)
           : undefined,
         address: formData.address,
-        // Usar imagens base64 se disponíveis, senão URLs vazias
-        imageBase64: images && images.length > 0 ? images : undefined,
-        imageUrls: images && images.length > 0 ? undefined : [],
+        // Agora usamos UploadThing e salvamos URLs
+        imageUrls: images && images.length > 0 ? images : [],
         imageAltTexts: images && images.length > 0 ? images.map(() => "") : [],
       };
 
