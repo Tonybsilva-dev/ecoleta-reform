@@ -62,9 +62,17 @@ export const createItemSchema = z.object({
     .max(180, "Longitude deve estar entre -180 e 180")
     .optional(),
 
-  // URLs das imagens
+  // URLs das imagens ou dados base64
   imageUrls: z
-    .array(z.string().url("URL da imagem inválida"))
+    .array(
+      z.string().refine((val) => {
+        // Aceitar URLs válidas ou dados base64
+        return (
+          z.string().url().safeParse(val).success ||
+          val.startsWith("data:image/")
+        );
+      }, "Deve ser uma URL válida ou dados base64 de imagem"),
+    )
     .min(1, "Pelo menos uma imagem é obrigatória")
     .max(5, "Máximo de 5 imagens permitidas"),
 
