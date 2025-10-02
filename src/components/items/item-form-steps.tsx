@@ -504,36 +504,43 @@ export function ItemImagesStep({
   images: string[];
   setImages: (images: string[]) => void;
 }) {
+  const [isUploading, setIsUploading] = React.useState(false);
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const files = event.target.files;
     if (!files) return;
 
-    // Converter imagens para base64 (solução temporária)
-    const newImages: string[] = [];
-    for (const file of Array.from(files)) {
-      try {
-        const base64 = await convertToBase64(file);
-        newImages.push(base64);
-      } catch (error) {
-        console.error("Erro ao converter imagem:", error);
+    setIsUploading(true);
+    try {
+      // Criar FormData para upload multipart
+      const formData = new FormData();
+      Array.from(files).forEach((file) => {
+        formData.append("files", file);
+      });
+
+      // Fazer upload para a API
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Erro ao fazer upload");
       }
+
+      const result = await response.json();
+      const uploadedUrls = result.data.map((file: { url: string }) => file.url);
+
+      setImages([...images, ...uploadedUrls].slice(0, 5)); // Máximo 5 imagens
+    } catch (error) {
+      console.error("Erro ao fazer upload:", error);
+      // Aqui você pode adicionar um toast de erro
+    } finally {
+      setIsUploading(false);
     }
-
-    setImages([...images, ...newImages].slice(0, 5)); // Máximo 5 imagens
-  };
-
-  const convertToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        resolve(result);
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
   };
 
   const removeImage = (index: number) => {
@@ -558,7 +565,13 @@ export function ItemImagesStep({
 
         <div className="space-y-4">
           {/* Upload Area */}
-          <div className="rounded-lg border-2 border-gray-300 border-dashed p-6 text-center transition-colors hover:border-gray-400">
+          <div
+            className={`rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
+              isUploading
+                ? "border-blue-300 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
+            }`}
+          >
             <input
               type="file"
               multiple
@@ -566,18 +579,35 @@ export function ItemImagesStep({
               onChange={handleImageUpload}
               className="hidden"
               id="image-upload"
+              disabled={isUploading}
             />
             <label
               htmlFor="image-upload"
-              className="flex cursor-pointer flex-col items-center space-y-2"
+              className={`flex flex-col items-center space-y-2 ${
+                isUploading ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+              }`}
             >
-              <Image className="h-8 w-8 text-gray-400" />
-              <span className="font-medium text-gray-600">
-                Clique para adicionar imagens
-              </span>
-              <span className="text-gray-500 text-sm">
-                PNG, JPG até 5MB cada
-              </span>
+              {isUploading ? (
+                <>
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+                  <span className="font-medium text-blue-600">
+                    Enviando imagens...
+                  </span>
+                  <span className="text-blue-500 text-sm">
+                    Aguarde enquanto processamos seus arquivos
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Image className="h-8 w-8 text-gray-400" />
+                  <span className="font-medium text-gray-600">
+                    Clique para adicionar imagens
+                  </span>
+                  <span className="text-gray-500 text-sm">
+                    PNG, JPG até 5MB cada
+                  </span>
+                </>
+              )}
             </label>
           </div>
 

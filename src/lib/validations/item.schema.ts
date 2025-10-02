@@ -64,15 +64,7 @@ export const createItemSchema = z.object({
 
   // URLs das imagens ou dados base64
   imageUrls: z
-    .array(
-      z.string().refine((val) => {
-        // Aceitar URLs válidas ou dados base64
-        return (
-          z.string().url().safeParse(val).success ||
-          val.startsWith("data:image/")
-        );
-      }, "Deve ser uma URL válida ou dados base64 de imagem"),
-    )
+    .array(z.string().url("URL da imagem inválida"))
     .min(1, "Pelo menos uma imagem é obrigatória")
     .max(5, "Máximo de 5 imagens permitidas"),
 
