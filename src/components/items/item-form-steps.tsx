@@ -43,6 +43,7 @@ import {
 } from "@/components/ui";
 import { useMaterialsStore } from "@/lib/stores/materials.store";
 import { cn } from "@/lib/utils";
+import type { Material } from "@/types";
 import { LocationMap } from "./LocationMap";
 
 // Step 1: Informações Básicas
@@ -505,12 +506,14 @@ export function ItemImagesStep({
   updateFormData: _updateFormData,
   images,
   setImages,
+  imageFiles,
   setImageFiles,
 }: {
   formData: Record<string, string>;
   updateFormData: (field: string, value: string) => void;
   images: string[];
   setImages: (images: string[]) => void;
+  imageFiles: File[];
   setImageFiles: (files: File[]) => void;
 }) {
   // Mantemos apenas a lista de previews e arquivos; UI permanece igual
@@ -520,6 +523,7 @@ export function ItemImagesStep({
 
   const removeImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
+    setImageFiles(imageFiles.filter((_, i) => i !== index));
   };
 
   return (

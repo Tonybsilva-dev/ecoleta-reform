@@ -35,7 +35,6 @@ export function ItemCreationForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [images, setImages] = useState<string[]>([]); // previews para manter a UI
   const [imageFiles, setImageFiles] = useState<File[]>([]); // arquivos reais para upload final
   const { showSuccess, showError, showLoading, dismiss } = useNotifications();
@@ -103,13 +102,7 @@ export function ItemCreationForm({
       id: "location",
       title: "Localização do item",
       description: "Onde o item está localizado?",
-      component: (props: Record<string, unknown>) => (
-        <ItemLocationStep
-          {...props}
-          isGettingLocation={isGettingLocation}
-          setIsGettingLocation={setIsGettingLocation}
-        />
-      ),
+      component: ItemLocationStep,
       validation: (formData: Record<string, string>) => {
         try {
           createItemSchema.pick({ latitude: true, longitude: true }).parse({
@@ -128,9 +121,13 @@ export function ItemCreationForm({
       description: "Adicione fotos para mostrar seu item",
       component: (props: Record<string, unknown>) => (
         <ItemImagesStep
-          {...props}
+          formData={props.formData as Record<string, string>}
+          updateFormData={
+            props.updateFormData as (field: string, value: string) => void
+          }
           images={images}
           setImages={setImages}
+          imageFiles={imageFiles}
           setImageFiles={setImageFiles}
         />
       ),

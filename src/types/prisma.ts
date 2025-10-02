@@ -98,6 +98,15 @@ export type OrganizationWithAllRelations = Prisma.OrganizationGetPayload<{
   };
 }>;
 
+// ===== MATERIAL TYPES =====
+
+// Material with category
+export type Material = Prisma.MaterialGetPayload<{
+  include: {
+    category: true;
+  };
+}>;
+
 // ===== ITEM TYPES =====
 
 // Item with creator and organization

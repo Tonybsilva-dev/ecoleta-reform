@@ -134,7 +134,13 @@ export async function POST(request: NextRequest) {
     });
 
     // Processar imagens (URLs ou base64)
-    const imagesToCreate = [];
+    const imagesToCreate: Array<{
+      url: string | null;
+      base64: string | null;
+      altText: string;
+      isPrimary: boolean;
+      itemId: string;
+    }> = [];
 
     if (validatedData.imageUrls && validatedData.imageUrls.length > 0) {
       console.log(
