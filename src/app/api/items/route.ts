@@ -21,10 +21,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Debug: verificar dados recebidos
-    console.log("API recebeu:", {
-      ...body,
+    console.log("🔍 API recebeu dados:", {
+      title: body.title,
+      description: body.description,
+      materialId: body.materialId,
       imageUrls: body.imageUrls,
       imageUrlsLength: body.imageUrls?.length || 0,
+      imageBase64: body.imageBase64 ? "PRESENTE" : "AUSENTE",
       imageBase64Length: body.imageBase64?.length || 0,
       imageUrlsPreview:
         body.imageUrls?.map((img: string) => `${img.substring(0, 50)}...`) ||
@@ -35,6 +38,15 @@ export async function POST(request: NextRequest) {
     });
 
     const validatedData = createItemSchema.parse(body);
+
+    console.log("✅ Dados validados:", {
+      title: validatedData.title,
+      materialId: validatedData.materialId,
+      imageUrls: validatedData.imageUrls,
+      imageUrlsLength: validatedData.imageUrls?.length || 0,
+      imageBase64: validatedData.imageBase64 ? "PRESENTE" : "AUSENTE",
+      imageBase64Length: validatedData.imageBase64?.length || 0,
+    });
 
     // Verificar se o material existe (se fornecido)
     if (validatedData.materialId) {
@@ -112,17 +124,23 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar imagens se fornecidas
-    console.log("Verificando imagens:", {
+    console.log("🖼️ Verificando imagens:", {
       hasImageUrls: !!validatedData.imageUrls,
       imageUrlsLength: validatedData.imageUrls?.length || 0,
       hasImageBase64: !!validatedData.imageBase64,
       imageBase64Length: validatedData.imageBase64?.length || 0,
+      imageUrlsValue: validatedData.imageUrls,
+      imageBase64Value: validatedData.imageBase64 ? "PRESENTE" : "AUSENTE",
     });
 
     // Processar imagens (URLs ou base64)
     const imagesToCreate = [];
 
     if (validatedData.imageUrls && validatedData.imageUrls.length > 0) {
+      console.log(
+        "📷 Processando URLs de imagens:",
+        validatedData.imageUrls.length,
+      );
       // Criar imagens a partir de URLs
       validatedData.imageUrls.forEach((url, index) => {
         imagesToCreate.push({
@@ -137,6 +155,10 @@ export async function POST(request: NextRequest) {
       validatedData.imageBase64 &&
       validatedData.imageBase64.length > 0
     ) {
+      console.log(
+        "📷 Processando imagens base64:",
+        validatedData.imageBase64.length,
+      );
       // Criar imagens a partir de base64
       validatedData.imageBase64.forEach((base64Data, index) => {
         imagesToCreate.push({
@@ -147,6 +169,8 @@ export async function POST(request: NextRequest) {
           itemId: item.id,
         });
       });
+    } else {
+      console.log("⚠️ Nenhuma imagem fornecida");
     }
 
     if (imagesToCreate.length > 0) {
