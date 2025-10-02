@@ -172,6 +172,15 @@ export const useItemsStore = create<ItemsState>()(
       createItem: async (itemData) => {
         set({ isLoading: true, error: null });
 
+        console.log("🔍 ItemsStore.createItem:", {
+          title: itemData.title,
+          materialId: itemData.materialId,
+          imageBase64: itemData.imageBase64 ? "PRESENTE" : "AUSENTE",
+          imageBase64Length: itemData.imageBase64?.length || 0,
+          imageUrls: itemData.imageUrls,
+          imageUrlsLength: itemData.imageUrls?.length || 0,
+        });
+
         try {
           const response = await fetch("/api/items", {
             method: "POST",

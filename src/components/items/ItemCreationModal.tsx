@@ -21,6 +21,13 @@ export function ItemCreationModal({
     formData: Record<string, string>,
     images?: string[],
   ) => {
+    console.log("🔍 ItemCreationModal.handleComplete:", {
+      formDataKeys: Object.keys(formData),
+      imagesReceived: images ? "SIM" : "NÃO",
+      imagesLength: images?.length || 0,
+      imagesPreview: images?.map((img) => `${img.substring(0, 50)}...`),
+    });
+
     try {
       // Preparar dados para envio
       const itemData = {

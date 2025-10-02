@@ -136,6 +136,12 @@ export function ItemCreationForm({
   ];
 
   const handleComplete = async (formData: Record<string, string>) => {
+    console.log("🔍 ItemCreationForm.handleComplete:", {
+      formDataKeys: Object.keys(formData),
+      imagesLength: images.length,
+      imagesPreview: images.map((img) => `${img.substring(0, 50)}...`),
+    });
+
     // Se onComplete foi fornecido, usar ele (modal)
     if (onComplete) {
       onComplete(formData, images);
