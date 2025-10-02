@@ -22,8 +22,13 @@ import {
   X,
 } from "lucide-react";
 import NextImage from "next/image";
-import type React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import {
   Button,
@@ -39,7 +44,6 @@ import {
 import { useMaterialsStore } from "@/lib/stores/materials.store";
 import { cn } from "@/lib/utils";
 import { LocationMap } from "./LocationMap";
-import { UploadThingImageUploader } from "./UploadThingImageUploader";
 
 // Step 1: Informações Básicas
 export function ItemBasicInfoStep({
@@ -194,7 +198,9 @@ export function ItemMaterialStep({
             <div className="grid grid-cols-2 gap-3">
               {visibleMaterials.map((m) => {
                 const active = formData.materialId === m.id;
-                const iconKey = (m as any).category?.icon as string | undefined;
+                const iconKey = (
+                  m as Material & { category?: { icon?: string } }
+                ).category?.icon as string | undefined;
                 const IconComp = iconKey
                   ? IconByName[iconKey] || Package
                   : Package;
@@ -499,13 +505,16 @@ export function ItemImagesStep({
   updateFormData: _updateFormData,
   images,
   setImages,
+  setImageFiles,
 }: {
   formData: Record<string, string>;
   updateFormData: (field: string, value: string) => void;
   images: string[];
   setImages: (images: string[]) => void;
+  setImageFiles: (files: File[]) => void;
 }) {
-  // UploadThing gerencia estado interno; mantemos apenas a lista de URLs
+  // Mantemos apenas a lista de previews e arquivos; UI permanece igual
+  const [isUploading, setIsUploading] = React.useState(false);
 
   // Conversão base64 removida no fluxo com UploadThing
 
@@ -531,11 +540,95 @@ export function ItemImagesStep({
 
         <div className="space-y-4">
           {/* Upload via UploadThing */}
-          <UploadThingImageUploader
-            value={images}
-            onChange={setImages}
-            max={5}
-          />
+          {/* Área de upload original (sem mudanças visuais) */}
+          <div
+            className={`rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
+              isUploading
+                ? "border-blue-300 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
+            }`}
+          >
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={async (e) => {
+                const files = e.target.files ? Array.from(e.target.files) : [];
+                if (files.length === 0) return;
+                setIsUploading(true);
+                try {
+                  // capturar arquivos para upload posterior na confirmação
+                  setImageFiles(files.slice(0, 5));
+
+                  // gerar previews base64 como antes
+                  const previews: string[] = [];
+                  for (const f of files.slice(0, 5)) {
+                    const b64 = await new Promise<string>((resolve, reject) => {
+                      const reader = new FileReader();
+                      reader.onload = () => resolve(reader.result as string);
+                      reader.onerror = reject;
+                      reader.readAsDataURL(f);
+                    });
+                    previews.push(b64);
+                  }
+                  setImages(previews);
+                } finally {
+                  setIsUploading(false);
+                }
+              }}
+              className="hidden"
+              id="image-upload-final"
+            />
+            <label
+              htmlFor="image-upload-final"
+              className={`flex flex-col items-center space-y-2 ${
+                isUploading ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+              }`}
+            >
+              {isUploading ? (
+                <>
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+                  <span className="font-medium text-blue-600">
+                    Enviando imagens...
+                  </span>
+                  <span className="text-blue-500 text-sm">
+                    Aguarde enquanto processamos seus arquivos
+                  </span>
+                </>
+              ) : (
+                <>
+                  <svg
+                    className="h-8 w-8 text-gray-400"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-label="Ícone de imagem"
+                  >
+                    <title>Ícone de imagem</title>
+                    <rect
+                      x="3"
+                      y="3"
+                      width="18"
+                      height="14"
+                      rx="2"
+                      ry="2"
+                    ></rect>
+                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                    <path d="M21 15l-5-5L5 21"></path>
+                  </svg>
+                  <span className="font-medium text-gray-600">
+                    Clique para adicionar imagens
+                  </span>
+                  <span className="text-gray-500 text-sm">
+                    PNG, JPG até 5MB cada
+                  </span>
+                </>
+              )}
+            </label>
+          </div>
 
           {/* Image Preview */}
           {images.length > 0 && (
@@ -621,7 +714,9 @@ export function ItemConfirmationStep({
   };
 
   const getMaterialIconForConfirm = () => {
-    const key = (selectedMaterial as any)?.category?.icon as string | undefined;
+    const key = (
+      selectedMaterial as Material & { category?: { icon?: string } }
+    )?.category?.icon as string | undefined;
     if (key && IconMapConfirm[key]) return IconMapConfirm[key];
     return Package;
   };

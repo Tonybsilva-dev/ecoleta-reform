@@ -17,7 +17,11 @@ import {
 
 interface ItemCreationFormProps {
   className?: string;
-  onComplete?: (formData: Record<string, string>, images?: string[]) => void;
+  onComplete?: (
+    formData: Record<string, string>,
+    images?: string[],
+    files?: File[],
+  ) => void;
   onBack?: () => void;
   isLoading?: boolean;
 }
@@ -32,7 +36,8 @@ export function ItemCreationForm({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([]); // previews para manter a UI
+  const [imageFiles, setImageFiles] = useState<File[]>([]); // arquivos reais para upload final
   const { showSuccess, showError, showLoading, dismiss } = useNotifications();
 
   const isFormLoading = externalLoading || isLoading;
@@ -98,7 +103,7 @@ export function ItemCreationForm({
       id: "location",
       title: "Localização do item",
       description: "Onde o item está localizado?",
-      component: (props: any) => (
+      component: (props: Record<string, unknown>) => (
         <ItemLocationStep
           {...props}
           isGettingLocation={isGettingLocation}
@@ -121,8 +126,13 @@ export function ItemCreationForm({
       id: "images",
       title: "Fotos do item",
       description: "Adicione fotos para mostrar seu item",
-      component: (props: any) => (
-        <ItemImagesStep {...props} images={images} setImages={setImages} />
+      component: (props: Record<string, unknown>) => (
+        <ItemImagesStep
+          {...props}
+          images={images}
+          setImages={setImages}
+          setImageFiles={setImageFiles}
+        />
       ),
       validation: () => images.length > 0, // Pelo menos uma imagem é obrigatória
     },
@@ -144,7 +154,8 @@ export function ItemCreationForm({
 
     // Se onComplete foi fornecido, usar ele (modal)
     if (onComplete) {
-      onComplete(formData, images);
+      // Passar previews e os arquivos reais (upload só na confirmação)
+      onComplete(formData, images, imageFiles);
       return;
     }
 
