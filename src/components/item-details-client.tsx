@@ -177,7 +177,7 @@ export function ItemDetailsClient({ id }: ItemDetailsClientProps) {
         <div className="space-y-4">
           {/* Imagem Principal */}
           {primaryImage ? (
-            <div className="relative aspect-square w-full overflow-hidden rounded-lg border bg-muted">
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg border bg-muted md:aspect-[16/9]">
               <Image
                 src={primaryImage.url}
                 alt={item.title}
