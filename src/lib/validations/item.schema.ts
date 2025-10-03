@@ -112,6 +112,9 @@ export const mapItemsSchema = z.object({
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
   radius: z.number().min(0.1).max(100).default(10),
+  // Coordenadas opcionais do usuário para cálculo de distância exibida
+  userLatitude: z.number().min(-90).max(90).optional(),
+  userLongitude: z.number().min(-180).max(180).optional(),
 });
 
 // Tipos TypeScript derivados dos schemas

@@ -34,6 +34,12 @@ export async function GET(request: NextRequest) {
       latitude,
       longitude,
       radius,
+      userLatitude: searchParams.get("userLatitude")
+        ? parseFloat(searchParams.get("userLatitude") || "0")
+        : undefined,
+      userLongitude: searchParams.get("userLongitude")
+        ? parseFloat(searchParams.get("userLongitude") || "0")
+        : undefined,
     });
 
     // Construir query base
@@ -98,6 +104,7 @@ export async function GET(request: NextRequest) {
         status: string;
         price: number | null;
         quantity: number;
+        transactionType: string;
         longitude: number;
         latitude: number;
         distance_km: number;
@@ -112,11 +119,31 @@ export async function GET(request: NextRequest) {
       status: item.status,
       price: item.price,
       quantity: item.quantity,
+      transactionType: item.transactionType,
       location: {
         latitude: item.latitude,
         longitude: item.longitude,
       },
-      distance: item.distance_km,
+      // Se tivermos a localização real do usuário, calcule distância a partir dela
+      distance:
+        validatedData.userLatitude !== undefined &&
+        validatedData.userLongitude !== undefined
+          ? Number(
+              (
+                (Math.acos(
+                  Math.sin((validatedData.userLatitude * Math.PI) / 180) *
+                    Math.sin((item.latitude * Math.PI) / 180) +
+                    Math.cos((validatedData.userLatitude * Math.PI) / 180) *
+                      Math.cos((item.latitude * Math.PI) / 180) *
+                      Math.cos(
+                        ((item.longitude - validatedData.userLongitude) *
+                          Math.PI) /
+                          180,
+                      ),
+                ) * 6371) as number
+              ).toFixed(3),
+            )
+          : item.distance_km,
       material: item.material_name
         ? {
             name: item.material_name,

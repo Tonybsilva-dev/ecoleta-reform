@@ -281,14 +281,19 @@ export default function PublicMapPage() {
         setIsLoading(false);
         return;
       }
-      // Usar a localização do usuário para calcular distâncias
+      // Priorizar o centro atual do mapa; se indisponível, usar localização do usuário
       const center =
-        userLocation ?? mapCenter ?? ([-23.5505, -46.6333] as [number, number]);
+        mapCenter ?? userLocation ?? ([-23.5505, -46.6333] as [number, number]);
       const params = new URLSearchParams({
         latitude: center[0].toString(),
         longitude: center[1].toString(),
         radius: filters.radius.toString(),
       });
+      // Enviar a posição real do usuário (se existir) para que o backend devolva a distância a partir dela
+      if (userLocation) {
+        params.append("userLatitude", userLocation[0].toString());
+        params.append("userLongitude", userLocation[1].toString());
+      }
 
       if (filters.materialId && filters.materialId !== "all") {
         params.append("materialId", filters.materialId);
