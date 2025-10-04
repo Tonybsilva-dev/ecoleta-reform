@@ -131,7 +131,7 @@ export function ItemListRow({ item, onEdit, onView }: ItemListRowProps) {
   };
 
   const primaryImage =
-    item.images.find((img) => img.isPrimary) || item.images[0];
+    item.images?.find((img) => img.isPrimary) || item.images?.[0];
   const priceFormatted = item.price
     ? new Intl.NumberFormat("pt-BR", {
         style: "currency",
