@@ -354,7 +354,7 @@ export default function PublicMapPage() {
     if (!validationResult.success) {
       // Pegar o primeiro erro para exibir
       const firstError = validationResult.error.issues[0];
-      setError(firstError?.message);
+      setError(firstError?.message || "Erro de validação");
       return;
     }
 
