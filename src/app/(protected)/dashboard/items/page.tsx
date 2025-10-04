@@ -1,9 +1,9 @@
 "use client";
 
 import { Package, Plus } from "lucide-react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ItemCreationModal } from "@/components/items";
+import { ItemCreationModal, ItemListRow } from "@/components/items";
 import { MainLayout, PageHeader } from "@/components/layout";
 import { Button, EmptyState, LoadingState } from "@/components/ui";
 import { useItemsStore } from "@/lib/stores";
@@ -11,6 +11,7 @@ import { useItemsStore } from "@/lib/stores";
 export default function ItemsPage() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const { items, isLoading, error, loadItems } = useItemsStore();
+  const router = useRouter();
 
   useEffect(() => {
     loadItems({}, true); // true = apenas itens do usuário logado
@@ -20,6 +21,14 @@ export default function ItemsPage() {
     console.log("Item criado com sucesso!");
     // Recarregar a lista de itens do usuário
     await loadItems({}, true);
+  };
+
+  const handleEditItem = (itemId: string) => {
+    router.push(`/dashboard/items/${itemId}/edit`);
+  };
+
+  const handleViewItem = (itemId: string) => {
+    router.push(`/dashboard/items/${itemId}`);
   };
 
   if (isLoading) {
@@ -101,59 +110,17 @@ export default function ItemsPage() {
             }}
           />
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {items.map((item) => (
-              <Link
-                key={item.id}
-                href={`/dashboard/items/${item.id}`}
-                aria-label={`Ver detalhes do item ${item.title}`}
-                className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:shadow-md"
-              >
-                <div className="mb-4">
-                  <h3 className="font-semibold text-gray-900 text-lg">
-                    {item.title}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {item.description || "Sem descrição"}
-                  </p>
-                </div>
-
-                <div className="mb-4 space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Quantidade:</span>
-                    <span className="font-medium">{item.quantity}</span>
-                  </div>
-
-                  {item.price && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Preço:</span>
-                      <span className="font-medium text-green-600">
-                        R$ {Number(item.price).toFixed(2)}
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500">Status:</span>
-                    <span className="rounded-full bg-green-100 px-2 py-1 font-medium text-green-800 text-xs">
-                      {item.status}
-                    </span>
-                  </div>
-
-                  {item.material && (
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Material:</span>
-                      <span className="font-medium">{item.material.name}</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="text-gray-400 text-xs">
-                  Criado em{" "}
-                  {new Date(item.createdAt).toLocaleDateString("pt-BR")}
-                </div>
-              </Link>
-            ))}
+          <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+            <div className="divide-y divide-gray-100">
+              {items.map((item) => (
+                <ItemListRow
+                  key={item.id}
+                  item={item}
+                  onEdit={handleEditItem}
+                  onView={handleViewItem}
+                />
+              ))}
+            </div>
           </div>
         )}
 

@@ -31,6 +31,10 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { APP_NAME } from "@/lib";
+import {
+  type MapFiltersInput,
+  mapFiltersSchema,
+} from "@/lib/validations/item.schema";
 
 // Dynamic import do mapa para evitar SSR
 const MapComponent = dynamic(() => import("@/components/map/Map"), {
@@ -76,13 +80,8 @@ interface MapItem {
   }>;
 }
 
-interface MapFilters {
-  materialId?: string;
-  organizationId?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  radius: number;
-}
+// Usar o tipo Zod para os filtros
+type MapFilters = MapFiltersInput;
 
 interface Material {
   id: string;
@@ -338,15 +337,32 @@ export default function PublicMapPage() {
     [],
   );
 
-  // Handler para mudança de filtros
+  // Handler para mudança de filtros com validação Zod
   const handleFilterChange = (
     key: keyof MapFilters,
     value: string | number | undefined,
   ) => {
-    setFilters((prev) => ({
-      ...prev,
+    // Preparar novos filtros para validação
+    const newFilters = {
+      ...filters,
       [key]: value,
-    }));
+    };
+
+    // Validar usando Zod
+    const validationResult = mapFiltersSchema.safeParse(newFilters);
+
+    if (!validationResult.success) {
+      // Pegar o primeiro erro para exibir
+      const firstError = validationResult.error.issues[0];
+      setError(firstError?.message);
+      return;
+    }
+
+    // Limpar erro se validação passou
+    if (error) setError(null);
+
+    // Atualizar filtros com dados validados
+    setFilters(validationResult.data);
   };
 
   // Limpar filtros
@@ -575,33 +591,54 @@ export default function PublicMapPage() {
                         id="min-price-filter"
                         placeholder="Min R$"
                         className="flex-1"
+                        type="number"
+                        min="0"
+                        max="999999.99"
+                        step="0.01"
                         value={filters.minPrice || ""}
-                        onChange={(e) =>
-                          handleFilterChange(
-                            "minPrice",
-                            e.target.value
-                              ? parseFloat(e.target.value)
-                              : undefined,
-                          )
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "") {
+                            handleFilterChange("minPrice", undefined);
+                          } else {
+                            const numValue = parseFloat(value);
+                            if (!Number.isNaN(numValue)) {
+                              handleFilterChange("minPrice", numValue);
+                            }
+                          }
+                        }}
                       />
                       <span className="text-gray-400">-</span>
                       <Input
                         id="max-price-filter"
                         placeholder="Max R$"
                         className="flex-1"
+                        type="number"
+                        min="0"
+                        max="999999.99"
+                        step="0.01"
                         value={filters.maxPrice || ""}
-                        onChange={(e) =>
-                          handleFilterChange(
-                            "maxPrice",
-                            e.target.value
-                              ? parseFloat(e.target.value)
-                              : undefined,
-                          )
-                        }
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "") {
+                            handleFilterChange("maxPrice", undefined);
+                          } else {
+                            const numValue = parseFloat(value);
+                            if (!Number.isNaN(numValue)) {
+                              handleFilterChange("maxPrice", numValue);
+                            }
+                          }
+                        }}
                       />
                     </div>
                   </div>
+
+                  {/* Mensagem de erro */}
+                  {error && (
+                    <div className="rounded-md bg-red-50 p-3">
+                      <p className="text-red-800 text-sm">{error}</p>
+                    </div>
+                  )}
 
                   <div className="flex justify-end space-x-2 pt-4">
                     <Button variant="outline" onClick={clearFilters}>

@@ -34,6 +34,7 @@ interface Item {
   price?: number | null;
   quantity: number;
   status: string;
+  transactionType: string;
   createdAt: string;
   updatedAt: string;
   material?: Material | null;
@@ -82,6 +83,11 @@ interface ItemsState {
   ) => Promise<void>;
   createItem: (itemData: any) => Promise<Item | null>;
   updateItem: (id: string, itemData: Partial<Item>) => Promise<Item | null>;
+  updateItemStatus: (id: string, status: string) => Promise<boolean>;
+  updateItemTransactionType: (
+    id: string,
+    transactionType: string,
+  ) => Promise<boolean>;
   deleteItem: (id: string) => Promise<boolean>;
   reset: () => void;
 }
@@ -251,6 +257,88 @@ export const useItemsStore = create<ItemsState>()(
             isLoading: false,
           });
           return null;
+        }
+      },
+
+      updateItemStatus: async (id, status) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await fetch(`/api/items/${id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Erro ao atualizar status");
+          }
+
+          const result = await response.json();
+          const updatedItem = result.data;
+
+          // Atualizar o item na lista
+          set((state) => ({
+            items: state.items.map((item) =>
+              item.id === id ? { ...item, status: updatedItem.status } : item,
+            ),
+            isLoading: false,
+          }));
+
+          return true;
+        } catch (error) {
+          console.error("Erro ao atualizar status:", error);
+          set({
+            error: error instanceof Error ? error.message : "Erro desconhecido",
+            isLoading: false,
+          });
+          return false;
+        }
+      },
+
+      updateItemTransactionType: async (id, transactionType) => {
+        set({ isLoading: true, error: null });
+
+        try {
+          const response = await fetch(`/api/items/${id}`, {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ transactionType }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+              errorData.error || "Erro ao atualizar tipo de transação",
+            );
+          }
+
+          const result = await response.json();
+          const updatedItem = result.data;
+
+          // Atualizar o item na lista
+          set((state) => ({
+            items: state.items.map((item) =>
+              item.id === id
+                ? { ...item, transactionType: updatedItem.transactionType }
+                : item,
+            ),
+            isLoading: false,
+          }));
+
+          return true;
+        } catch (error) {
+          console.error("Erro ao atualizar tipo de transação:", error);
+          set({
+            error: error instanceof Error ? error.message : "Erro desconhecido",
+            isLoading: false,
+          });
+          return false;
         }
       },
 

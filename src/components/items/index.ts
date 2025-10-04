@@ -1,5 +1,6 @@
 export { ItemCreationForm } from "./ItemCreationForm";
 export { ItemCreationModal } from "./ItemCreationModal";
+export { ItemListRow } from "./ItemListRow";
 export {
   ItemBasicInfoStep,
   ItemConfirmationStep,

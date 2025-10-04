@@ -102,7 +102,7 @@ export const searchItemsSchema = z.object({
   limit: z.number().int().min(1).max(100).default(20),
 });
 
-// Schema para filtros de itens no mapa
+// Schema para filtros de itens no mapa (backend)
 export const mapItemsSchema = z.object({
   materialId: z.string().cuid().optional(),
   organizationId: z.string().cuid().optional(),
@@ -117,9 +117,41 @@ export const mapItemsSchema = z.object({
   userLongitude: z.number().min(-180).max(180).optional(),
 });
 
+// Schema para filtros do mapa no frontend (com validação de preços)
+export const mapFiltersSchema = z
+  .object({
+    materialId: z.string().optional(),
+    organizationId: z.string().optional(),
+    minPrice: z
+      .number()
+      .min(0, "Preço mínimo não pode ser negativo")
+      .max(999999.99, "Preço mínimo muito alto (máximo R$ 999.999,99)")
+      .optional(),
+    maxPrice: z
+      .number()
+      .min(0, "Preço máximo não pode ser negativo")
+      .max(999999.99, "Preço máximo muito alto (máximo R$ 999.999,99)")
+      .optional(),
+    radius: z.number().min(0.1).max(100).default(10),
+  })
+  .refine(
+    (data) => {
+      // Validar se minPrice <= maxPrice quando ambos estão definidos
+      if (data.minPrice !== undefined && data.maxPrice !== undefined) {
+        return data.minPrice <= data.maxPrice;
+      }
+      return true;
+    },
+    {
+      message: "Preço mínimo não pode ser maior que o preço máximo",
+      path: ["minPrice"], // Mostrar erro no campo minPrice
+    },
+  );
+
 // Tipos TypeScript derivados dos schemas
 export type CreateItemInput = z.infer<typeof createItemSchema>;
 export type UpdateItemInput = z.infer<typeof updateItemSchema>;
 export type SearchItemsInput = z.infer<typeof searchItemsSchema>;
 export type MapItemsInput = z.infer<typeof mapItemsSchema>;
+export type MapFiltersInput = z.infer<typeof mapFiltersSchema>;
 export type ItemStatus = z.infer<typeof ItemStatusSchema>;
